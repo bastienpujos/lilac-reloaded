@@ -1,6 +1,7 @@
 <?php
 /*
 Lilac - A Nagios Configuration Tool
+Copyright (C) 2013 Rene Hadler
 Copyright (C) 2007 Taylor Dondich
 
 This program is free software; you can redistribute it and/or
@@ -303,7 +304,7 @@ if(isset($autodiscoveryJob)) {
     		colModel: [
     		{display: 'Time', name: 'name', width: 100, sortable: true, align: 'left'},
     		{display: 'Type', name: 'type', width: 100, sortable: true, align: 'left'},
-    		{display: 'Text', name: 'text', width: 1000, sortable: true, align: 'left'}
+    		{display: 'Text', name: 'text', width: 1200, sortable: true, align: 'left'}
     			],
     		resizable: false, //resizable table
     		sortname: "time", 
@@ -313,8 +314,8 @@ if(isset($autodiscoveryJob)) {
     		title: false,
     		showToggleBtn: false, //show or hide column toggle popup
     		useRp: true,
-    		rp: 20,
-    		height: 200
+    		rp: 50,
+    		height: 600
     	});
     
     	<?php
@@ -327,6 +328,7 @@ if(isset($autodiscoveryJob)) {
 				$.getJSON("autodiscovery.php?id=<?php echo $autodiscoveryJob->getId();?>&request=status&tok=" + Math.random() , function(data) {
 					$("#jobstatus").html(data.status_text);
 					$("#elapsedtime").html(data.elapsed_time);
+					$("#joblog").flexReload();
 					
 					if(data.status_code == <?php echo AutodiscoveryJob::STATUS_FINISHED;?> || data.status_code == <?php echo AutodiscoveryJob::STATUS_FAILED;?>) {
 						if(data.status_code == <?php echo AutodiscoveryJob::STATUS_FINISHED;?>) {
@@ -377,7 +379,7 @@ else {
 			targetcount = targetcount + 1;
 			event.preventDefault();
 			// Add new row to the table before this row, showing the 
-			var content = $("<tr><td>" + $("#activetarget").attr("value") + "<input type='hidden' name='target[" + targetcount + "]' value='" + $("#activetarget").attr("value") + "'/></td><td><a class=\"btn btn-danger btn-xs\" href=''>Delete This Target</a></td></tr>");
+			var content = $("<tr><td>" + $("#activetarget").attr("value") + "<input type='hidden' name='target[" + targetcount + "]' value='" + $("#activetarget").attr("value") + "'/></td><td><a href=''>Delete This Target</a></td></tr>");
 			// Add link to remove
 			$("a", content).click(function(event) {
 				event.preventDefault();
@@ -424,6 +426,8 @@ float: none;
 .checks p {
 padding: 2px;
 }
+
+}
 </style>
 <?php
 if(!isset($autodiscoveryJob))	{
@@ -462,10 +466,45 @@ if(!isset($autodiscoveryJob))	{
 		print_window_footer();	
 	}
 	
-	
+	$nmapPath = Lilac::getExecutablePath("nmap");
+	$sudoPath = Lilac::getExecutablePath("sudo");
+	$procUser = Lilac::getProcessUserInfo("name");
 	
 	print_window_header("Create New Auto Discovery Job", "100%", "center");
+	
+	if(!$nmapPath)
+	{
+		$nmapPath = "";
 	?>
+		<div class="error">
+		The nmap program was not found on your system. Please make sure nmap is installed properly and available in the system path. You can also enter the path to nmap manually if you have installed it in a different place outside the system path.
+		</div>
+	<?php 
+	}
+	
+	if(!$sudoPath)
+	{
+		$sudoPath = "";
+		?>
+			<div class="error">
+			  The sudo program was not found on your system. Please make sure sudo is installed / configured properly and available in the system path. Also make sure the webserver-user (<?php echo $procUser; ?>) is able to execute nmap via sudo with administrative rights.
+			</div>
+		<?php 
+		}
+	
+	if(!empty($nmapPath) && !empty($sudoPath))	
+	{
+	?>
+	
+	<div class="notice">
+	  Please make sure to add following line to your sudoers file to make autodiscovery work correctly:<br>
+	  <pre><?php echo $procUser; ?> ALL=(ALL) NOPASSWD: <?php echo $nmapPath; ?> *</pre>
+	</div>
+	
+	<?php 
+	}
+	?>
+	
 	To begin an auto-discovery of your configuration, an Auto Discovery Job must be defined.  Configure your auto discovery job below.  Once created, your auto discovery 
 	job will begin in the background.  You will be able to check on the status of your job and view it's log as it continues running.  You are advised to NOT edit anything 
 	in Lilac while your job is running.
@@ -486,7 +525,7 @@ if(!isset($autodiscoveryJob))	{
 		<legend>Discovery Options</legend>
 		<p>
 		<label for="nmap_binary">NMAP Binary Location</label>
-		<input id="nmap_binary" name="nmap_binary" type="text" size="100" maxlength="255" value="/usr/bin/nmap" />
+		<input id="nmap_binary" name="nmap_binary" type="text" size="100" maxlength="255" value="<?php echo $nmapPath; ?>" />
 		</p>
 		<p>
 		<input id="traceroute_enabled" name="traceroute_enabled" type="checkbox" checked="checked" /> Enable Traceroute to Determine Parent Host<br />
@@ -517,7 +556,7 @@ if(!isset($autodiscoveryJob))	{
 		<table id="targets">
 			<tr id="targetinputrow">
 				<td>
-				<input id="activetarget" type="text"size="40"></td><td><a class="btn btn-primary btn-xs" id="addtargetlink" href="">Add Target</a>
+				<input id="activetarget" type="text"size="40"></td><td><a id="addtargetlink" href=""> Add Target</a>
 				</td>
 			</tr>
 		</table>
@@ -525,7 +564,7 @@ if(!isset($autodiscoveryJob))	{
 		</p>
 	</fieldset>
 	</p>
-	<input class="btn btn-primary" id="jobSubmitButton" type="submit" disabled="disabled" value="You Must Provide At Least One Target" />
+	<input id="jobSubmitButton" type="submit" disabled="disabled" value="You Must Provide At Least One Target" />
 	<?php
 	print_window_footer();
 }
@@ -578,7 +617,7 @@ else if(!isset($_GET['review'])) {
 	   <div class="roundedcorner_success_bottom"><div></div></div>
 	</div></a>
 	
-	<a href="autodiscovery.php?id=<?php echo $autodiscoveryJob->getId();?>&action=restart">Restart Job</a> | <a href="autodiscovery.php?id=<?php echo $autodiscoveryJob->getId();?>&delete=1" onclick="javascript:return confirmDelete();">Remove Job</a> | <a href="autodiscovery.php">Return To AutoDiscovery Menu</a>
+	<a href="autodiscovery.php?id=<?php echo $autodiscoveryJob->getId();?>&action=restart">Restart Job</a> | <a href="autodiscovery.php?id=<?php echo $autodiscoveryJob->getId();?>&delete=1" onclick="javascript:confirmDelete();">Remove Job</a> | <a href="autodiscovery.php">Return To AutoDiscovery Menu</a>
 	<?php
 	print_window_footer();
 	print_window_header("Job Log");
@@ -639,9 +678,8 @@ else if(!isset($_GET['deviceId'])) {
 			Address
 			</td>
 			<td>Name</td>
-			<td>
-			Description
-			</td>
+			<td>Description</td>
+			<td>OS Family</td>
 			<td>Parent</td>
 			<td>Hostname</td>
 
@@ -666,6 +704,9 @@ else if(!isset($_GET['deviceId'])) {
 				</td>
 				<td>
 				<?php echo $device->getDescription();?>
+				</td>
+				<td>
+				<?php echo $device->getOsfamily();?>
 				</td>
 				<td>
 				<?php
@@ -710,7 +751,7 @@ else if(!isset($_GET['deviceId'])) {
 		<a class="checkAllLink" href="#">Check All</a> / <a class="uncheckAllLink" href="#">Un-Check All</a> With Selected: <select>
 		<option value="accept">Import</option>
 		<option value="remove">Remove</option>
-		</select> <input p: type="submit" value="Process" />		</form>
+		</select> <input type="submit" value="Process" />		</form>
 		<?php
 	}
 	?>
@@ -721,7 +762,7 @@ else if(!isset($_GET['deviceId'])) {
 else {
 	print_window_header("Device Details");
 	?>
-	<a class="btn btn-default" href="autodiscovery.php?id=<?php echo $device->getAutodiscoveryJob()->getId();?>&review=1">Return To Device List</a>
+	[ <a href="autodiscovery.php?id=<?php echo $device->getAutodiscoveryJob()->getId();?>&review=1">Return To Device List</a> ]
 	<br />
 	<br />
 	<h3>General Information</h3>
@@ -782,7 +823,7 @@ else {
 	<form action="autodiscovery.php?id=<?php echo $_GET['id'];?>&review=1&deviceId=<?php echo $device->getId();?>" method="post">
 	<input type="hidden" name="request" value="updateGeneral" />
 	<strong>Name: </strong><input type="text" value="<?php echo $device->getName();?>" name="name" size="40" maxlength="255" /> <strong>Description: </strong><input value="<?php echo $device->getDescription();?>" type="text" name="description" size="40" maxlength="255" /> 
-	<input class="btn btn-primary" type="submit" value="Update General" />	
+	<input type="submit" value="Update General" />	
 	
 	</form>
 	<br />
@@ -805,9 +846,7 @@ else {
 			$searchArray[] = $match->getNagiosHostTemplate()->getId();
 		}
 		// Add the rest of the templates
-                $c = new Criteria();
-                $c->addAscendingOrderByColumn(NagiosHostTemplatePeer::NAME);
-                $templates = NagiosHostTemplatePeer::doSelect($c);
+		$templates = NagiosHostTemplatePeer::doSelect(new Criteria());
 		foreach($templates as $template) {
 			if(!in_array($template->getId(), $searchArray)) {
 				$options[] = array(
@@ -817,7 +856,7 @@ else {
 			}
 		}
 		print_select("template", $options, "value", "option", $device->getHostTemplate());
-	?> <input class="btn btn-primary" type="submit" value="Assign Template" /> <a class="btn btn-primary" href="autodiscovery.php?id=<?php echo $_GET['id'];?>&review=1&deviceId=<?php echo $device->getId();?>&request=recalc">Recalculate Template Matches</a>
+	?> <input type="submit" value="Assign Template" /> [ <a href="autodiscovery.php?id=<?php echo $_GET['id'];?>&review=1&deviceId=<?php echo $device->getId();?>&request=recalc">Recalculate Template Matches</a> ]
 	</form>
 	<br />
 	<br />

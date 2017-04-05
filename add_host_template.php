@@ -30,7 +30,7 @@ include_once('includes/config.inc');
 if(isset($_POST['request'])) {
 	if($_POST['request'] == 'add_host_template') {
 		// Check for pre-existing host template with same name
-		if($lilac->hosttemplate_exists($_POST['template_name'])) {
+		if($lilac->host_template_exists($_POST['template_name'])) {
 			$error = "A host template with that name already exists!";
 		}
 		else {
@@ -61,7 +61,7 @@ print_window_header("Add Host Template", "100%");
 <tr bgcolor="f0f0f0">
 	<td colspan="2" class="formcell">
 	<b>Template Name:</b><br />
-	<input type="text" size="40" name="template_name" value="">
+	<input type="text" size="40" name="template_name" value=""><br />
 	<?php echo $lilac->element_desc("template_name", "nagios_hosts_desc"); ?><br />
 	<br />
 	</td>
@@ -69,13 +69,13 @@ print_window_header("Add Host Template", "100%");
 <tr bgcolor="eeeeee">
 	<td colspan="2" class="formcell">
 	<b>Template Description:</b><br />
-	<input type="text" size="40" name="template_description" value="">
+	<input type="text" size="40" name="template_description" value=""><br />
 	<?php echo $lilac->element_desc("template_description", "nagios_hosts_desc"); ?><br />
 	<br />
 	</td>
 </tr>
 <?php double_pane_form_window_finish(); ?>
-<input class="btn btn-primary" type="submit" value="Add Host Template" /> <a class="btn btn-default" href="templates.php">Cancel</a>
+<input type="submit" value="Add Host Template" />&nbsp;[ <a href="templates.php">Cancel</a> ]
 <br /><br />
 </form>
 <?php

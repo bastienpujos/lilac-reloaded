@@ -64,7 +64,7 @@ if(isset($_POST['request'])) {
 		$resourceCfg->setUser29($_POST['resource_config']['user29']);
 		$resourceCfg->setUser30($_POST['resource_config']['user30']);
 		$resourceCfg->setUser31($_POST['resource_config']['user31']);
-		$resourceCfg->setUser32($_POST['resource_config']['user32']);
+		$resourceCfg->setUser32($_POST['resource_config']['user31']);
 		$resourceCfg->save();	
 	
 
@@ -80,7 +80,7 @@ print_header("Environment Resources");
 	print_window_header("Nagios Resources", "100%", "center");
 		?>
 		Nagios resources are used as macros when defining Nagios commands.  Text strings which are commonly used are good examples of 
-		resources.  These include passwords, file paths and usernames.<br><br>
+		resources.  These include passwords, file paths and usernames.
 		<form name="resource_config[resource_config_form" method="post" action="resources.php">
 		<input type="hidden" name="request" value="update" />
 		<table width="100%" cellspacing="10" align="center" border="0">
@@ -144,36 +144,38 @@ print_header("Environment Resources");
 			<b>$USER19$:</b> <input type="text" size="60" name="resource_config[user19]" value="<?php echo $resourceCfg->getUser19();?>"><br />
 			<br />
 			
-			<b>$USER20$:</b> <input type="text" size="60" name="resource_config[user20]" value="<?php echo $resourceCfg->getUser20();?>"><br />
+			<b>$USER29$:</b> <input type="text" size="60" name="resource_config[user29]" value="<?php echo $resourceCfg->getUser20();?>"><br />
 			<br />
 			
-			<b>$USER21$:</b> <input type="text" size="60" name="resource_config[user21]" value="<?php echo $resourceCfg->getUser21();?>"><br />
+			<b>$USER20$:</b> <input type="text" size="60" name="resource_config[user20]" value="<?php echo $resourceCfg->getUser21();?>"><br />
 			<br />
 			
-			<b>$USER22$:</b> <input type="text" size="60" name="resource_config[user22]" value="<?php echo $resourceCfg->getUser22();?>"><br />
+			<b>$USER21$:</b> <input type="text" size="60" name="resource_config[user21]" value="<?php echo $resourceCfg->getUser22();?>"><br />
 			<br />
 			
-			<b>$USER23$:</b> <input type="text" size="60" name="resource_config[user23]" value="<?php echo $resourceCfg->getUser23();?>"><br />
+			<b>$USER22$:</b> <input type="text" size="60" name="resource_config[user22]" value="<?php echo $resourceCfg->getUser23();?>"><br />
 			<br />
 			
-			<b>$USER24$:</b> <input type="text" size="60" name="resource_config[user24]" value="<?php echo $resourceCfg->getUser24();?>"><br />
+			<b>$USER23$:</b> <input type="text" size="60" name="resource_config[user23]" value="<?php echo $resourceCfg->getUser24();?>"><br />
 			<br />
 			
-			<b>$USER25$:</b> <input type="text" size="60" name="resource_config[user25]" value="<?php echo $resourceCfg->getUser25();?>"><br />
+			<b>$USER24$:</b> <input type="text" size="60" name="resource_config[user24]" value="<?php echo $resourceCfg->getUser25();?>"><br />
 			<br />
 			
-			<b>$USER26$:</b> <input type="text" size="60" name="resource_config[user26]" value="<?php echo $resourceCfg->getUser26();?>"><br />
+			<b>$USER25$:</b> <input type="text" size="60" name="resource_config[user25]" value="<?php echo $resourceCfg->getUser26();?>"><br />
 			<br />
 			
-			<b>$USER27$:</b> <input type="text" size="60" name="resource_config[user27]" value="<?php echo $resourceCfg->getUser27();?>"><br />
+			<b>$USER26$:</b> <input type="text" size="60" name="resource_config[user26]" value="<?php echo $resourceCfg->getUser27();?>"><br />
+			<br />
+			
+			<b>$USER27$:</b> <input type="text" size="60" name="resource_config[user27]" value="<?php echo $resourceCfg->getUser28();?>"><br />
 			<br />
 	
-			<b>$USER28$:</b> <input type="text" size="60" name="resource_config[user28]" value="<?php echo $resourceCfg->getUser28();?>"><br />
+			<b>$USER18$:</b> <input type="text" size="60" name="resource_config[user28]" value="<?php echo $resourceCfg->getUser29();?>"><br />
 			<br />
+			
 
-			<b>$USER29$:</b> <input type="text" size="60" name="resource_config[user29]" value="<?php echo $resourceCfg->getUser29();?>"><br />
-			<br />
-
+			
 			<b>$USER30$:</b> <input type="text" size="60" name="resource_config[user30]" value="<?php echo $resourceCfg->getUser30();?>"><br />
 			<br />
 			
@@ -186,7 +188,7 @@ print_header("Environment Resources");
 		</tr>
 		<tr>
 			<td colspan="2">
-			<input class="btn btn-primary" type="submit" value="Update Resource Configuration" />
+			<input type="submit" value="Update Resource Configuration" />
 			</td>
 		</tr>
 		</table>

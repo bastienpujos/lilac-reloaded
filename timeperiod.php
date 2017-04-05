@@ -72,7 +72,7 @@ if(isset($_GET['request'])) {
 if(isset($_POST['request'])) {
 	if($_POST['request'] == 'modify_period') {
 	
-		if($_POST['timeperiod_manage']['timeperiod_name'] != $timeperiod->getName() && $lilac->timeperiod_exists($_POST['timeperiod_manage']['timeperiod_name'])) {
+		if($_POST['timeperiod_manage']['timeperiod_name'] != $timeperiod->getName() && $lilac->period_exists($_POST['timeperiod_manage']['timeperiod_name'])) {
 			$error = "A time period with that name already exists!";
 		}
 		else {
@@ -178,22 +178,22 @@ print_header("Time Period Editor");
 			<input type="hidden" name="request" value="modify_period" />
 			<input type="hidden" name="timeperiod_manage[timeperiod_id]" value="<?php echo $timeperiod->getId();?>">
 			<b>Time Period Name:</b><br />
-			<input type="text" name="timeperiod_manage[timeperiod_name]" value="<?php echo isset($timeperiod) ? $timeperiod->getName() : '';?>">
+			<input type="text" name="timeperiod_manage[timeperiod_name]" value="<?php echo isset($timeperiod) ? $timeperiod->getName() : '';?>"><br />
 			<?php echo $lilac->element_desc("timeperiod_name", "nagios_timeperiods_desc"); ?><br />
 			<br />
 			<b>Description:</b><br />
-			<input type="text" size="80" name="timeperiod_manage[alias]" value="<?php echo isset($timeperiod) ? $timeperiod->getAlias() : '';?>">
+			<input type="text" size="80" name="timeperiod_manage[alias]" value="<?php echo isset($timeperiod) ? $timeperiod->getAlias() : '';?>"><br />
 			<?php echo $lilac->element_desc("alias", "nagios_timeperiods_desc"); ?><br />
 			<br />
 			<?php 
 				if(isset($_GET['timeperiod_id'])) {
 					?>
-					<a class="btn btn-danger" href="timeperiods.php?timeperiod_id=<?php echo $_GET['timeperiod_id'];?>&request=delete">Delete</a> <input class="btn btn-primary" type="submit" value="Modify Period" /> <a class="btn btn-default" href="timeperiods.php">Cancel</a>
+					<a href="timeperiods.php?timeperiod_id=<?php echo $_GET['timeperiod_id'];?>&request=delete">Delete</a>&nbsp;<input type="submit" value="Modify Period" />&nbsp;<a href="timeperiods.php">Cancel</a>
 					<?php
 				}
 				else {
 					?>
-					<input class="btn btn-primary" type="submit" value="Create Period" /> <a class="btn btn-default" href="timeperiods.php">Cancel</a>
+					<input type="submit" value="Create Period" />&nbsp;<a href="timeperiods.php">Cancel</a>
 					<?php
 				}
 			?>
@@ -235,7 +235,7 @@ print_header("Time Period Editor");
 					<?php
 				}
 				?>
-					<td><a class="btn btn-danger btn-xs" href="timeperiod.php?timeperiod_id=<?php echo $timeperiod->getId();?>&request=removeentry&entry_id=<?php echo $tempEntry->getId();?>&section=entries">Delete</a></td>
+					<td>[ <a href="timeperiod.php?timeperiod_id=<?php echo $timeperiod->getId();?>&request=removeentry&entry_id=<?php echo $tempEntry->getId();?>&section=entries">Delete</a> ]</td>
 					<td><?php echo $tempEntry->getEntry();?></td>
 					<td><?php echo $tempEntry->getValue();?></td>
 				</tr>
@@ -250,12 +250,12 @@ print_header("Time Period Editor");
 		<b>Add A New Entry:</b><br />
 		<form name="timeperiod_form" method="post" action="timeperiod.php?timeperiod_id=<?php echo $timeperiod->getId();?>&section=entries">
 			<input type="hidden" name="request" value="add_entry" />		
-		<b>Weekday / Exception: </b><input name="entry" value="<?php echo $entry;?>" type="text" size="50" maxlength="255" />
+		<b>Weekday / Exception: </b><input name="entry" value="<?php echo $entry;?>" type="text" size="50" maxlength="255" /><br />
 		<?php echo $lilac->element_desc("timeperiod_weekday_exception", "nagios_timeperiods_desc"); ?><br />
 		<br />
-		<b>Value: </b><input type="text" name="value" value="<?php echo $value;?>" size="50" maxlength="255" />
+		<b>Value: </b><input type="text" name="value" value="<?php echo $value;?>" size="50" maxlength="255" /><br />
 		<?php echo $lilac->element_desc("timeperiod_value", "nagios_timeperiods_desc"); ?><br />
-		<input class="btn btn-primary" type="submit" value="Add Entry" />
+		<input type="submit" value="Add Entry" />
 		</div>
 		<?php
 	}
@@ -289,7 +289,7 @@ print_header("Time Period Editor");
 						<?php
 					}
 					?>
-					<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="timeperiod.php?timeperiod_id=<?php echo $_GET['timeperiod_id'];?>&section=exclusions&request=delete&exclude_id=<?php echo $exclusions[$counter]->getId();?>" onClick="javascript:return confirmDelete();">Delete</a></td>
+					<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="timeperiod.php?timeperiod_id=<?php echo $_GET['timeperiod_id'];?>&section=exclusions&request=delete&exclude_id=<?php echo $exclusions[$counter]->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
 					<td height="20" class="altRight"><b><?php echo $excludedTimeperiod->getName();?>:</b> <?php echo $excludedTimeperiod->getAlias();?></td>
 					</tr>
 					<?php
@@ -300,7 +300,7 @@ print_header("Time Period Editor");
 			<br />
 			<form name="contactgroup_member_add" method="post" action="timeperiod.php?timeperiod_id=<?php echo $_GET['timeperiod_id'];?>&section=exclusions">
 			<input type="hidden" name="request" value="exclusion_add" />
-			<b>Add New Timeperiod Exclusion:</b> <?php print_object_select("timeperiod_manage[exclusion_add][timeperiod_id]", $timeperiods, "getId", "getName", "0", true, array($timeperiod->getId()));?> <input class="btn btn-primary" type="submit" value="Add Exclusion">
+			<b>Add New Timeperiod Exclusion:</b> <?php print_object_select("timeperiod_manage[exclusion_add][timeperiod_id]", $timeperiods, "getId", "getName", "0", true, array($timeperiod->getId()));?> <input type="submit" value="Add Exclusion"><br />
 			<?php echo $lilac->element_desc("exclusion", "nagios_timeperiods_desc"); ?><br />
 			<br />
 			</form>

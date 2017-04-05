@@ -1,4 +1,30 @@
 <?php
+
+/*
+ lilac-reloaded - A Nagios Configuration Tool
+Copyright (C) 2013 Rene Hadler
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+/*
+ Filename: NagiosExportEngine.php
+Description:
+The class definition and methods for the NagiosExporter class
+*/
+
 abstract class NagiosExporter extends Exporter {
 	
 	private $exportJob;
@@ -46,22 +72,24 @@ class NagiosExportEngine extends ExportEngine {
 	}
 
 	public function renderConfig() {
+		
+		$nagiosExePath = Lilac::getExecutablePath("nagios");
 		?>
 		<p>
 		<fieldset class="checks">
 		
 			<legend>Options</legend>
 			<p>
-			<input type="checkbox" id="backup_existing" name="backup_existing" checked="checked" />
+			<input type="checkbox" id="backup_existing" name="backup_existing" />
 			<label for="backup_existing">Backup Existing Files</label>
 			</p>
 			<p>
-			<input type="checkbox" id="preflight_check" name="preflight_check" checked="checked" />
+			<input type="checkbox" id="preflight_check" name="preflight_check" />
 			<label for="preflight_check">Perform a Configuration Sanity Check</label>
 			</p>
 			<p>
-			<input type="checkbox" id="restart_nagios" name="restart_nagios" checked="checked" />
-			<label for="restart_nagios">Restart Nagios</label>
+			<input type="checkbox" id="restart_nagios" name="restart_nagios" />
+			<label for="restart_nagios">Restart Nagios (Please configure your permissions properly eg. your sudoers file)</label>
 			</p>
 		</fieldset>
 		</p>
@@ -70,7 +98,7 @@ class NagiosExportEngine extends ExportEngine {
 			<legend>Path Locations</legend>
 			<p>
 			<label for="nagios_path">Nagios Sanity-Check Command (Required if Doing Sanity Check)</label>
-			<input type="text" size="100" maxlength="255" id="nagios_path" name="nagios_path" />
+			<input type="text" size="100" maxlength="255" id="nagios_path" name="nagios_path" value="<?php echo $nagiosExePath; ?>" />
 			</p>
 			
 			<p>
@@ -145,7 +173,14 @@ class NagiosExportEngine extends ExportEngine {
 		// First determine, do we need to make backups?
 		if($config->getVar('backup_existing')) {
 			$mainConfiguration = NagiosMainConfigurationPeer::doSelectOne(new Criteria());
-			$backupDir = $mainConfiguration->getConfigDir() . "/" . "lilac-backup-" . date("m-d-Y-H-i");
+			
+			// Do some more checks
+			if(!is_writable($mainConfiguration->getConfigDir())) {
+				$job->addError("Backup directory at >" . $mainConfiguration->getConfigDir() . "< is not writeable, please check permissions.");
+				return false;
+			}
+				
+			$backupDir = $mainConfiguration->getConfigDir() . "/" . "lilac-backup-" . date("m-d-Y-H-i-s");
 			$result = @mkdir($backupDir);
 			if(!$result) {
 				$job->addError("Unable to create backup directory at: " . $backupDir);
@@ -499,7 +534,6 @@ class NagiosExportEngine extends ExportEngine {
 		}
 
 		// Move the configuration files to the appropriate place.
-
 		$mainConfiguration = NagiosMainConfigurationPeer::doSelectOne(new Criteria());
 		if(!$this->dir_copy($this->exportDir, $mainConfiguration->getConfigDir())) {
 			$job->addError("Unable to copy configuration files to : " . $mainConfiguration->getConfigDir());

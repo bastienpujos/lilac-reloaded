@@ -1,6 +1,5 @@
 <?php
 
-require 'om/BaseNagiosHostContactMember.php';
 
 
 /**
@@ -12,19 +11,8 @@ require 'om/BaseNagiosHostContactMember.php';
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package    
+ * @package    propel.generator.
  */
 class NagiosHostContactMember extends BaseNagiosHostContactMember {
-
-	/**
-	 * Initializes internal state of NagiosHostContactMember object.
-	 * @see        parent::__construct()
-	 */
-	public function __construct()
-	{
-		// Make sure that parent constructor is always invoked, since that
-		// is where any default values for this object are set.
-		parent::__construct();
-	}
 
 } // NagiosHostContactMember

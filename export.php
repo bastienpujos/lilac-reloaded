@@ -1,6 +1,7 @@
 <?php
 /*
 Lilac - A Nagios Configuration Tool
+Copyright (C) 2014 Rene Hadler
 Copyright (C) 2007 Taylor Dondich
 
 This program is free software; you can redistribute it and/or
@@ -53,6 +54,7 @@ if(isset($_GET['id'])) {
 		$exportJob->setStatus("Starting...");
 		$exportJob->save();
 		exec("php exporter/export.php " . $exportJob->getId() . " > /dev/null", $tempOutput, $retVal);
+		//exec("php exporter/export.php " . $exportJob->getId() . " > /tmp/phpdebug.txt", $tempOutput, $retVal);
 		if($retVal != 42) {
 			$error = "Failed to run external exporter script. Return value: " . $retVal . "<br /> Error:";
 			foreach($tempOutput as $output) {
@@ -138,7 +140,7 @@ if(isset($_GET['request']) && $_GET['request'] == 'fetch') {
 
 if(isset($_POST['request'])) {
 	if(!strlen(trim($_POST['job_name']))) {
-		$status_msg = "Job name must be provided.";
+		$error = "Job name must be provided.";
 	}
 	else {
 		// Instantiate an engine
@@ -186,7 +188,7 @@ if(isset($exportJob)) {
     		colModel: [
     		{display: 'Time', name: 'name', width: 100, sortable: true, align: 'left'},
     		{display: 'Type', name: 'type', width: 100, sortable: true, align: 'left'},
-    		{display: 'Text', name: 'text', width: 1000, sortable: true, align: 'left'}
+    		{display: 'Text', name: 'text', width: 1200, sortable: true, align: 'left'}
     			],
     		resizable: false, //resizable table
     		sortname: "time", 
@@ -196,8 +198,8 @@ if(isset($exportJob)) {
     		title: false,
     		showToggleBtn: false, //show or hide column toggle popup
     		useRp: true,
-    		rp: 20,
-    		height: 200
+    		rp: 50,
+    		height: 600
     	});
     	<?php
     	if(!in_array($exportJob->getStatusCode(), array(ExportJob::STATUS_FINISHED, ExportJob::STATUS_FAILED))) {
@@ -209,6 +211,7 @@ if(isset($exportJob)) {
 				$.getJSON("export.php?id=<?php echo $exportJob->getId();?>&request=status&tok=" + Math.random() , function(data) {
 					$("#jobstatus").html(data.status_text);
 					$("#elapsedtime").html(data.elapsed_time);
+					$("#joblog").flexReload();
 					
 					if(data.status_code == <?php echo ExportJob::STATUS_FINISHED;?> || data.status_code == <?php echo ExportJob::STATUS_FAILED;?>) {
 						if(data.status_code == <?php echo ExportJob::STATUS_FINISHED;?>) {
@@ -252,6 +255,8 @@ float: none;
 .checks p {
 padding: 2px;
 }
+
+}
 </style>
 <?php
 if(!isset($exportJob))	{
@@ -279,8 +284,8 @@ if(!isset($exportJob))	{
 				<td><?php echo $job->getDescription();?></td>
 				<td><?php echo $job->getStartTime();?></td>
 				<td><?php echo $job->getStatus();?></td>
-				<td><a class="btn btn-info" href="export.php?id=<?php echo $job->getId();?>">View Job</td>
-				<td><a class="btn btn-primary" href="export.php?id=<?php echo $job->getId();?>&action=restart">Restart</a></td>
+				<td><a href="export.php?id=<?php echo $job->getId();?>">View Job</td>
+				<td><a href="export.php?id=<?php echo $job->getId();?>&action=restart">Restart</a></td>
 			</tr>
 			<?php
 		}
@@ -324,17 +329,8 @@ if(!isset($exportJob))	{
 	<form name="export_job" method="post" action="export.php">
 	<input type="hidden" name="request" value="export" />
 	<p>
-<?php
-// Get Next Job Id
-include("/srv/eyesofnetwork/eonweb/include/config.php");
-$link = mysql_connect( $databas_host, $database_username, $database_password );
-mysql_select_db( $database_lilac );
-$query = mysql_query( "SHOW TABLE STATUS LIKE 'export_job';" );
-$result = mysql_fetch_object( $query );
-mysql_close( $link );
-?>
-        <fieldset>
-                <legend>Job Definition ID : <?php echo $result->Auto_increment; ?> </legend>
+	<fieldset>
+		<legend>Job Definition</legend>
 		<label for="job_name">Job Name</label>
 		<input id="job_name" name="job_name" type="text" size="100" maxlength="255" />
 		<label for="job_description">Job Description</label>
@@ -357,7 +353,7 @@ mysql_close( $link );
 	Choose an Engine to use for your Import Job from Above.
 	</div>
 
-	<input class="btn btn-primary" id="export_submit" style="display:none;" type="submit" value="Begin Export" />
+	<input id="export_submit" style="display:none;" type="submit" value="Begin Export" />
 	<?php
 	print_window_footer();
 }
@@ -428,8 +424,7 @@ else {
 	      </div>
 	   <div class="roundedcorner_success_bottom"><div></div></div>
 	</div>
-
-	<a class="btn btn-primary" href="export.php?id=<?php echo $exportJob->getId();?>&action=restart">Restart Job</a> <a class="btn btn-danger" href="export.php?id=<?php echo $exportJob->getId();?>&delete=1" onclick="javascript:return confirmDelete();">Remove Job</a> <a class="btn btn-default" href="export.php">Return To Exporter</a>
+	<a href="export.php?id=<?php echo $exportJob->getId();?>&action=restart">Restart Job</a>  | <a href="export.php?id=<?php echo $exportJob->getId();?>&delete=1" onclick="javascript:confirmDelete();">Remove Job</a> | <a href="export.php">Return To Exporter</a>
 	<?php
 	print_window_footer();
 	print_window_header("Job Log");

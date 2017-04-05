@@ -1,6 +1,7 @@
 <?php
 /*
 Lilac - A Nagios Configuration Tool
+Copyright (C) 2013 Rene Hadler
 Copyright (C) 2007 Taylor Dondich
 
 This program is free software; you can redistribute it and/or
@@ -196,13 +197,14 @@ if(isset($_GET['request'])) {
 			if($param) {
 				$param->delete();
 				$success = "Check Command Parameter Deleted.";
-			}		
+			}			
 		}
-		if($_GET['request'] == "update" && $_GET['section'] == 'checkcommand') {
-			$commandParameter = NagiosServiceCheckCommandParameterPeer::retrieveByPK($_GET['checkcommandparameter_id']);
-			$commandParameter->setParameter($_POST['param']);
-			$commandParameter->save();
-			$success = "Check Command Parameter Updated.";
+		if($_GET['request'] == "delete" && $_GET['section'] == 'customobjectvars') {
+			$customObjectVar = NagiosServiceCustomObjectVarPeer::retrieveByPK($_GET['customobjectvariable_id']);
+			if($customObjectVar) {
+				$customObjectVar->delete();
+			}
+			$success = "Custom Object Variable Deleted.";
 		}
 }
 
@@ -220,7 +222,7 @@ if(isset($_POST['request'])) {
 	}
 	
 	if($_POST['request'] == 'service_template_modify_general') {
-		if($modifiedData['template_name'] != $serviceTemplate->getName() && $lilac->servicetemplate_exists($modifiedData['template_name'])) {
+		if($modifiedData['template_name'] != $serviceTemplate->getName() && $lilac->service_template_exists($modifiedData['template_name'])) {
 			$error = "A service template with that name already exists!";
 		}
 		else {
@@ -284,7 +286,7 @@ if(isset($_POST['request'])) {
 			(isset($modifiedData['retry_interval']) && !is_numeric($modifiedData['retry_interval'])) || 
 			(isset($modifiedData['retry_interval']) && !($modifiedData['retry_interval'] >= 1)) ||
 			(isset($modifiedData['retry_interval']) && !is_numeric($modifiedData['retry_interval'])) || 
-			(isset($modifiedData['first_notification_delay']) && !is_numeric($modifiedData['first_notification_delay'])) ||
+			(isset($modifiedData['first_notification_delay']) && !is_numberic($modifiedData['first_notification_delay'])) ||
 			(isset($modifiedData['freshness_threshold']) && !($modifiedData['freshness_threshold'] >= 0))) {
 			$addError = 1;
 			$error = "Incorrect values for fields.  Please verify.";
@@ -740,6 +742,24 @@ if(isset($_POST['request'])) {
 			$success = "Command Parameter added.";
 		}
 	}
+	else if($_POST['request'] == 'custom_object_variable_add') {
+		try
+		{
+			// All is well for error checking, modify the command.
+			$param = new NagiosServiceCustomObjectVar();
+			$param->setNagiosServiceTemplate(NagiosServiceTemplatePeer::retrieveByPK($_GET['id']));
+			$param->setVarName($_POST['service_manage']['custom_variable_name']);
+			$param->setVarValue($_POST['service_manage']['custom_variable_value']);
+			$param->save();
+			// Remove session data
+			unset($param);
+			$success = "Custom object variable added.";
+		}
+		catch(Exception $e)
+		{
+			$error = $e->getMessage();
+		}
+	}
 	
 	
 }
@@ -794,10 +814,14 @@ $subnav = array(
 	'contacts' => 'Contacts',
 	'extended' => 'Extended Information',
 	'dependencies' => 'Dependencies',
-	'escalations' => 'Escalations'
+	'escalations' => 'Escalations',
+	'customobjectvars' => 'Custom Object Variables',
 	);
 if(isset($tempServiceTemplateInfo['check_command']) || isset($templateValues['check_command'])) {
 	$subnav['checkcommand'] = "Check Command Parameters";
+}
+if($serviceTemplate->getDependentCount()) {
+	$subnav['dependent'] = 'Show Dependent Services and Templates';
 }
 
 print_header("Service Template Editor");
@@ -819,15 +843,15 @@ print_header("Service Template Editor");
 					<input type="hidden" name="request" value="service_template_modify_general" />
 					<input type="hidden" name="service_template_id" value="<?php echo $_GET['id'];?>">
 					<b>Template Name:</b><br />
-					<input type="text" size="40" name="service_manage[template_name]" value="<?php echo $serviceTemplate->getName();?>">
+					<input type="text" size="40" name="service_manage[template_name]" value="<?php echo $serviceTemplate->getName();?>"><br />
 					<?php echo $lilac->element_desc("template_name", "nagios_service_template_desc"); ?><br />
 					<br />		
 					<b>Description:</b><br />
-					<input type="text" size="80" name="service_manage[template_description]" value="<?php echo $serviceTemplate->getDescription();?>">
+					<input type="text" size="80" name="service_manage[template_description]" value="<?php echo $serviceTemplate->getDescription();?>"><br />
 					<?php echo $lilac->element_desc("template_description", "nagios_service_template_desc"); ?><br />
 					<br />
 					<br />
-					<input class="btn btn-primary" type="submit" value="Update General" /> <a class="btn btn-default" href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a>
+					<input type="submit" value="Update General" /> [ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a> ]
 					<?php
 				}
 				else {
@@ -835,7 +859,7 @@ print_header("Service Template Editor");
 					<b>Template Name:</b> <?php echo $serviceTemplate->getName();?><br />
 					<b>Description:</b> <?php echo $serviceTemplate->getDescription();?><br />
 					<br />
-					<a class="btn btn-primary" href="service_template.php?id=<?php echo $_GET['id'];?>&section=general&edit=1">Edit</a>
+					[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=general&edit=1">Edit</a> ]
 					<?php
 				}
 				?>
@@ -843,7 +867,7 @@ print_header("Service Template Editor");
 			</tr>
 			</table>
 			<br />
-			<a class="btn btn-danger" href="service_template.php?id=<?php echo $_GET['id'];?>&request=delete" onClick="javascript:return confirmDelete();" onClick="javascript:return confirmDelete();">Delete This Service Template</a>
+			[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&request=delete" onClick="javascript:return confirmDelete();" onClick="javascript:return confirmDelete();">Delete This Service Template</a> ]
 			<?php
 		}
 		if($_GET['section'] == 'inheritance') {
@@ -856,10 +880,10 @@ print_header("Service Template Editor");
 					$exclude_list[] = $template->getId();
 				}
 			}
-		
-                        $c=new Criteria();
-                        $c->addAscendingOrderByColumn(NagiosServiceTemplatePeer::NAME);
-                        $templateList = NagiosServiceTemplatePeer::doSelect($c);
+			
+			$c = new Criteria();
+			$c->addAscendingOrderByColumn(NagiosServiceTemplatePeer::NAME);
+			$templateList = NagiosServiceTemplatePeer::doSelect($c);
 			
 			?>
 			<table width="100%" border="0">
@@ -885,9 +909,9 @@ print_header("Service Template Editor");
 							<?php
 						}
 						?>
-						<td height="20" width="80" class="altLeft"><?php if($numOfTemplates > 1 && $counter > 0) { ?><a class="btn btn-primary btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=inheritance&request=moveup&template_id=<?php echo $templateInheritances[$counter]->getId();?>">Move Up</a><?php }?></td>
-						<td height="20" width="100" class="altLeft"><?php if($numOfTemplates > 1 && $counter < ($numOfTemplates -1)) { ?><a class="btn btn-primary btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=inheritance&request=movedown&template_id=<?php echo $templateInheritances[$counter]->getId();?>">Move Down</a><?php }?></td>
-						<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=inheritance&request=delete&template_id=<?php echo $templateInheritances[$counter]->getId();?>" onClick="javascript:return confirmDelete();">Delete</a></td>
+						<td height="20" width="80" class="altLeft"><?php if($numOfTemplates > 1 && $counter > 0) { ?>[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=inheritance&request=moveup&template_id=<?php echo $templateInheritances[$counter]->getId();?>">Move Up</a>]<?php }?></td>
+						<td height="20" width="90" class="altLeft"><?php if($numOfTemplates > 1 && $counter < ($numOfTemplates -1)) { ?>[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=inheritance&request=movedown&template_id=<?php echo $templateInheritances[$counter]->getId();?>">Move Down</a>]<?php }?></td>
+						<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=inheritance&request=delete&template_id=<?php echo $templateInheritances[$counter]->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
 						<td height="20" class="altRight"><b><?php echo $templateInheritances[$counter]->getName();?></b></td>
 						</tr>
 						<?php
@@ -898,7 +922,7 @@ print_header("Service Template Editor");
 				<br />
 				<form name="template_add" method="post" action="service_template.php?id=<?php echo $_GET['id'];?>&section=inheritance">
 				<input type="hidden" name="request" value="add_template_command" />
-				<b>Add Template To Inherit From:</b> <?php print_object_select("servicemanage[template_add][template_id]", $templateList, "getId", "getName", NULL, true, $exclude_list);?> <input class="btn btn-primary" type="submit" value="Add Template"><br />
+				<b>Add Template To Inherit From:</b> <?php print_object_select("servicemanage[template_add][template_id]", $templateList, "getId", "getName", NULL, true, $exclude_list);?> <input type="submit" value="Add Template"><br />
 				<br />
 				</form>
 				</td>
@@ -944,7 +968,7 @@ print_header("Service Template Editor");
 					double_pane_form_window_finish();
 					?>					
 					<br />
-					<input class="btn btn-primary" type="submit" value="Update Checks" /> <a class="btn btn-default" href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a>
+					<input type="submit" value="Update Checks" /> [ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a> ]
 					<?php
 				}
 				else {
@@ -970,7 +994,7 @@ print_header("Service Template Editor");
 					print_enabled_display_field("Failure Prediction", $templateValues, "failure_prediction_enabled", $_GET['id']);
 					?>
 					<br />
-					<a class="btn btn-primary" href="service_template.php?id=<?php echo $_GET['id'];?>&section=checks&edit=1">Edit</a>
+					[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=checks&edit=1">Edit</a> ]
 					<?php
 				}
 				?>
@@ -1007,7 +1031,7 @@ print_header("Service Template Editor");
 					form_text_element_with_enabler(4, 4, "service_manage", "high_flap_threshold", "High Flap Threshold", $lilac->element_desc("high_flap_threshold", "nagios_services_desc"), $templateValues, $_GET['id']);
 					double_pane_form_window_finish();
 					?>
-					<input class="btn btn-primary" type="submit" value="Update Flapping" /> <a class="btn btn-default" href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a>
+					<input type="submit" value="Update Flapping" /> [ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a> ]
 					<?php
 				}
 				else {
@@ -1043,7 +1067,7 @@ print_header("Service Template Editor");
 					print_display_field("High Flap Threshold", $templateValues, "high_flap_threshold", $_GET['id']);			
 					?>
 					<br />
-					<a class="btn btn-primary" href="service_template.php?id=<?php echo $_GET['id'];?>&section=flapping&edit=1">Edit</a>
+					[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=flapping&edit=1">Edit</a> ]
 					<?php
 				}
 				?>
@@ -1073,7 +1097,7 @@ print_header("Service Template Editor");
 					form_select_element_with_enabler($enable_list, "values", "text", "service_manage", "retain_nonstatus_information", "Retain Non-Status Information", $lilac->element_desc("retain_nonstatus_information", "nagios_services_desc"), $templateValues, $_GET['id']);
 					double_pane_form_window_finish();
 					?>
-					<input class="btn btn-primary" type="submit" value="Update Logging" /> <a class="btn btn-default" href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a>
+					<input type="submit" value="Update Logging" /> [ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a> ]
 					<?php
 				}
 				else {
@@ -1085,7 +1109,7 @@ print_header("Service Template Editor");
 					print_enabled_display_field("Retain Non-Status Information", $templateValues, "retain_nonstatus_information", $_GET['id']);				
 					?>
 					<br />
-					<a class="btn btn-primary" href="service_template.php?id=<?php echo $_GET['id'];?>&section=logging&edit=1">Edit</a>
+					[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=logging&edit=1">Edit</a> ]
 					<?php
 				}
 				?>
@@ -1130,7 +1154,7 @@ print_header("Service Template Editor");
 					double_pane_form_window_finish();
 					?>
 					<br />
-					<input class="btn btn-primary" type="submit" value="Update Notifications" /> <a class="btn btn-default" href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a>
+					<input type="submit" value="Update Notifications" /> [ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=general">Cancel</a> ]
 					<?php
 				}
 				else {
@@ -1240,7 +1264,7 @@ print_header("Service Template Editor");
 					}					
 					?>
 					<br />
-					<a class="btn btn-primary" href="service_template.php?id=<?php echo $_GET['id'];?>&section=notifications&edit=1">Edit</a>
+					[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=notifications&edit=1">Edit</a> ]
 					<?php
 				}
 				?>
@@ -1285,7 +1309,7 @@ print_header("Service Template Editor");
 								}
 								?>
 								<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;</td>
-								<td height="20" class="altRight"><b>$ARG<?php echo ++$parameterCounter;?>$:</b> <?php echo $parameter['parameter'];?></td>
+								<td height="20" class="altRight"><b>$ARG<?php echo ++$parameterCounter;?>$:</b> <?php echo $parameter->getParameter();?></td>
 								</tr>
 								<?php
 							}
@@ -1313,18 +1337,8 @@ print_header("Service Template Editor");
 							<?php
 						}
 						?>
-						<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=checkcommand&request=delete&checkcommandparameter_id=<?php echo $checkCommandParameters[$counter]->getId();?>" onClick="javascript:return confirmDelete();" onClick="javascript:return confirmDelete();">Delete</a></td>
-						
-<form name="set_check_command_paramter<?php echo ++$parameterCounter;?>" method="post" action="service_template.php?section=checkcommand&id=<?php echo $_GET['id'];?>&request=update&checkcommandparameter_id=<?php echo $checkCommandParameters[$counter]->getId();?>">
-                    <td height="20" class="altRight"><b>$ARG<?php echo $parameterCounter;?>$:</b><input type="text" <?php
-             					echo 'name="param"';
-             					echo ' style="width:300px;"';
-             					echo ' value=\''.$checkCommandParameters[$counter]->getParameter().'\'';
-						?>
-                    >
-                                <input class="nicebutton" type="submit" value="Update" />
-                   </td>
-  					</form>	
+						<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=checkcommand&request=delete&checkcommandparameter_id=<?php echo $checkCommandParameters[$counter]->getId();?>" onClick="javascript:return confirmDelete();" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
+						<td height="20" class="altRight"><b>$ARG<?php echo ++$parameterCounter;?>$:</b> <?php echo $checkCommandParameters[$counter]->getParameter();?></td>
 						</tr>
 						<?php
 					}
@@ -1334,7 +1348,7 @@ print_header("Service Template Editor");
 			<br />
 			<form name="add_check_command_paramter" method="post" action="service_template.php?id=<?php echo $_GET['id'];?>&section=checkcommand">
 			<input type="hidden" name="request" value="command_parameter_add" />
-			Value for $ARG<?php echo ($parameterCounter+1);?>$: <input type="text" name="service_manage[parameter]" /> <input class="btn btn-primary" type="submit" value="Add Parameter" />
+			Value for $ARG<?php echo ($parameterCounter+1);?>$: <input type="text" name="service_manage[parameter]" /> <input type="submit" value="Add Parameter" />
 			</form>
 			</td>
 			</tr>
@@ -1381,7 +1395,7 @@ print_header("Service Template Editor");
 				double_pane_form_window_finish();
 				?>
 				<br />
-				<input class="btn btn-primary" type="submit" value="Update Extended Information" /> <a class="btn btn-default" href="service_template.php?id=<?php echo $_GET['id'];?>&section=extended">Cancel</a>
+				<input type="submit" value="Update Extended Information" /> [ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=extended">Cancel</a> ]
 				</form>
 				<?php
 			} else {
@@ -1393,7 +1407,7 @@ print_header("Service Template Editor");
 				print_display_field("Icon Image Alt Text", $templateValues, "icon_image_alt", $_GET['id']);
 				?>
 				<br />
-				<a class="btn btn-primary" href="service_template.php?id=<?php echo $_GET['id'];?>&section=extended&edit=1">Edit</a>
+				[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=extended&edit=1">Edit</a> ]
 				<?php
 			}
 			?>
@@ -1465,7 +1479,7 @@ print_header("Service Template Editor");
 									<?php
 								}
 								?>
-								<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=contacts&request=delete&contact_id=<?php echo $contacts_list[$counter]->getNagiosContact()->getId();?>" onClick="javascript:return confirmDelete();">Delete</a></td>
+								<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=contacts&request=delete&contact_id=<?php echo $contacts_list[$counter]->getNagiosContact()->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
 								<td height="20" class="altRight"><b><?php echo $contacts_list[$counter]->getNagiosContact()->getName();?>:</b> <?php echo $contacts_list[$counter]->getNagiosContact()->getAlias();?></td>
 								</tr>
 								<?php
@@ -1483,7 +1497,7 @@ print_header("Service Template Editor");
 				<br />
 				<form name="service_template_contact_add" method="post" action="service_template.php?id=<?php echo $_GET['id'];?>&section=contacts">
 				<input type="hidden" name="request" value="add_contact_command" />
-				<b>Add New Contact:</b> <?php print_select("service_manage[contact_add][contact_id]", $contacts_list, "contact_id", "contact_name", "0");?> <input class="btn btn-primary" type="submit" value="Add Contact">
+				<b>Add New Contact:</b> <?php print_select("service_manage[contact_add][contact_id]", $contacts_list, "contact_id", "contact_name", "0");?> <input type="submit" value="Add Contact"><br />
 				<?php echo $lilac->element_desc("contact_groups", "nagios_hosts_desc"); ?><br />
 				<br />
 				</form>
@@ -1554,7 +1568,7 @@ print_header("Service Template Editor");
 									<?php
 								}
 								?>
-								<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=contacts&request=delete&contactgroup_id=<?php echo $contactgroups_list[$counter]->getNagiosContactgroup()->getId();?>" onClick="javascript:return confirmDelete();">Delete</a></td>
+								<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=contacts&request=delete&contactgroup_id=<?php echo $contactgroups_list[$counter]->getNagiosContactgroup()->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
 								<td height="20" class="altRight"><b><?php echo $contactgroups_list[$counter]->getNagiosContactgroup()->getName();?>:</b> <?php echo $contactgroups_list[$counter]->getNagiosContactgroup()->getAlias();?></td>
 								</tr>
 								<?php
@@ -1572,7 +1586,7 @@ print_header("Service Template Editor");
 				<br />
 				<form name="service_template_contactgroup_add" method="post" action="service_template.php?id=<?php echo $_GET['id'];?>&section=contacts">
 				<input type="hidden" name="request" value="add_contactgroup_command" />
-				<b>Add New Contact Group:</b> <?php print_select("contactgroup_id", $contactgroups_list, "contactgroup_id", "contactgroup_name", "0");?> <input class="btn btn-primary" type="submit" value="Add Contact Group">
+				<b>Add New Contact Group:</b> <?php print_select("contactgroup_id", $contactgroups_list, "contactgroup_id", "contactgroup_name", "0");?> <input type="submit" value="Add Contact Group"><br />
 				<?php echo $lilac->element_desc("contact_groups", "nagios_services_desc"); ?><br />
 				<br />
 				</form>
@@ -1647,7 +1661,7 @@ print_header("Service Template Editor");
 									<?php
 								}
 								?>
-								<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=servicegroups&request=delete&servicegroup_id=<?php echo $servicegroups_list[$counter]->getNagiosServiceGroup()->getId();?>" onClick="javascript:return confirmDelete();">Delete</a></td>
+								<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=servicegroups&request=delete&servicegroup_id=<?php echo $servicegroups_list[$counter]->getNagiosServiceGroup()->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
 								<td height="20" class="altRight"><b><?php echo $servicegroups_list[$counter]->getNagiosServiceGroup()->getName();?>:</b> <?php echo $servicegroups_list[$counter]->getNagiosServiceGroup()->getAlias();?></td>
 								</tr>
 								<?php
@@ -1665,7 +1679,7 @@ print_header("Service Template Editor");
 				<br />
 				<form name="service_template_servicegroup_add" method="post" action="service_template.php?id=<?php echo $_GET['id'];?>&section=servicegroups">
 				<input type="hidden" name="request" value="add_servicegroup_command" />
-				<b>Add New Service Group:</b> <?php print_select("servicegroup_id", $servicegroups_list, "servicegroup_id", "servicegroup_name", "0");?> <input class="btn btn-primary" type="submit" value="Add Service Group">
+				<b>Add New Service Group:</b> <?php print_select("servicegroup_id", $servicegroups_list, "servicegroup_id", "servicegroup_name", "0");?> <input type="submit" value="Add Service Group"><br />
 				<?php echo $lilac->element_desc("service_groups", "nagios_services_desc"); ?><br />
 				<br />
 				</form>
@@ -1742,7 +1756,7 @@ print_header("Service Template Editor");
 										<?php
 									}
 									?>
-									<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=dependencies&request=delete&dependency_id=<?php echo $dependency->getId();?>" onClick="javascript:return confirmDelete();">Delete</a></td>
+									<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=dependencies&request=delete&dependency_id=<?php echo $dependency->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
 									<td height="20" class="altRight"><b><a href="dependency.php?id=<?php echo $dependency->getId();?>"><?php echo $dependency->getName();?></a></b></td>
 									</tr>
 									<?php
@@ -1753,12 +1767,99 @@ print_header("Service Template Editor");
 						</table>
 						<br />
 						<br />
-						<a class="btn btn-success" href="add_dependency.php?service_template_id=<?php echo $_GET['id'];?>">Create A New Service Dependency For This Service Template</a>
+						[ <a href="add_dependency.php?service_template_id=<?php echo $_GET['id'];?>">Create A New Service Dependency For This Service Template</a> ]
 				</td>
 			</tr>
 			</table>
 			<?php
 		}
+		else if($_GET['section'] == "customobjectvars") {
+			$inherited_list = $serviceTemplate->getInheritedCustomObjectVariables();
+		
+			// Get List Of Custom object variables for this service and check
+			$customObjectVariables = $serviceTemplate->getNagiosServiceTemplateCustomObjectVariables();
+		
+			$parameterCounter = 0;
+			?>
+							<table width="90%" align="center" border="0">
+							<tr>
+							<td>
+								<?php
+								if(count($inherited_list)) {
+									?>
+									<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
+										<tr class="altTop">
+										<td colspan="2">Custom Object Variables Inherited By Templates:</td>
+										</tr>
+										<?php
+										if(count($inherited_list)) {
+											$counter = 1;
+											foreach($inherited_list as $customObjectVariable) {
+												if($counter % 2) {
+													?>
+													<tr class="altRow1">
+													<?php
+												}
+												else {
+													?>
+													<tr class="altRow2">
+													<?php
+												}
+												?>
+												<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;</td>
+												<td height="20" class="altRight"><b>$_SERVICE<?php echo $customObjectVariable->getVarName();?>$:</b> <?php echo $customObjectVariable->getVarValue();?> from <strong>(service template) <?php echo $customObjectVariable->getNagiosServiceTemplate()->getName(); ?></strong></td>
+												</tr>
+												<?php
+												
+												$counter++;
+											}
+										}
+										?>
+									</table>
+									<br />
+									<?php
+								}
+								?>
+								<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
+									<tr class="altTop">
+									<td colspan="2">Custom Object Variables:</td>
+									</tr>
+									<?php
+									$counter = 0;
+									foreach($customObjectVariables as $customObjectVariable) {
+										if($counter % 2) {
+											?>
+											<tr class="altRow1">
+											<?php
+										}
+										else {
+											?>
+											<tr class="altRow2">
+											<?php
+										}
+										?>
+										<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=customobjectvars&request=delete&customobjectvariable_id=<?php echo $customObjectVariable->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
+										<td height="20" class="altRight"><b>$_SERVICE<?php echo $customObjectVariable->getVarName();?>$:</b> <?php echo $customObjectVariable->getVarValue();?></td>
+										</tr>
+										<?php
+										
+										$counter++;
+									}
+									?>
+								</table>
+							<br />
+							<br />
+							<form name="add_custom_object_variable" method="post" action="service_template.php?section=customobjectvars&id=<?php echo $_GET['id'];?>">
+							<input type="hidden" name="request" value="custom_object_variable_add" />
+							New Custom Object Variable Name: <input type="text" name="service_manage[custom_variable_name]" />
+							Value: <input type="text" name="service_manage[custom_variable_value]" /> 
+							<input type="submit" value="Add Variable" />
+							</form>
+							</td>
+							</tr>
+							</table>
+							<?php
+						}
 		else if($_GET['section'] == 'escalations') {		
 			$inherited_list = $serviceTemplate->getInheritedEscalations();
 			$numOfInheritedEscalations = count($inherited_list);	
@@ -1826,7 +1927,7 @@ print_header("Service Template Editor");
 										<?php
 									}
 									?>
-									<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="service_template.php?id=<?php echo $_GET['id'];?>&section=escalations&request=delete&escalation_id=<?php echo $escalation->getId();?>" onClick="javascript:return confirmDelete();">Delete</a></td>
+									<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="service_template.php?id=<?php echo $_GET['id'];?>&section=escalations&request=delete&escalation_id=<?php echo $escalation->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
 									<td height="20" class="altRight"><b><a href="escalation.php?escalation_id=<?php echo $escalation->getId();?>"><?php echo $escalation->getDescription();?></a></b></td>
 									</tr>
 									<?php
@@ -1837,11 +1938,51 @@ print_header("Service Template Editor");
 						</table>
 						<br />
 						<br />
-						<a class="btn btn-success" href="add_escalation.php?service_template_id=<?php echo $_GET['id'];?>">Create A New Escalation For This Template</a>
+						[ <a href="add_escalation.php?service_template_id=<?php echo $_GET['id'];?>">Create A New Escalation For This Template</a> ]
 				</td>
 			</tr>
 			</table>
 			<?php
+		}
+		else if($_GET['section'] == 'dependent') {		
+			$dependentservices = $serviceTemplate->getDependentServices();
+			$counter = 0;
+			if(count($dependentservices)) {
+				?>
+					<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
+					<tr class="altTop">
+					<td colspan="2">Services directly dependent on this Service Template:</td>
+					</tr>
+				<?php
+				foreach($dependentservices as $dependent) {
+					if($counter++ % 2) {
+						?> <tr class="altRow1"> <?php
+					} else {
+						?> <tr class="altRow2"> <?php
+					}
+					?> <td height="20" class="altRight"><b><a href="service.php?id=<?php echo $dependent->getId();?>"><?php echo $dependent->getDisplayName();?></a></b></td> <?php
+				}
+				?> </table> <?php
+			}
+
+			$dependentservicetemplates = $serviceTemplate->getDependentServiceTemplates();
+			if(count($dependentservicetemplates)) {
+				?>
+					<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
+					<tr class="altTop">
+					<td colspan="2">Service templates directly dependent on this Service Template:</td>
+					</tr>
+				<?php
+				foreach($dependentservicetemplates as $dependent) {
+					if($counter++ % 2) {
+						?> <tr class="altRow1"> <?php
+					} else {
+						?> <tr class="altRow2"> <?php
+					}
+					?> <td height="20" class="altRight"><b><a href="service_template.php?id=<?php echo $dependent->getId();?>"><?php echo $dependent->getName();?></a></b></td> <?php
+				}
+				?> </table> <?php
+			}
 		}
 		print_window_footer();
 		?>

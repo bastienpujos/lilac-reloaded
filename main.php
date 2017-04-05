@@ -83,6 +83,12 @@ if(isset($_POST['request'])) {
 			else {
 				$mainConfig->setTempFile(null);
 			}
+			if(isset($_POST['main_config']['temp_path'])) {
+				$mainConfig->setTempPath($_POST['main_config']['temp_path']);
+			}
+			else {
+				$mainConfig->setTempPath(null);
+			}
 			if(isset($_POST['main_config']['status_file'])) {
 				$mainConfig->setStatusFile($_POST['main_config']['status_file']);
 			}
@@ -172,6 +178,12 @@ if(isset($_POST['request'])) {
 		}
 		else {
 			$mainConfig->setCachedServiceCheckHorizon(null);
+		}
+		if(isset($_POST['main_config']['check_for_orphaned_hosts'])) {
+			$mainConfig->setCheckForOrphanedHosts($_POST['main_config']['check_for_orphaned_hosts']);
+		}
+		else {
+			$mainConfig->setCheckForOrphanedHosts(null);
 		}
 		$mainConfig->save();
 		$success = "Modified Main Status Configuration";
@@ -397,6 +409,18 @@ if(isset($_POST['request'])) {
 		}
 		else {
 			$mainConfig->setGlobalServiceEventHandler(null);
+		}
+		if(isset($_POST['main_config']['check_for_updates'])) {
+			$mainConfig->setCheckForUpdates($_POST['main_config']['check_for_updates']);
+		}
+		else {
+			$mainConfig->setCheckForUpdates(null);
+		}
+		if(isset($_POST['main_config']['bare_update_check'])) {
+			$mainConfig->setBareUpdateCheck($_POST['main_config']['bare_update_check']);
+		}
+		else {
+			$mainConfig->setBareUpdateCheck(null);
 		}
 		$mainConfig->save();
 		$success = "Modified Main Global Configuration";
@@ -865,6 +889,29 @@ if(isset($_POST['request'])) {
 		$mainConfig->save();
 		$success = "Modified Main Debug Configuration";
 	}
+    if($_POST['request'] == 'main_modify_nagios4') {
+        // Field Error Checking
+        if(isset($_POST['main_config']['log_current_states'])) {
+            $mainConfig->setLogCurrentStates($_POST['main_config']['log_current_states']);
+        }
+        else {
+            $mainConfig->setLogCurrentStates(null);
+        }
+        if(isset($_POST['main_config']['check_workers'])) {
+            $mainConfig->setCheckWorkers($_POST['main_config']['check_workers']);
+        }
+        else {
+            $mainConfig->setCheckWorkers(null);
+        }
+        if(isset($_POST['main_config']['query_socket'])) {
+            $mainConfig->setQuerySocket($_POST['main_config']['query_socket']);
+        }
+        else {
+            $mainConfig->setQuerySocket(null);
+        }
+        $mainConfig->save();
+        $success = "Modified Main Nagios4 Configuration";
+    }
 	if($_POST['request'] == "main_modify_broker") {
 		$mainConfig->setEventBrokerOptions($_POST['main_config']['event_broker_options']);
 		$mainConfig->save();
@@ -929,7 +976,8 @@ $subnav = array(
 	'freshness' => 'Freshness',
 	'broker' => 'Broker',
 	'debug' => 'Debug',
-	'other' => 'Other'
+	'other' => 'Other',
+    'nagios4' => 'Nagios 4'
 	);
 
 
@@ -946,7 +994,7 @@ print_header("Main Configuration File Editor", "main");
 		?>
 		<div class="formbox">
 			<b>Configuration Directory</b><br />
-			<input type="text" size="80" maxlength="255" name="main_config[config_dir]" value="<?php echo $mainConfig->getConfigDir();?>">
+			<input type="text" size="80" maxlength="255" name="main_config[config_dir]" value="<?php echo $mainConfig->getConfigDir();?>"><br />
 			<?php echo $lilac->element_desc("config_dir", "nagios_main_desc"); ?><br />
 		</div>
 			<?php
@@ -954,6 +1002,7 @@ print_header("Main Configuration File Editor", "main");
 			form_text_element_with_enabler(60, 255, "main_config", "object_cache_file", "Object Cache File", $lilac->element_desc("object_cache_file", "nagios_main_desc"), $mainValues, null);
 			form_text_element_with_enabler(60, 255, "main_config", "precached_object_file", "Precached Object File", $lilac->element_desc("precached_object_file", "nagios_main_desc"), $mainValues, null);
 			form_text_element_with_enabler(60, 255, "main_config", "temp_file", "Temporary File", $lilac->element_desc("temp_file", "nagios_main_desc"), $mainValues, null);
+			form_text_element_with_enabler(60, 255, "main_config", "temp_path", "Temporary Path", $lilac->element_desc("temp_path", "nagios_main_desc"), $mainValues, null);
 			form_text_element_with_enabler(60, 255, "main_config", "status_file", "Status File", $lilac->element_desc("status_file", "nagios_main_desc"), $mainValues, null);
 			form_text_element_with_enabler(60, 255, "main_config", "log_archive_path", "Log Archive Path", $lilac->element_desc("log_archive_path", "nagios_main_desc"), $mainValues, null);
 			form_text_element_with_enabler(60, 255, "main_config", "command_file", "Command File", $lilac->element_desc("command_file", "nagios_main_desc"), $mainValues, null);
@@ -963,7 +1012,7 @@ print_header("Main Configuration File Editor", "main");
 			double_pane_form_window_finish();
 			?>
 			<div class="formbox">
-			<input class="btn btn-primary" type="submit" value="Update Path Configuration" />
+			<input type="submit" value="Update Path Configuration" />
 			</div>
 			</form>
 			<?php
@@ -975,6 +1024,7 @@ print_header("Main Configuration File Editor", "main");
 		<?php
 		double_pane_form_window_start();
 		form_text_element_with_enabler(2, 4, "main_config", "status_update_interval", "Aggregated Status Update Interval", $lilac->element_desc("status_update_interval", "nagios_main_desc"), $mainValues, null);
+		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "check_for_orphaned_hosts", "Check For Orphaned Hosts", $lilac->element_desc("check_for_orphaned_hosts", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "translate_passive_host_checks", "Translate Passive Host Checks", $lilac->element_desc("translate_passive_host_checks", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "passive_host_checks_are_soft", "Passive Host Checks Are Soft", $lilac->element_desc("passive_host_checks_are_soft", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "soft_state_dependencies", "Soft State Dependencies", $lilac->element_desc("soft_state_dependencies", "nagios_main_desc"), $mainValues, null);
@@ -986,7 +1036,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Status Configuration" />
+		<input type="submit" value="Update Status Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1003,7 +1053,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Security Configuration" />
+		<input type="submit" value="Update Security Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1023,7 +1073,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Restart Configuration" />
+		<input type="submit" value="Update Restart Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1046,7 +1096,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Logging Configuration" />
+		<input type="submit" value="Update Logging Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1058,12 +1108,12 @@ print_header("Main Configuration File Editor", "main");
 		<?php
 		double_pane_form_window_start();
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "check_external_commands", "Check External Commands", $lilac->element_desc("check_external_commands", "nagios_main_desc"), $mainValues, null);
-		form_text_element_with_enabler(3, 40, "main_config", "command_check_interval", "Command Check Interval", $lilac->element_desc("command_check_interval", "nagios_main_desc"), $mainValues, null);
-		form_text_element_with_enabler(5, 40, "main_config", "external_command_buffer_slots", "External Command Buffer Slots", $lilac->element_desc("external_command_buffer_slots", "nagios_main_desc"), $mainValues, null);
+		form_text_element_with_enabler(3, 40, "main_config", "command_check_interval", "Command Check Interval <span style='color: red;'>(Deprecated in Nagios 4)</span>", $lilac->element_desc("command_check_interval", "nagios_main_desc"), $mainValues, null);
+		form_text_element_with_enabler(5, 40, "main_config", "external_command_buffer_slots", "External Command Buffer Slots <span style='color: red;'>(Deprecated in Nagios 4)</span>", $lilac->element_desc("external_command_buffer_slots", "nagios_main_desc"), $mainValues, null);
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update External Command Configuration" />
+		<input type="submit" value="Update External Command Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1089,7 +1139,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Retention Configuration" />
+		<input type="submit" value="Update Retention Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1102,10 +1152,12 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_start();
 		form_select_element_with_enabler($command_list, "command_id", "command_name", "main_config", "global_host_event_handler", "Global Host Event Handler", $lilac->element_desc("global_host_event_handler", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($command_list, "command_id", "command_name", "main_config", "global_service_event_handler", "Global Service Event Handler", $lilac->element_desc("global_service_event_handler", "nagios_main_desc"), $mainValues, null);
+		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "check_for_updates", "Check For Updates", $lilac->element_desc("check_for_updates", "nagios_main_desc"), $mainValues, null);
+		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "bare_update_check", "Bare Update Check", $lilac->element_desc("bare_update_check", "nagios_main_desc"), $mainValues, null);
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Global Handlers Configuration" />
+		<input type="submit" value="Update Global Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1116,7 +1168,7 @@ print_header("Main Configuration File Editor", "main");
 		<input type="hidden" name="request" value="main_modify_intervals" />
 		<?php
 		double_pane_form_window_start();
-		form_text_element_with_enabler(6, 6, "main_config", "sleep_time", "Sleep Time", $lilac->element_desc("sleep_time", "nagios_main_desc"), $mainValues, null);
+		form_text_element_with_enabler(6, 6, "main_config", "sleep_time", "Sleep Time <span style='color: red;'>(Deprecated in Nagios 4)</span>", $lilac->element_desc("sleep_time", "nagios_main_desc"), $mainValues, null);
 		form_text_element_with_enabler(6, 6, "main_config", "service_inter_check_delay_method", "Service Inter Check Delay Method", $lilac->element_desc("service_inter_check_delay_method", "nagios_main_desc"), $mainValues, null);
 		form_text_element_with_enabler(6, 6, "main_config", "max_service_check_spread", "Max Service Check Spread", $lilac->element_desc("max_service_check_spread", "nagios_main_desc"), $mainValues, null);
 		form_text_element_with_enabler(6, 6, "main_config", "host_inter_check_delay_method", "Host Inter Check Delay Method", $lilac->element_desc("host_inter_check_delay_method", "nagios_main_desc"), $mainValues, null);
@@ -1135,7 +1187,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Interval Configuration" />
+		<input type="submit" value="Update Interval Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1154,7 +1206,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Interval Configuration" />
+		<input type="submit" value="Update Interval Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1176,7 +1228,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Timeout Configuration" />
+		<input type="submit" value="Update Timeout Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1194,7 +1246,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Obsession Configuration" />
+		<input type="submit" value="Update Obsession Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1212,7 +1264,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Obsession Configuration" />
+		<input type="submit" value="Update Obsession Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1244,7 +1296,7 @@ print_header("Main Configuration File Editor", "main");
 		</div>
 
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Debug Configuration" />
+		<input type="submit" value="Update Debug Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1261,19 +1313,19 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_start();
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "use_large_installation_tweaks", "Use Large Installation Tweaks", $lilac->element_desc("use_large_installation_tweaks", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "free_child_process_memory", "Free Child Process Memory", $lilac->element_desc("free_child_process_memory", "nagios_main_desc"), $mainValues, null);
-		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "child_processes_fork_twice", "Child Processes Fork Twice", $lilac->element_desc("child_processes_fork_twice", "nagios_main_desc"), $mainValues, null);
+		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "child_processes_fork_twice", "Child Processes Fork Twice <span style='color: red;'>(Deprecated in Nagios 4)</span>", $lilac->element_desc("child_processes_fork_twice", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "enable_environment_macros", "Enable Environment Macros", $lilac->element_desc("enable_environment_macros", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "process_performance_data", "Process Performance Data", $lilac->element_desc("Process Performance Data", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($command_list, "command_id", "command_name", "main_config", "host_perfdata_command", "Host Performance Data Command", $lilac->element_desc("host_perfdata_command", "nagios_main_desc"), $mainValues, null);
 		form_text_element_with_enabler(60, 255, "main_config", "host_perfdata_file", "Host Performance Data File", $lilac->element_desc("host_perfdata_file", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($file_mode_array, "values", "text", "main_config", "host_perfdata_file_mode", "Host Performance Data File Mode", $lilac->element_desc("host_perfdata_file_mode", "nagios_main_desc"), $mainValues, null);
-		form_text_element_with_enabler(60, 500, "main_config", "host_perfdata_file_template", "Host Performance Template", $lilac->element_desc("host_perfdata_file_template", "nagios_main_desc"), $mainValues, null);
+		form_text_element_with_enabler(60, 255, "main_config", "host_perfdata_file_template", "Host Performance Template", $lilac->element_desc("host_perfdata_file_template", "nagios_main_desc"), $mainValues, null);
 		form_text_element_with_enabler(8, 40, "main_config", "host_perfdata_file_processing_interval", "Host Performance Data File Processing Interval", $lilac->element_desc("host_perfdata_file_processing_interval", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($command_list, "command_id", "command_name", "main_config", "host_perfdata_file_processing_command", "Host Performance Data File Processing Command", $lilac->element_desc("host_perfdata_file_processing_command", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($command_list, "command_id", "command_name", "main_config", "service_perfdata_command", "Service Performance Data Command", $lilac->element_desc("service_perfdata_command", "nagios_main_desc"), $mainValues, null);
 		form_text_element_with_enabler(60, 255, "main_config", "service_perfdata_file", "Service Performance Data File", $lilac->element_desc("service_perfdata_file", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($file_mode_array, "values", "text", "main_config", "service_perfdata_file_mode", "Service Performance Data File Mode", $lilac->element_desc("service_perfdata_file_mode", "nagios_main_desc"), $mainValues, null);
-		form_text_element_with_enabler(60, 500, "main_config", "service_perfdata_file_template", "Service Performance Template", $lilac->element_desc("service_perfdata_file_template", "nagios_main_desc"), $mainValues, null);
+		form_text_element_with_enabler(60, 255, "main_config", "service_perfdata_file_template", "Service Performance Template", $lilac->element_desc("service_perfdata_file_template", "nagios_main_desc"), $mainValues, null);
 		form_text_element_with_enabler(8, 40, "main_config", "service_perfdata_file_processing_interval", "Service Performance Data File Processing Interval", $lilac->element_desc("service_perfdata_file_processing_interval", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($command_list, "command_id", "command_name", "main_config", "service_perfdata_file_processing_command", "Service Performance Data File Processing Command", $lilac->element_desc("service_perfdata_file_processing_command", "nagios_main_desc"), $mainValues, null);
 		form_select_element_with_enabler($enable_list, "values", "text", "main_config", "check_for_orphaned_services", "Check For Orphaned Services", $lilac->element_desc("check_for_orphaned_services", "nagios_main_desc"), $mainValues, null);
@@ -1293,7 +1345,7 @@ print_header("Main Configuration File Editor", "main");
 		double_pane_form_window_finish();
 		?>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Other Configuration" />
+		<input type="submit" value="Update Other Configuration" />
 		</div>
 		</form>
 		<?php
@@ -1311,11 +1363,11 @@ print_header("Main Configuration File Editor", "main");
 		<form name="main_broker_config" method="post" action="main.php?section=broker">
 		<input type="hidden" name="request" value="main_modify_broker" />
 		<div class="formbox">
-			<b>Event Broker Options:</b> <?php print_select("main_config[event_broker_options]", $broker_list, "value", "label", $mainConfig->getEventBrokerOptions());?>
+			<b>Event Broker Options:</b> <?php print_select("main_config[event_broker_options]", $broker_list, "value", "label", $mainConfig->getEventBrokerOptions());?><br />
 			<?php echo $lilac->element_desc("event_broker_options", "nagios_main_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<input class="btn btn-primary" type="submit" value="Update Event Broker Configuration" />
+		<input type="submit" value="Update Event Broker Configuration" />
 		</div>
 		</form>
 		<br />
@@ -1339,7 +1391,7 @@ print_header("Main Configuration File Editor", "main");
 						<?php
 					}
 					?>
-					<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger" href="main.php?section=broker&request=delete&module_id=<?php echo $module->getId();?>" onClick="javascript:return confirmDelete();">Delete</a></td>
+					<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="main.php?section=broker&request=delete&module_id=<?php echo $module->getId();?>" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
 					<td height="20" class="altRight"><b><?php echo $module->getLine();?></b></td>
 					</tr>
 					<?php
@@ -1353,12 +1405,34 @@ print_header("Main Configuration File Editor", "main");
 		<b>Add Event Broker Module:</b>
 		<form action="<?php echo $_SERVER['PHP_SELF'];?>?&section=broker" method="post">
 		<input type="hidden" name="request" value="module_add" />
-		Module Path And Any Arguments:<input type="text" size="50" maxsize="255" name="module_line" /> <input class="btn btn-primary" type="submit" value="Add Module" /><br />
+		Module Path And Any Arguments:<input type="text" size="50" maxsize="255" name="module_line" /> <input type="submit" value="Add Module" /><br />
 		<i>Example:</i> /usr/lib/module.so arg1 arg2 arg3
 		</div>
 		</form>
 		<?php
 	}
+    else if($_GET['section'] == 'nagios4') {
+        ?>
+        <form name="main_config" method="post" action="main.php?section=nagios4">
+            <input type="hidden" name="request" value="main_modify_nagios4" />
+            <?php
+            $file_mode_array[] = array("values" => 'a', "text" => "Append");
+            $file_mode_array[] = array("values" => 'w', "text" => "Write");
+
+            double_pane_form_window_start();
+
+            form_select_element_with_enabler($enable_list, "values", "text", "main_config", "log_current_states", "Log Current States", $lilac->element_desc("log_current_states", "nagios_main_desc"), $mainValues, null);
+            form_text_element_with_enabler(60, 255, "main_config", "query_socket", "Query Socket", $lilac->element_desc("query_socket", "nagios_main_desc"), $mainValues, null);
+            form_text_element_with_enabler(10, 10, "main_config", "check_workers", "Check Workers", $lilac->element_desc("check_workers", "nagios_main_desc"), $mainValues, null);
+
+            double_pane_form_window_finish();
+            ?>
+            <div class="formbox">
+                <input type="submit" value="Update Nagios Configuration" />
+            </div>
+        </form>
+    <?php
+    }
 	
 	print_window_footer();
 	?>

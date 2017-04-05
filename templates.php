@@ -23,10 +23,6 @@ Lilac Index Page, Displays Menu, and Statistics
 */
 include_once('includes/config.inc');
 
-// EoN_Actions_HostTemplates
-EoN_Actions_Process("HostTemplate");
-EoN_Actions_Process("ServiceTemplate");
-
 // Get list of host templates
 $lilac->get_host_template_list($hostTemplateList);
 $numOfHostTemplates = count($hostTemplateList);
@@ -40,41 +36,36 @@ print_header("Template Listings");
 <?php
 	print_window_header("Host Templates", "100%");
 	?>
-	<a class="sublink btn btn-success" href="add_host_template.php">Add A New Host Template</a><br />
+	&nbsp;<a class="sublink" href="add_host_template.php">Add A New Host Template</a><br />
 		<br />
 		<?php
 	if($numOfHostTemplates) {
 		?>
-			<form name="EoN_Actions_Form" method="post">
-			<?php echo EoN_Actions("HostTemplate");?>
 			<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
 			<tr class="altTop">
 			<td>Host Template Name</td>
 			<td>Description</td>
-		        <td align="center"><a href="#" onClick="checkUncheckAll('EoN_Actions_Checks_HostTemplate');">ALL</a></td>
 			</tr>
 		<?php
 		for($counter = 0; $counter < $numOfHostTemplates; $counter++) {
 		if($counter % 2) {
 			?>
-				<tr class="altRow1" id="line<?php echo $counter?>">
+				<tr class="altRow1">
 					<?php
 			}
 			else {
 				?>
-				<tr class="altRow2" id="line<?php echo $counter?>">
+				<tr class="altRow2">
 					<?php
 			}
 			?>
-				<td height="20" class="altLeft" onclick="checkLine('line<?php echo $counter?>','check<?php echo $counter?>');">&nbsp;<a href="host_template.php?id=<?php echo $hostTemplateList[$counter]->getId();?>"><?php echo $hostTemplateList[$counter]->getName();?></a></td>
-				<td height="20" class="altRight" onclick="checkLine('line<?php echo $counter?>','check<?php echo $counter?>');">&nbsp;<?php echo $hostTemplateList[$counter]->getDescription();?></td>
-				<td align="center"><input type="checkbox" id="check<?php echo $counter?>" class="checkbox" name="EoN_Actions_Checks_HostTemplate[]" value="<?php echo $hostTemplateList[$counter]->getId();?>" onclick="checkBox('line<?php echo $counter?>','check<?php echo $counter?>');"></td>
+				<td height="20" class="altLeft">&nbsp;<a href="host_template.php?id=<?php echo $hostTemplateList[$counter]->getId();?>"><?php echo $hostTemplateList[$counter]->getName();?> (<?php echo $hostTemplateList[$counter]->getDependentCount();?>)</a></td>
+				<td height="20" class="altRight">&nbsp;<?php echo $hostTemplateList[$counter]->getDescription();?></td>
 				</tr>
 				<?php
 		}
 		?>
 			</table>
-			</form>
 			<?php
 	}
 	else {
@@ -85,41 +76,36 @@ print_header("Template Listings");
 	print_window_footer();
 	print_window_header("Service Templates", "100%");
 	?>
-	<a class="sublink btn btn-success" href="add_service_template.php">Add A New Service Template</a><br />
+	&nbsp;<a class="sublink" href="add_service_template.php">Add A New Service Template</a><br />
 		<br />
 		<?php
 	if($numOfServiceTemplates) {
 		?>
-	                <form name="EoN_Actions_Form" method="post">
-                        <?php echo EoN_Actions("ServiceTemplate");?>
 			<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
 			<tr class="altTop">
 			<td>Service Template Name</td>
 			<td>Description</td>
-			<td align="center"><a href="#" onClick="checkUncheckAll('EoN_Actions_Checks_ServiceTemplate');">ALL</a></td>	
 			</tr>
 		<?php
 		for($counter = 0; $counter < $numOfServiceTemplates; $counter++) {
 		if($counter % 2) {
 			?>
-				<tr class="altRow1" id="Sline<?php echo $counter?>">
+				<tr class="altRow1">
 					<?php
 			}
 			else {
 				?>
-				<tr class="altRow2" id="Sline<?php echo $counter?>">
+				<tr class="altRow2">
 					<?php
 			}
 			?>
-				<td height="20" class="altLeft" onclick="checkLine('Sline<?php echo $counter?>','Scheck<?php echo $counter?>');">&nbsp;<a href="service_template.php?id=<?php echo $serviceTemplateList[$counter]->getId();?>"><?php echo $serviceTemplateList[$counter]->getName();?></a></td>
-				<td height="20" class="altRight" onclick="checkLine('Sline<?php echo $counter?>','Scheck<?php echo $counter?>');">&nbsp;<?php echo $serviceTemplateList[$counter]->getDescription();?></td>
-				<td align="center"><input type="checkbox" id="Scheck<?php echo $counter?>" class="checkbox" name="EoN_Actions_Checks_ServiceTemplate[]" value="<?php echo $serviceTemplateList[$counter]->getId();?>" onclick="checkBox('Sline<?php echo $counter?>','Scheck<?php echo $counter?>');"></td>
+				<td height="20" class="altLeft">&nbsp;<a href="service_template.php?id=<?php echo $serviceTemplateList[$counter]->getId();?>"><?php echo $serviceTemplateList[$counter]->getName();?> (<?php echo $serviceTemplateList[$counter]->getDependentCount();?>)</a></td>
+				<td height="20" class="altRight">&nbsp;<?php echo $serviceTemplateList[$counter]->getDescription();?></td>
 				</tr>
 				<?php
 		}
 		?>
 			</table>
-			</form>
 			<?php
 	}
 	else {

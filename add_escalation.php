@@ -108,7 +108,15 @@ if(isset($_POST['request']) && $_POST['request'] == 'add_escalation') {
 }
 
 if($type == "service") {
-	$textTitle = $tempSource->getNagiosHost()->getName() . " : " . $tempSource->getDescription();
+	if($tempSource->getNagiosHost() !== null)
+	{
+		$textTitle = $tempSource->getNagiosHost()->getName() . " : " . $tempSource->getDescription();
+	}
+	else if($tempSource->getNagiosHostGroup() !== null)
+	{
+		$textTitle = $tempSource->getNagiosHostGroup()->getName() . " : " . $tempSource->getDescription();
+	}
+	
 }
 else {
 	$textTitle = $tempSource->getName();
@@ -121,7 +129,7 @@ print_window_header("Add A Escalation", "100%");
 
 
 ?>
-<a class="btn btn-default" href="<?php echo $link;?>?id=<?php echo $tempSource->getId();?>">Return To <?php echo $title;?> <?php echo $textTitle;?></a>
+<a href="<?php echo $link;?>?id=<?php echo $tempSource->getId();?>">Return To <?php echo $title;?> <?php echo $textTitle;?></a>
 <?php
 	if(isset($errorMsg)) {
 		?>
@@ -138,13 +146,13 @@ double_pane_form_window_start(); ?>
 <tr bgcolor="eeeeee">
 	<td colspan="2" class="formcell">
 	<b>Description:</b><br />
-	<input type="text" size="40" name="escalation_description" value="" />
+	<input type="text" size="40" name="escalation_description" value="" /><br />
 	<?php echo $lilac->element_desc("escalation_description", "nagios_escalations_desc"); ?><br />
 	<br />
 	</td>
 </tr>
 <?php double_pane_form_window_finish(); ?>
-<input class="btn btn-primary" type="submit" value="Add Escalation" />
+<input type="submit" value="Add Escalation" />
 <br /><br />
 </form>
 <?php
