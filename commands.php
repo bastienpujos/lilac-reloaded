@@ -23,6 +23,9 @@ Lilac Index Page, Displays Menu, and Statistics
 */
 include_once('includes/config.inc');
 
+// EoN_Actions
+EoN_Actions_Process("Command");
+
 if(isset($_GET['command_id'])) {
 	$command = NagiosCommandPeer::retrieveByPK($_GET['command_id']);
 	if(!$command) {
@@ -47,8 +50,8 @@ if(isset($_POST['request'])) {
 	
 	if($_POST['request'] == 'add_command') {
 		// Error check for required fields
-		if(!isset($_POST['command_manage']['command_name'])) {
-			$error = "You must provide a command name.";
+		if($_POST['command_manage']['command_name']=='' or $_POST['command_manage']['command_line']=='') {
+			$error = "You must provide a command name and a command line.";
 			$_GET['command_add'] = 1;
 		}
 		else {
@@ -74,7 +77,11 @@ if(isset($_POST['request'])) {
 		
 		$duplicate = NagiosCommandPeer::doSelectOne($c);
 		
-		if($duplicate && $command->getId() != $duplicate->getId()) {
+		if($_POST['command_manage']['command_name']=='' or $_POST['command_manage']['command_line']=='') {
+			$error = "You must provide a command name and a command line.";
+			$_GET['command_add'] = 1;
+		}
+		else if($duplicate && $command->getId() != $duplicate->getId()) {
 			$error = "A command with that name already exists!";
 		}
 		else {
@@ -120,27 +127,27 @@ print_header("Nagios Command Editor");
 				}
 			?>
 			<b>Command Name:</b><br />
-			<input type="text" size="40" name="command_manage[command_name]" value="<?php echo isset($command) ? $command->getName() : '';?>"><br />
+			<input type="text" size="40" name="command_manage[command_name]" value="<?php echo isset($command) ? $command->getName() : '';?>">
 			<?php echo $lilac->element_desc("command_name", "nagios_commands_desc"); ?><br />
 			<br />
 			<b>Command Line:</b><br />
-			<input type="text" size="100" name="command_manage[command_line]" value="<?php echo isset($command) ? htmlentities($command->getLine()) : '';?>"><br />
+			<input type="text" size="100" name="command_manage[command_line]" value="<?php echo isset($command) ? htmlentities($command->getLine()) : '';?>">
 			<?php echo $lilac->element_desc("command_line", "nagios_commands_desc"); ?><br />
 			<br />
 			<b>Command Description:</b><br />
-			<input type="text" size="100" name="command_manage[command_desc]" value="<?php echo isset($command) ? $command->getDescription(): '';?>"><br />
+			<input type="text" size="100" name="command_manage[command_desc]" value="<?php echo isset($command) ? $command->getDescription(): '';?>">
 			<?php echo $lilac->element_desc("command_desc", "nagios_commands_desc"); ?><br />
 			<br />		
 			<br />
 			<?php 
 				if(isset($command)) {
 					?>
-					<a href="commands.php?command_id=<?php echo $command->getId();?>&request=delete">Delete</a>&nbsp;<input type="submit" value="Modify Command" />&nbsp;<a href="commands.php">Cancel</a>
+					<a class="btn btn-danger" href="commands.php?command_id=<?php echo $command->getId();?>&request=delete">Delete</a> <input class="btn btn-primary" type="submit" value="Modify Command" /> <a class="btn btn-default" href="commands.php">Cancel</a>
 					<?php
 				}
 				else {
 					?>
-					<input type="submit" value="Create Command" />&nbsp;<a href="commands.php">Cancel</a>
+					<input class="btn btn-primary" type="submit" value="Create Command" /> <a class="btn btn-default" href="commands.php">Cancel</a>
 					<?php
 				}
 			?>
@@ -151,36 +158,41 @@ print_header("Nagios Command Editor");
 	else {
 		print_window_header("Nagios Commands", "100%");
 		?>
-		&nbsp;<a class="sublink" href="commands.php?command_add=1">Add A New Command</a><br />
+		<a class="sublink btn btn-success" href="commands.php?command_add=1">Add A New Command</a><br />
 		<?php
 		if($numOfCommands) {
 			?>
 			<br />
+			<form name="EoN_Actions_Form" method="post">
+		        <?php echo EoN_Actions("Command");?>
 			<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
 			<tr class="altTop">
 			<td>Command Name</td>
 			<td>Command Description</td>
+			<td align="center"><a href="#" onClick="checkUncheckAll('EoN_Actions_Checks_Command');">ALL</a></td>
 			</tr>
 			<?php
 			for($counter = 0; $counter < $numOfCommands; $counter++) {
 				if($counter % 2) {
 					?>
-					<tr class="altRow1">
+					<tr class="altRow1" id="line<?php echo $counter?>">
 					<?php
 				}
 				else {
 					?>
-					<tr class="altRow2">
+					<tr class="altRow2" id="line<?php echo $counter?>">
 					<?php
 				}
 				?>
-				<td height="20" class="altLeft">&nbsp;<a href="commands.php?command_id=<?php echo $command_list[$counter]->getId();?>"><?php echo $command_list[$counter]->getName();?></a></td>
-				<td height="20" class="altLeft">&nbsp;<?php echo $command_list[$counter]->getDescription();?></td>
+				<td height="20" class="altLeft" onclick="checkLine('line<?php echo $counter?>','check<?php echo $counter?>');">&nbsp;<a href="commands.php?command_id=<?php echo $command_list[$counter]->getId();?>"><?php echo $command_list[$counter]->getName();?></a></td>
+				<td height="20" class="altLeft" onclick="checkLine('line<?php echo $counter?>','check<?php echo $counter?>');">&nbsp;<?php echo $command_list[$counter]->getDescription();?></td>
+				<td align="center"><input type="checkbox" id="check<?php echo $counter?>" class="checkbox" name="EoN_Actions_Checks_Command[]" value="<?php echo $command_list[$counter]->getId();?>" onclick="checkBox('line<?php echo $counter?>','check<?php echo $counter?>');"></td>
 				</tr>
 				<?php
 			}
 			?>
 			</table>
+			</form>
 			<?php
 	
 		}

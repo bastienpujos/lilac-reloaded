@@ -1,20 +1,14 @@
 <?php
 
-
 /**
  * Base class that represents a row from the 'nagios_host_check_command_parameter' table.
  *
  * Parameter for Host Check Command
  *
- * @package    propel.generator..om
+ * @package    .om
  */
-abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implements Persistent
-{
+abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implements Persistent {
 
-	/**
-	 * Peer class name
-	 */
-	const PEER = 'NagiosHostCheckCommandParameterPeer';
 
 	/**
 	 * The Peer class.
@@ -71,6 +65,26 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 	 * @var        boolean
 	 */
 	protected $alreadyInValidation = false;
+
+	/**
+	 * Initializes internal state of BaseNagiosHostCheckCommandParameter object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
 
 	/**
 	 * Get the [id] column value.
@@ -210,6 +224,11 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 	 */
 	public function hasOnlyDefaultValues()
 	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
 		// otherwise, everything was equal, so return TRUE
 		return true;
 	} // hasOnlyDefaultValues()
@@ -244,7 +263,8 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 4; // 4 = NagiosHostCheckCommandParameterPeer::NUM_HYDRATE_COLUMNS.
+			// FIXME - using NUM_COLUMNS may be clearer.
+			return $startcol + 4; // 4 = NagiosHostCheckCommandParameterPeer::NUM_COLUMNS - NagiosHostCheckCommandParameterPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating NagiosHostCheckCommandParameter object", $e);
@@ -335,20 +355,12 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosHostCheckCommandParameterPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
 		try {
-			$ret = $this->preDelete($con);
-			if ($ret) {
-				NagiosHostCheckCommandParameterQuery::create()
-					->filterByPrimaryKey($this->getPrimaryKey())
-					->delete($con);
-				$this->postDelete($con);
-				$con->commit();
-				$this->setDeleted(true);
-			} else {
-				$con->commit();
-			}
+			NagiosHostCheckCommandParameterPeer::doDelete($this, $con);
+			$this->setDeleted(true);
+			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollBack();
 			throw $e;
@@ -377,29 +389,12 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosHostCheckCommandParameterPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
-		$isInsert = $this->isNew();
 		try {
-			$ret = $this->preSave($con);
-			if ($isInsert) {
-				$ret = $ret && $this->preInsert($con);
-			} else {
-				$ret = $ret && $this->preUpdate($con);
-			}
-			if ($ret) {
-				$affectedRows = $this->doSave($con);
-				if ($isInsert) {
-					$this->postInsert($con);
-				} else {
-					$this->postUpdate($con);
-				}
-				$this->postSave($con);
-				NagiosHostCheckCommandParameterPeer::addInstanceToPool($this);
-			} else {
-				$affectedRows = 0;
-			}
+			$affectedRows = $this->doSave($con);
 			$con->commit();
+			NagiosHostCheckCommandParameterPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollBack();
@@ -450,14 +445,13 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(NagiosHostCheckCommandParameterPeer::ID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.NagiosHostCheckCommandParameterPeer::ID.')');
-					}
+					$pk = NagiosHostCheckCommandParameterPeer::doInsert($this, $con);
+					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
+										 // should always be true here (even though technically
+										 // BasePeer::doInsert() can insert multiple rows).
 
-					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows += 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
+
 					$this->setNew(false);
 				} else {
 					$affectedRows += NagiosHostCheckCommandParameterPeer::doUpdate($this, $con);
@@ -612,21 +606,13 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param     string  $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-	 *                    Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
-	 *
-	 * @return    array an associative array containing the field names (as keys) and field values
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
+	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
-		if (isset($alreadyDumpedObjects['NagiosHostCheckCommandParameter'][$this->getPrimaryKey()])) {
-			return '*RECURSION*';
-		}
-		$alreadyDumpedObjects['NagiosHostCheckCommandParameter'][$this->getPrimaryKey()] = true;
 		$keys = NagiosHostCheckCommandParameterPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
@@ -634,14 +620,6 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 			$keys[2] => $this->getHostTemplate(),
 			$keys[3] => $this->getParameter(),
 		);
-		if ($includeForeignObjects) {
-			if (null !== $this->aNagiosHost) {
-				$result['NagiosHost'] = $this->aNagiosHost->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHostTemplate) {
-				$result['NagiosHostTemplate'] = $this->aNagiosHostTemplate->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-		}
 		return $result;
 	}
 
@@ -742,6 +720,7 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 	public function buildPkeyCriteria()
 	{
 		$criteria = new Criteria(NagiosHostCheckCommandParameterPeer::DATABASE_NAME);
+
 		$criteria->add(NagiosHostCheckCommandParameterPeer::ID, $this->id);
 
 		return $criteria;
@@ -768,15 +747,6 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 	}
 
 	/**
-	 * Returns true if the primary key for this object is null.
-	 * @return     boolean
-	 */
-	public function isPrimaryKeyNull()
-	{
-		return null === $this->getId();
-	}
-
-	/**
 	 * Sets contents of passed object to values from current object.
 	 *
 	 * If desired, this method can also make copies of all associated (fkey referrers)
@@ -784,18 +754,22 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 	 *
 	 * @param      object $copyObj An object of NagiosHostCheckCommandParameter (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
 	 * @throws     PropelException
 	 */
-	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
+	public function copyInto($copyObj, $deepCopy = false)
 	{
-		$copyObj->setHost($this->getHost());
-		$copyObj->setHostTemplate($this->getHostTemplate());
-		$copyObj->setParameter($this->getParameter());
-		if ($makeNew) {
-			$copyObj->setNew(true);
-			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
-		}
+
+		$copyObj->setHost($this->host);
+
+		$copyObj->setHostTemplate($this->host_template);
+
+		$copyObj->setParameter($this->parameter);
+
+
+		$copyObj->setNew(true);
+
+		$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+
 	}
 
 	/**
@@ -873,13 +847,15 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 	public function getNagiosHost(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHost === null && ($this->host !== null)) {
-			$this->aNagiosHost = NagiosHostQuery::create()->findPk($this->host, $con);
+			$c = new Criteria(NagiosHostPeer::DATABASE_NAME);
+			$c->add(NagiosHostPeer::ID, $this->host);
+			$this->aNagiosHost = NagiosHostPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHost->addNagiosHostCheckCommandParameters($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHost->addNagiosHostCheckCommandParameters($this);
 			 */
 		}
 		return $this->aNagiosHost;
@@ -922,80 +898,36 @@ abstract class BaseNagiosHostCheckCommandParameter extends BaseObject  implement
 	public function getNagiosHostTemplate(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostTemplate === null && ($this->host_template !== null)) {
-			$this->aNagiosHostTemplate = NagiosHostTemplateQuery::create()->findPk($this->host_template, $con);
+			$c = new Criteria(NagiosHostTemplatePeer::DATABASE_NAME);
+			$c->add(NagiosHostTemplatePeer::ID, $this->host_template);
+			$this->aNagiosHostTemplate = NagiosHostTemplatePeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostTemplate->addNagiosHostCheckCommandParameters($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostTemplate->addNagiosHostCheckCommandParameters($this);
 			 */
 		}
 		return $this->aNagiosHostTemplate;
 	}
 
 	/**
-	 * Clears the current object and sets all attributes to their default values
-	 */
-	public function clear()
-	{
-		$this->id = null;
-		$this->host = null;
-		$this->host_template = null;
-		$this->parameter = null;
-		$this->alreadyInSave = false;
-		$this->alreadyInValidation = false;
-		$this->clearAllReferences();
-		$this->resetModified();
-		$this->setNew(true);
-		$this->setDeleted(false);
-	}
-
-	/**
-	 * Resets all references to other model objects or collections of model objects.
+	 * Resets all collections of referencing foreign keys.
 	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect
-	 * objects with circular references (even in PHP 5.3). This is currently necessary
-	 * when using Propel in certain daemon or large-volumne/high-memory operations.
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
 	 *
-	 * @param      boolean $deep Whether to also clear the references on all referrer objects.
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
 	 */
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
 		} // if ($deep)
 
-		$this->aNagiosHost = null;
-		$this->aNagiosHostTemplate = null;
-	}
-
-	/**
-	 * Return the string representation of this object
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string) $this->exportTo(NagiosHostCheckCommandParameterPeer::DEFAULT_STRING_FORMAT);
-	}
-
-	/**
-	 * Catches calls to virtual methods
-	 */
-	public function __call($name, $params)
-	{
-		if (preg_match('/get(\w+)/', $name, $matches)) {
-			$virtualColumn = $matches[1];
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-			// no lcfirst in php<5.3...
-			$virtualColumn[0] = strtolower($virtualColumn[0]);
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-		}
-		return parent::__call($name, $params);
+			$this->aNagiosHost = null;
+			$this->aNagiosHostTemplate = null;
 	}
 
 } // BaseNagiosHostCheckCommandParameter

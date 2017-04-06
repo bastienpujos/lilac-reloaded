@@ -1,5 +1,6 @@
 <?php
 
+require 'om/BaseAutodiscoveryJob.php';
 
 
 /**
@@ -11,10 +12,10 @@
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package    propel.generator.
+ * @package    
  */
 class AutodiscoveryJob extends BaseAutodiscoveryJob {
-	
+
 	const CMD_START = "start";
 	const CMD_STOP = "stop";
 		
@@ -33,7 +34,7 @@ class AutodiscoveryJob extends BaseAutodiscoveryJob {
 		// Make sure that parent constructor is always invoked, since that
 		// is where any default values for this object are set.
 		parent::__construct();
-	}
+        }
 
 	
 	public function addLogEntry($text, $type = 3) {
@@ -48,7 +49,6 @@ class AutodiscoveryJob extends BaseAutodiscoveryJob {
 		$entry->save();
 		return true;
 	}
-	
 	public function setStatus($v) {
 		parent::setStatus($v);
 		// update the status time
@@ -72,5 +72,5 @@ class AutodiscoveryJob extends BaseAutodiscoveryJob {
 	public function addNotice($text) {
 		$this->addLogEntry($text, AutodiscoveryLogEntry::TYPE_NOTICE);
 	}	
-
+	
 } // AutodiscoveryJob

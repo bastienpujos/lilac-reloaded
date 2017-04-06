@@ -1,8 +1,8 @@
 <?php
 /**
- * $Header$
+ * $Header: /repository/pear/Log/Log/mdb2.php,v 1.5 2006/01/08 03:35:44 jon Exp $
  *
- * @version $Revision: 204814 $
+ * @version $Revision: 1.5 $
  * @package Log
  */
 

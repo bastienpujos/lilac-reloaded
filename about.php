@@ -23,17 +23,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 require_once('includes/config.inc');
 print_header();
 
-print_window_header("About Lilac-Reloaded", "100%");
+print_window_header("About Eonweb Configurator", "100%");
 ?>
 <p>
-<h2>Lilac-Reloaded <?php echo LILAC_VERSION;?></h2>
-<p>
-	Lilac-Reloaded is the successor of the Lilac Nagios Configurator.  The community site is available at <a href="http://sourceforge.net/projects/lilac--reloaded/">http://sourceforge.net/projects/lilac--reloaded/</a>.
-</p>
+<h2>Eonweb Configurator <?php echo LILAC_VERSION;?></h2>
+The community site is available at <a href="http://www.eyesofnetwork.com">www.eyesofnetwork.com</a>.  
 </p>
 <p>
 <h2>Statistics</h2>
-<p>
 <table class="statistics">
 	<tr>
 		<td><strong>Total Nagios Commands:</strong></td>
@@ -77,7 +74,6 @@ print_window_header("About Lilac-Reloaded", "100%");
 	</tr>
 
 </table>
-</p>
 
 <?php
 print_window_footer();

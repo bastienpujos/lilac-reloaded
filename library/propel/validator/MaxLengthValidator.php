@@ -1,11 +1,22 @@
 <?php
-
-/**
- * This file is part of the Propel package.
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+/*
+ *  $Id: MaxLengthValidator.php 521 2007-01-05 13:29:36Z heltem $
  *
- * @license    MIT License
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the LGPL. For more information please see
+ * <http://propel.phpdb.org>.
  */
 
 /**
@@ -26,15 +37,14 @@
  * </code>
  *
  * @author     Michael Aichler <aichler@mediacluster.de>
- * @version    $Revision: 1849 $
- * @package    propel.runtime.validator
+ * @version    $Revision: 521 $
+ * @package    propel.validator
  */
 class MaxLengthValidator implements BasicValidator
 {
 
-	public function isValid (ValidatorMap $map, $str)
-	{
-		$len = function_exists('mb_strlen') ? mb_strlen($str) : strlen($str);
-		return $len <= intval($map->getValue());
-	}
+  public function isValid (ValidatorMap $map, $str)
+  {
+	return strlen($str) <= intval($map->getValue());
+  }
 }

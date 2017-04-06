@@ -1,8 +1,8 @@
 <?php
 /**
- * $Header$
+ * $Header: /repository/pear/Log/Log/sqlite.php,v 1.5 2005/12/05 05:38:31 jon Exp $
  *
- * @version $Revision: 202069 $
+ * @version $Revision: 1.5 $
  * @package Log
  */
 

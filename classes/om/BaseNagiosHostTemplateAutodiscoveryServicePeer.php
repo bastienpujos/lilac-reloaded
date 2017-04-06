@@ -1,12 +1,11 @@
 <?php
 
-
 /**
  * Base static class for performing query and update operations on the 'nagios_host_template_autodiscovery_service' table.
  *
  * 
  *
- * @package    propel.generator..om
+ * @package    .om
  */
 abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 
@@ -16,23 +15,14 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	/** the table name for this class */
 	const TABLE_NAME = 'nagios_host_template_autodiscovery_service';
 
-	/** the related Propel class for this table */
-	const OM_CLASS = 'NagiosHostTemplateAutodiscoveryService';
-
 	/** A class that can be returned by this peer. */
 	const CLASS_DEFAULT = 'NagiosHostTemplateAutodiscoveryService';
 
-	/** the related TableMap class for this table */
-	const TM_CLASS = 'NagiosHostTemplateAutodiscoveryServiceTableMap';
-	
 	/** The total number of columns. */
 	const NUM_COLUMNS = 8;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
-
-	/** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-	const NUM_HYDRATE_COLUMNS = 8;
 
 	/** the column name for the ID field */
 	const ID = 'nagios_host_template_autodiscovery_service.ID';
@@ -58,9 +48,6 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	/** the column name for the EXTRA_INFORMATION field */
 	const EXTRA_INFORMATION = 'nagios_host_template_autodiscovery_service.EXTRA_INFORMATION';
 
-	/** The default string format for model objects of the related table **/
-	const DEFAULT_STRING_FORMAT = 'YAML';
-	
 	/**
 	 * An identiy map to hold any loaded instances of NagiosHostTemplateAutodiscoveryService objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -69,6 +56,11 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	 */
 	public static $instances = array();
 
+	/**
+	 * The MapBuilder instance for this peer.
+	 * @var        MapBuilder
+	 */
+	private static $mapBuilder = null;
 
 	/**
 	 * holds an array of fieldnames
@@ -76,11 +68,10 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
-	protected static $fieldNames = array (
+	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('Id', 'HostTemplate', 'Name', 'Protocol', 'Port', 'Product', 'Version', 'ExtraInformation', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'hostTemplate', 'name', 'protocol', 'port', 'product', 'version', 'extraInformation', ),
 		BasePeer::TYPE_COLNAME => array (self::ID, self::HOST_TEMPLATE, self::NAME, self::PROTOCOL, self::PORT, self::PRODUCT, self::VERSION, self::EXTRA_INFORMATION, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID', 'HOST_TEMPLATE', 'NAME', 'PROTOCOL', 'PORT', 'PRODUCT', 'VERSION', 'EXTRA_INFORMATION', ),
 		BasePeer::TYPE_FIELDNAME => array ('id', 'host_template', 'name', 'protocol', 'port', 'product', 'version', 'extra_information', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
@@ -91,15 +82,25 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
-	protected static $fieldKeys = array (
+	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'HostTemplate' => 1, 'Name' => 2, 'Protocol' => 3, 'Port' => 4, 'Product' => 5, 'Version' => 6, 'ExtraInformation' => 7, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'hostTemplate' => 1, 'name' => 2, 'protocol' => 3, 'port' => 4, 'product' => 5, 'version' => 6, 'extraInformation' => 7, ),
 		BasePeer::TYPE_COLNAME => array (self::ID => 0, self::HOST_TEMPLATE => 1, self::NAME => 2, self::PROTOCOL => 3, self::PORT => 4, self::PRODUCT => 5, self::VERSION => 6, self::EXTRA_INFORMATION => 7, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'HOST_TEMPLATE' => 1, 'NAME' => 2, 'PROTOCOL' => 3, 'PORT' => 4, 'PRODUCT' => 5, 'VERSION' => 6, 'EXTRA_INFORMATION' => 7, ),
 		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'host_template' => 1, 'name' => 2, 'protocol' => 3, 'port' => 4, 'product' => 5, 'version' => 6, 'extra_information' => 7, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
 	);
 
+	/**
+	 * Get a (singleton) instance of the MapBuilder for this peer class.
+	 * @return     MapBuilder The map builder for this peer
+	 */
+	public static function getMapBuilder()
+	{
+		if (self::$mapBuilder === null) {
+			self::$mapBuilder = new NagiosHostTemplateAutodiscoveryServiceMapBuilder();
+		}
+		return self::$mapBuilder;
+	}
 	/**
 	 * Translates a fieldname to another type
 	 *
@@ -161,32 +162,29 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param      Criteria $criteria object containing the columns to add.
-	 * @param      string   $alias    optional table alias
+	 * @param      criteria object containing the columns to add.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function addSelectColumns(Criteria $criteria, $alias = null)
+	public static function addSelectColumns(Criteria $criteria)
 	{
-		if (null === $alias) {
-			$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::ID);
-			$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE);
-			$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::NAME);
-			$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::PROTOCOL);
-			$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::PORT);
-			$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::PRODUCT);
-			$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::VERSION);
-			$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::EXTRA_INFORMATION);
-		} else {
-			$criteria->addSelectColumn($alias . '.ID');
-			$criteria->addSelectColumn($alias . '.HOST_TEMPLATE');
-			$criteria->addSelectColumn($alias . '.NAME');
-			$criteria->addSelectColumn($alias . '.PROTOCOL');
-			$criteria->addSelectColumn($alias . '.PORT');
-			$criteria->addSelectColumn($alias . '.PRODUCT');
-			$criteria->addSelectColumn($alias . '.VERSION');
-			$criteria->addSelectColumn($alias . '.EXTRA_INFORMATION');
-		}
+
+		$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::ID);
+
+		$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE);
+
+		$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::NAME);
+
+		$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::PROTOCOL);
+
+		$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::PORT);
+
+		$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::PRODUCT);
+
+		$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::VERSION);
+
+		$criteria->addSelectColumn(NagiosHostTemplateAutodiscoveryServicePeer::EXTRA_INFORMATION);
+
 	}
 
 	/**
@@ -233,7 +231,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 		return $count;
 	}
 	/**
-	 * Selects one object from the DB.
+	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      PropelPDO $con
@@ -252,7 +250,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 		return null;
 	}
 	/**
-	 * Selects several row from the DB.
+	 * Method to do selects.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
 	 * @param      PropelPDO $con
@@ -306,7 +304,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	 * @param      NagiosHostTemplateAutodiscoveryService $value A NagiosHostTemplateAutodiscoveryService object.
 	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool($obj, $key = null)
+	public static function addInstanceToPool(NagiosHostTemplateAutodiscoveryService $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
@@ -374,14 +372,6 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	}
 	
 	/**
-	 * Method to invalidate the instance pool of all tables related to nagios_host_template_autodiscovery_service
-	 * by a foreign key with ON DELETE CASCADE
-	 */
-	public static function clearRelatedInstancePool()
-	{
-	}
-
-	/**
 	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
 	 *
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
@@ -394,26 +384,12 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol] === null) {
+		if ($row[$startcol + 0] === null) {
 			return null;
 		}
-		return (string) $row[$startcol];
+		return (string) $row[$startcol + 0];
 	}
 
-	/**
-	 * Retrieves the primary key from the DB resultset row 
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, an array of the primary key columns will be returned.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @return     mixed The primary key of the row
-	 */
-	public static function getPrimaryKeyFromRow($row, $startcol = 0)
-	{
-		return (int) $row[$startcol];
-	}
-	
 	/**
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
@@ -426,16 +402,18 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = NagiosHostTemplateAutodiscoveryServicePeer::getOMClass(false);
+		$cls = NagiosHostTemplateAutodiscoveryServicePeer::getOMClass();
+		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key = NagiosHostTemplateAutodiscoveryServicePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj = NagiosHostTemplateAutodiscoveryServicePeer::getInstanceFromPool($key))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj->hydrate($row, 0, true); // rehydrate
 				$results[] = $obj;
 			} else {
+		
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
@@ -445,37 +423,11 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 		$stmt->closeCursor();
 		return $results;
 	}
-	/**
-	 * Populates an object of the default type or an object that inherit from the default.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @return     array (NagiosHostTemplateAutodiscoveryService object, last column rank)
-	 */
-	public static function populateObject($row, $startcol = 0)
-	{
-		$key = NagiosHostTemplateAutodiscoveryServicePeer::getPrimaryKeyHashFromRow($row, $startcol);
-		if (null !== ($obj = NagiosHostTemplateAutodiscoveryServicePeer::getInstanceFromPool($key))) {
-			// We no longer rehydrate the object, since this can cause data loss.
-			// See http://www.propelorm.org/ticket/509
-			// $obj->hydrate($row, $startcol, true); // rehydrate
-			$col = $startcol + NagiosHostTemplateAutodiscoveryServicePeer::NUM_HYDRATE_COLUMNS;
-		} else {
-			$cls = NagiosHostTemplateAutodiscoveryServicePeer::OM_CLASS;
-			$obj = new $cls();
-			$col = $obj->hydrate($row, $startcol);
-			NagiosHostTemplateAutodiscoveryServicePeer::addInstanceToPool($obj, $key);
-		}
-		return array($obj, $col);
-	}
-
 
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosHostTemplate table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -508,8 +460,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 			$con = Propel::getConnection(NagiosHostTemplateAutodiscoveryServicePeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -524,41 +475,41 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 
 	/**
 	 * Selects a collection of NagiosHostTemplateAutodiscoveryService objects pre-filled with their NagiosHostTemplate objects.
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosHostTemplateAutodiscoveryService objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinNagiosHostTemplate(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinNagiosHostTemplate(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosHostTemplateAutodiscoveryServicePeer::addSelectColumns($criteria);
-		$startcol = NagiosHostTemplateAutodiscoveryServicePeer::NUM_HYDRATE_COLUMNS;
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
+		NagiosHostTemplateAutodiscoveryServicePeer::addSelectColumns($c);
+		$startcol = (NagiosHostTemplateAutodiscoveryServicePeer::NUM_COLUMNS - NagiosHostTemplateAutodiscoveryServicePeer::NUM_LAZY_LOAD_COLUMNS);
+		NagiosHostTemplatePeer::addSelectColumns($c);
 
-		$criteria->addJoin(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosHostTemplateAutodiscoveryServicePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosHostTemplateAutodiscoveryServicePeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$cls = NagiosHostTemplateAutodiscoveryServicePeer::getOMClass(false);
+				$omClass = NagiosHostTemplateAutodiscoveryServicePeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosHostTemplateAutodiscoveryServicePeer::addInstanceToPool($obj1, $key1);
@@ -569,8 +520,9 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 				$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosHostTemplatePeer::getOMClass(false);
+					$omClass = NagiosHostTemplatePeer::getOMClass();
 
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -591,7 +543,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -624,8 +576,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 			$con = Propel::getConnection(NagiosHostTemplateAutodiscoveryServicePeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -640,42 +591,42 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	/**
 	 * Selects a collection of NagiosHostTemplateAutodiscoveryService objects pre-filled with all related objects.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosHostTemplateAutodiscoveryService objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosHostTemplateAutodiscoveryServicePeer::addSelectColumns($criteria);
-		$startcol2 = NagiosHostTemplateAutodiscoveryServicePeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostTemplateAutodiscoveryServicePeer::addSelectColumns($c);
+		$startcol2 = (NagiosHostTemplateAutodiscoveryServicePeer::NUM_COLUMNS - NagiosHostTemplateAutodiscoveryServicePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + NagiosHostTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostTemplatePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NagiosHostTemplatePeer::NUM_COLUMNS - NagiosHostTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosHostTemplateAutodiscoveryServicePeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosHostTemplateAutodiscoveryServicePeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosHostTemplateAutodiscoveryServicePeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = NagiosHostTemplateAutodiscoveryServicePeer::getOMClass(false);
+				$omClass = NagiosHostTemplateAutodiscoveryServicePeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosHostTemplateAutodiscoveryServicePeer::addInstanceToPool($obj1, $key1);
@@ -688,8 +639,10 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 				$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosHostTemplatePeer::getOMClass(false);
+					$omClass = NagiosHostTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -718,35 +671,21 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	}
 
 	/**
-	 * Add a TableMap instance to the database for this peer class.
-	 */
-	public static function buildTableMap()
-	{
-	  $dbMap = Propel::getDatabaseMap(BaseNagiosHostTemplateAutodiscoveryServicePeer::DATABASE_NAME);
-	  if (!$dbMap->hasTable(BaseNagiosHostTemplateAutodiscoveryServicePeer::TABLE_NAME))
-	  {
-	    $dbMap->addTableObject(new NagiosHostTemplateAutodiscoveryServiceTableMap());
-	  }
-	}
-
-	/**
 	 * The class that the Peer will make instances of.
 	 *
-	 * If $withPrefix is true, the returned path
-	 * uses a dot-path notation which is tranalted into a path
+	 * This uses a dot-path notation which is tranalted into a path
 	 * relative to a location on the PHP include_path.
 	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
 	 *
-	 * @param      boolean $withPrefix Whether or not to return the path with the class name
 	 * @return     string path.to.ClassName
 	 */
-	public static function getOMClass($withPrefix = true)
+	public static function getOMClass()
 	{
-		return $withPrefix ? NagiosHostTemplateAutodiscoveryServicePeer::CLASS_DEFAULT : NagiosHostTemplateAutodiscoveryServicePeer::OM_CLASS;
+		return NagiosHostTemplateAutodiscoveryServicePeer::CLASS_DEFAULT;
 	}
 
 	/**
-	 * Performs an INSERT on the database, given a NagiosHostTemplateAutodiscoveryService or Criteria object.
+	 * Method perform an INSERT on the database, given a NagiosHostTemplateAutodiscoveryService or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or NagiosHostTemplateAutodiscoveryService object containing data that is used to create the INSERT statement.
 	 * @param      PropelPDO $con the PropelPDO connection to use
@@ -789,7 +728,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	}
 
 	/**
-	 * Performs an UPDATE on the database, given a NagiosHostTemplateAutodiscoveryService or Criteria object.
+	 * Method perform an UPDATE on the database, given a NagiosHostTemplateAutodiscoveryService or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or NagiosHostTemplateAutodiscoveryService object containing data that is used to create the UPDATE statement.
 	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -809,12 +748,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 			$criteria = clone $values; // rename for clarity
 
 			$comparison = $criteria->getComparison(NagiosHostTemplateAutodiscoveryServicePeer::ID);
-			$value = $criteria->remove(NagiosHostTemplateAutodiscoveryServicePeer::ID);
-			if ($value) {
-				$selectCriteria->add(NagiosHostTemplateAutodiscoveryServicePeer::ID, $value, $comparison);
-			} else {
-				$selectCriteria->setPrimaryTableName(NagiosHostTemplateAutodiscoveryServicePeer::TABLE_NAME);
-			}
+			$selectCriteria->add(NagiosHostTemplateAutodiscoveryServicePeer::ID, $criteria->remove(NagiosHostTemplateAutodiscoveryServicePeer::ID), $comparison);
 
 		} else { // $values is NagiosHostTemplateAutodiscoveryService object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -828,12 +762,11 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	}
 
 	/**
-	 * Deletes all rows from the nagios_host_template_autodiscovery_service table.
+	 * Method to DELETE all rows from the nagios_host_template_autodiscovery_service table.
 	 *
-	 * @param      PropelPDO $con the connection to use
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
-	public static function doDeleteAll(PropelPDO $con = null)
+	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosHostTemplateAutodiscoveryServicePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -843,12 +776,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
-			$affectedRows += BasePeer::doDeleteAll(NagiosHostTemplateAutodiscoveryServicePeer::TABLE_NAME, $con, NagiosHostTemplateAutodiscoveryServicePeer::DATABASE_NAME);
-			// Because this db requires some delete cascade/set null emulation, we have to
-			// clear the cached instance *after* the emulation has happened (since
-			// instances get re-added by the select statement contained therein).
-			NagiosHostTemplateAutodiscoveryServicePeer::clearInstancePool();
-			NagiosHostTemplateAutodiscoveryServicePeer::clearRelatedInstancePool();
+			$affectedRows += BasePeer::doDeleteAll(NagiosHostTemplateAutodiscoveryServicePeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -858,7 +786,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	}
 
 	/**
-	 * Performs a DELETE on the database, given a NagiosHostTemplateAutodiscoveryService or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a NagiosHostTemplateAutodiscoveryService or Criteria object OR a primary key value.
 	 *
 	 * @param      mixed $values Criteria or NagiosHostTemplateAutodiscoveryService object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
@@ -879,18 +807,24 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 			// way of knowing (without running a query) what objects should be invalidated
 			// from the cache based on this Criteria.
 			NagiosHostTemplateAutodiscoveryServicePeer::clearInstancePool();
+
 			// rename for clarity
 			$criteria = clone $values;
-		} elseif ($values instanceof NagiosHostTemplateAutodiscoveryService) { // it's a model object
+		} elseif ($values instanceof NagiosHostTemplateAutodiscoveryService) {
 			// invalidate the cache for this single object
 			NagiosHostTemplateAutodiscoveryServicePeer::removeInstanceFromPool($values);
 			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
-		} else { // it's a primary key, or an array of pks
+		} else {
+			// it must be the primary key
+
+
+
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(NagiosHostTemplateAutodiscoveryServicePeer::ID, (array) $values, Criteria::IN);
-			// invalidate the cache for this object(s)
+
 			foreach ((array) $values as $singleval) {
+				// we can invalidate the cache for this single object
 				NagiosHostTemplateAutodiscoveryServicePeer::removeInstanceFromPool($singleval);
 			}
 		}
@@ -906,7 +840,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 			$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
-			NagiosHostTemplateAutodiscoveryServicePeer::clearRelatedInstancePool();
+
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -927,7 +861,7 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate($obj, $cols = null)
+	public static function doValidate(NagiosHostTemplateAutodiscoveryService $obj, $cols = null)
 	{
 		$columns = array();
 
@@ -1005,7 +939,14 @@ abstract class BaseNagiosHostTemplateAutodiscoveryServicePeer {
 
 } // BaseNagiosHostTemplateAutodiscoveryServicePeer
 
-// This is the static code needed to register the TableMap for this table with the main Propel class.
+// This is the static code needed to register the MapBuilder for this table with the main Propel class.
 //
-BaseNagiosHostTemplateAutodiscoveryServicePeer::buildTableMap();
+// NOTE: This static code cannot call methods on the NagiosHostTemplateAutodiscoveryServicePeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the NagiosHostTemplateAutodiscoveryServicePeer class:
+//
+// Propel::getDatabaseMap(NagiosHostTemplateAutodiscoveryServicePeer::DATABASE_NAME)->addTableBuilder(NagiosHostTemplateAutodiscoveryServicePeer::TABLE_NAME, NagiosHostTemplateAutodiscoveryServicePeer::getMapBuilder());
+//
+// Doing so will effectively overwrite the registration below.
+
+Propel::getDatabaseMap(BaseNagiosHostTemplateAutodiscoveryServicePeer::DATABASE_NAME)->addTableBuilder(BaseNagiosHostTemplateAutodiscoveryServicePeer::TABLE_NAME, BaseNagiosHostTemplateAutodiscoveryServicePeer::getMapBuilder());
 

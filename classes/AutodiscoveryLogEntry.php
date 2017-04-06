@@ -1,5 +1,6 @@
 <?php
 
+require 'om/BaseAutodiscoveryLogEntry.php';
 
 
 /**
@@ -11,25 +12,13 @@
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package    propel.generator.
+ * @package    
  */
 class AutodiscoveryLogEntry extends BaseAutodiscoveryLogEntry {
-	
 	const TYPE_NOTICE = 1;
 	const TYPE_WARNING = 2;
 	const TYPE_ERROR = 3;
 
-	/**
-	 * Initializes internal state of AutodiscoveryLogEntry object.
-	 * @see        parent::__construct()
-	 */
-	public function __construct()
-	{
-		// Make sure that parent constructor is always invoked, since that
-		// is where any default values for this object are set.
-		parent::__construct();
-	}
-	
 	public function isValidType($type) {
 		return true;
 		if($type != AutodiscoveryLogEntry::TYPE_NOTICE &&
@@ -51,5 +40,16 @@ class AutodiscoveryLogEntry extends BaseAutodiscoveryLogEntry {
 			return "ERROR";
 		}
 	}
+	/**
+	 * Initializes internal state of AutodiscoveryLogEntry object.
+	 * @see        parent::__construct()
+	 */
+	public function __construct()
+	{
+		// Make sure that parent constructor is always invoked, since that
+		// is where any default values for this object are set.
+		parent::__construct();
+	}
+
 
 } // AutodiscoveryLogEntry

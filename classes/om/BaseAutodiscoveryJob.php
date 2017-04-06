@@ -1,20 +1,14 @@
 <?php
 
-
 /**
  * Base class that represents a row from the 'autodiscovery_job' table.
  *
  * AutoDiscovery Job Information
  *
- * @package    propel.generator..om
+ * @package    .om
  */
-abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
-{
+abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent {
 
-	/**
-	 * Peer class name
-	 */
-	const PEER = 'AutodiscoveryJobPeer';
 
 	/**
 	 * The Peer class.
@@ -96,9 +90,19 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	protected $collAutodiscoveryLogEntrys;
 
 	/**
+	 * @var        Criteria The criteria used to select the current contents of collAutodiscoveryLogEntrys.
+	 */
+	private $lastAutodiscoveryLogEntryCriteria = null;
+
+	/**
 	 * @var        array AutodiscoveryDevice[] Collection to store aggregation of AutodiscoveryDevice objects.
 	 */
 	protected $collAutodiscoveryDevices;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collAutodiscoveryDevices.
+	 */
+	private $lastAutodiscoveryDeviceCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -113,6 +117,26 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	 * @var        boolean
 	 */
 	protected $alreadyInValidation = false;
+
+	/**
+	 * Initializes internal state of BaseAutodiscoveryJob object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
 
 	/**
 	 * Get the [id] column value.
@@ -391,18 +415,45 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	/**
 	 * Sets the value of [start_time] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      mixed $v string, integer (timestamp), or DateTime value.
-	 *               Empty strings are treated as NULL.
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
 	 * @return     AutodiscoveryJob The current object (for fluent API support)
 	 */
 	public function setStartTime($v)
 	{
-		$dt = PropelDateTime::newInstance($v, null, 'DateTime');
-		if ($this->start_time !== null || $dt !== null) {
-			$currentDateAsString = ($this->start_time !== null && $tmpDt = new DateTime($this->start_time)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-			$newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-			if ($currentDateAsString !== $newDateAsString) {
-				$this->start_time = $newDateAsString;
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->start_time !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->start_time !== null && $tmpDt = new DateTime($this->start_time)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->start_time = ($dt ? $dt->format('Y-m-d H:i:s') : null);
 				$this->modifiedColumns[] = AutodiscoveryJobPeer::START_TIME;
 			}
 		} // if either are not null
@@ -413,18 +464,45 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	/**
 	 * Sets the value of [end_time] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      mixed $v string, integer (timestamp), or DateTime value.
-	 *               Empty strings are treated as NULL.
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
 	 * @return     AutodiscoveryJob The current object (for fluent API support)
 	 */
 	public function setEndTime($v)
 	{
-		$dt = PropelDateTime::newInstance($v, null, 'DateTime');
-		if ($this->end_time !== null || $dt !== null) {
-			$currentDateAsString = ($this->end_time !== null && $tmpDt = new DateTime($this->end_time)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-			$newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-			if ($currentDateAsString !== $newDateAsString) {
-				$this->end_time = $newDateAsString;
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->end_time !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->end_time !== null && $tmpDt = new DateTime($this->end_time)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->end_time = ($dt ? $dt->format('Y-m-d H:i:s') : null);
 				$this->modifiedColumns[] = AutodiscoveryJobPeer::END_TIME;
 			}
 		} // if either are not null
@@ -475,18 +553,45 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	/**
 	 * Sets the value of [status_change_time] column to a normalized version of the date/time value specified.
 	 * 
-	 * @param      mixed $v string, integer (timestamp), or DateTime value.
-	 *               Empty strings are treated as NULL.
+	 * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
+	 *						be treated as NULL for temporal objects.
 	 * @return     AutodiscoveryJob The current object (for fluent API support)
 	 */
 	public function setStatusChangeTime($v)
 	{
-		$dt = PropelDateTime::newInstance($v, null, 'DateTime');
-		if ($this->status_change_time !== null || $dt !== null) {
-			$currentDateAsString = ($this->status_change_time !== null && $tmpDt = new DateTime($this->status_change_time)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-			$newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-			if ($currentDateAsString !== $newDateAsString) {
-				$this->status_change_time = $newDateAsString;
+		// we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
+		// -- which is unexpected, to say the least.
+		if ($v === null || $v === '') {
+			$dt = null;
+		} elseif ($v instanceof DateTime) {
+			$dt = $v;
+		} else {
+			// some string/numeric value passed; we normalize that so that we can
+			// validate it.
+			try {
+				if (is_numeric($v)) { // if it's a unix timestamp
+					$dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
+					// We have to explicitly specify and then change the time zone because of a
+					// DateTime bug: http://bugs.php.net/bug.php?id=43003
+					$dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
+				} else {
+					$dt = new DateTime($v);
+				}
+			} catch (Exception $x) {
+				throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
+			}
+		}
+
+		if ( $this->status_change_time !== null || $dt !== null ) {
+			// (nested ifs are a little easier to read in this case)
+
+			$currNorm = ($this->status_change_time !== null && $tmpDt = new DateTime($this->status_change_time)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+			$newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
+
+			if ( ($currNorm !== $newNorm) // normalized values don't match 
+					)
+			{
+				$this->status_change_time = ($dt ? $dt->format('Y-m-d H:i:s') : null);
 				$this->modifiedColumns[] = AutodiscoveryJobPeer::STATUS_CHANGE_TIME;
 			}
 		} // if either are not null
@@ -544,6 +649,11 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	 */
 	public function hasOnlyDefaultValues()
 	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
 		// otherwise, everything was equal, so return TRUE
 		return true;
 	} // hasOnlyDefaultValues()
@@ -585,7 +695,8 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 11; // 11 = AutodiscoveryJobPeer::NUM_HYDRATE_COLUMNS.
+			// FIXME - using NUM_COLUMNS may be clearer.
+			return $startcol + 11; // 11 = AutodiscoveryJobPeer::NUM_COLUMNS - AutodiscoveryJobPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating AutodiscoveryJob object", $e);
@@ -648,8 +759,10 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 		if ($deep) {  // also de-associate any related objects?
 
 			$this->collAutodiscoveryLogEntrys = null;
+			$this->lastAutodiscoveryLogEntryCriteria = null;
 
 			$this->collAutodiscoveryDevices = null;
+			$this->lastAutodiscoveryDeviceCriteria = null;
 
 		} // if (deep)
 	}
@@ -672,20 +785,12 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(AutodiscoveryJobPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
 		try {
-			$ret = $this->preDelete($con);
-			if ($ret) {
-				AutodiscoveryJobQuery::create()
-					->filterByPrimaryKey($this->getPrimaryKey())
-					->delete($con);
-				$this->postDelete($con);
-				$con->commit();
-				$this->setDeleted(true);
-			} else {
-				$con->commit();
-			}
+			AutodiscoveryJobPeer::doDelete($this, $con);
+			$this->setDeleted(true);
+			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollBack();
 			throw $e;
@@ -714,29 +819,12 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(AutodiscoveryJobPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
-		$isInsert = $this->isNew();
 		try {
-			$ret = $this->preSave($con);
-			if ($isInsert) {
-				$ret = $ret && $this->preInsert($con);
-			} else {
-				$ret = $ret && $this->preUpdate($con);
-			}
-			if ($ret) {
-				$affectedRows = $this->doSave($con);
-				if ($isInsert) {
-					$this->postInsert($con);
-				} else {
-					$this->postUpdate($con);
-				}
-				$this->postSave($con);
-				AutodiscoveryJobPeer::addInstanceToPool($this);
-			} else {
-				$affectedRows = 0;
-			}
+			$affectedRows = $this->doSave($con);
 			$con->commit();
+			AutodiscoveryJobPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollBack();
@@ -768,17 +856,16 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(AutodiscoveryJobPeer::ID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.AutodiscoveryJobPeer::ID.')');
-					}
+					$pk = AutodiscoveryJobPeer::doInsert($this, $con);
+					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
+										 // should always be true here (even though technically
+										 // BasePeer::doInsert() can insert multiple rows).
 
-					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows = 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
+
 					$this->setNew(false);
 				} else {
-					$affectedRows = AutodiscoveryJobPeer::doUpdate($this, $con);
+					$affectedRows += AutodiscoveryJobPeer::doUpdate($this, $con);
 				}
 
 				$this->resetModified(); // [HL] After being saved an object is no longer 'modified'
@@ -965,21 +1052,13 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param     string  $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-	 *                    Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
-	 *
-	 * @return    array an associative array containing the field names (as keys) and field values
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
+	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
-		if (isset($alreadyDumpedObjects['AutodiscoveryJob'][$this->getPrimaryKey()])) {
-			return '*RECURSION*';
-		}
-		$alreadyDumpedObjects['AutodiscoveryJob'][$this->getPrimaryKey()] = true;
 		$keys = AutodiscoveryJobPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
@@ -994,14 +1073,6 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 			$keys[9] => $this->getStats(),
 			$keys[10] => $this->getCmd(),
 		);
-		if ($includeForeignObjects) {
-			if (null !== $this->collAutodiscoveryLogEntrys) {
-				$result['AutodiscoveryLogEntrys'] = $this->collAutodiscoveryLogEntrys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collAutodiscoveryDevices) {
-				$result['AutodiscoveryDevices'] = $this->collAutodiscoveryDevices->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-		}
 		return $result;
 	}
 
@@ -1137,6 +1208,7 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	public function buildPkeyCriteria()
 	{
 		$criteria = new Criteria(AutodiscoveryJobPeer::DATABASE_NAME);
+
 		$criteria->add(AutodiscoveryJobPeer::ID, $this->id);
 
 		return $criteria;
@@ -1163,15 +1235,6 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Returns true if the primary key for this object is null.
-	 * @return     boolean
-	 */
-	public function isPrimaryKeyNull()
-	{
-		return null === $this->getId();
-	}
-
-	/**
 	 * Sets contents of passed object to values from current object.
 	 *
 	 * If desired, this method can also make copies of all associated (fkey referrers)
@@ -1179,21 +1242,31 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	 *
 	 * @param      object $copyObj An object of AutodiscoveryJob (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
 	 * @throws     PropelException
 	 */
-	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
+	public function copyInto($copyObj, $deepCopy = false)
 	{
-		$copyObj->setName($this->getName());
-		$copyObj->setDescription($this->getDescription());
-		$copyObj->setConfig($this->getConfig());
-		$copyObj->setStartTime($this->getStartTime());
-		$copyObj->setEndTime($this->getEndTime());
-		$copyObj->setStatus($this->getStatus());
-		$copyObj->setStatusCode($this->getStatusCode());
-		$copyObj->setStatusChangeTime($this->getStatusChangeTime());
-		$copyObj->setStats($this->getStats());
-		$copyObj->setCmd($this->getCmd());
+
+		$copyObj->setName($this->name);
+
+		$copyObj->setDescription($this->description);
+
+		$copyObj->setConfig($this->config);
+
+		$copyObj->setStartTime($this->start_time);
+
+		$copyObj->setEndTime($this->end_time);
+
+		$copyObj->setStatus($this->status);
+
+		$copyObj->setStatusCode($this->status_code);
+
+		$copyObj->setStatusChangeTime($this->status_change_time);
+
+		$copyObj->setStats($this->stats);
+
+		$copyObj->setCmd($this->cmd);
+
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -1214,10 +1287,11 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 
 		} // if ($deepCopy)
 
-		if ($makeNew) {
-			$copyObj->setNew(true);
-			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
-		}
+
+		$copyObj->setNew(true);
+
+		$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+
 	}
 
 	/**
@@ -1258,27 +1332,8 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 		return self::$peer;
 	}
 
-
 	/**
-	 * Initializes a collection based on the name of a relation.
-	 * Avoids crafting an 'init[$relationName]s' method name 
-	 * that wouldn't work when StandardEnglishPluralizer is used.
-	 *
-	 * @param      string $relationName The name of the relation to initialize
-	 * @return     void
-	 */
-	public function initRelation($relationName)
-	{
-		if ('AutodiscoveryLogEntry' == $relationName) {
-			return $this->initAutodiscoveryLogEntrys();
-		}
-		if ('AutodiscoveryDevice' == $relationName) {
-			return $this->initAutodiscoveryDevices();
-		}
-	}
-
-	/**
-	 * Clears out the collAutodiscoveryLogEntrys collection
+	 * Clears out the collAutodiscoveryLogEntrys collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -1292,56 +1347,69 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collAutodiscoveryLogEntrys collection.
+	 * Initializes the collAutodiscoveryLogEntrys collection (array).
 	 *
 	 * By default this just sets the collAutodiscoveryLogEntrys collection to an empty array (like clearcollAutodiscoveryLogEntrys());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initAutodiscoveryLogEntrys($overrideExisting = true)
+	public function initAutodiscoveryLogEntrys()
 	{
-		if (null !== $this->collAutodiscoveryLogEntrys && !$overrideExisting) {
-			return;
-		}
-		$this->collAutodiscoveryLogEntrys = new PropelObjectCollection();
-		$this->collAutodiscoveryLogEntrys->setModel('AutodiscoveryLogEntry');
+		$this->collAutodiscoveryLogEntrys = array();
 	}
 
 	/**
 	 * Gets an array of AutodiscoveryLogEntry objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this AutodiscoveryJob is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this AutodiscoveryJob has previously been saved, it will retrieve
+	 * related AutodiscoveryLogEntrys from storage. If this AutodiscoveryJob is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array AutodiscoveryLogEntry[] List of AutodiscoveryLogEntry objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array AutodiscoveryLogEntry[]
 	 * @throws     PropelException
 	 */
 	public function getAutodiscoveryLogEntrys($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collAutodiscoveryLogEntrys || null !== $criteria) {
-			if ($this->isNew() && null === $this->collAutodiscoveryLogEntrys) {
-				// return empty collection
-				$this->initAutodiscoveryLogEntrys();
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryJobPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collAutodiscoveryLogEntrys === null) {
+			if ($this->isNew()) {
+			   $this->collAutodiscoveryLogEntrys = array();
 			} else {
-				$collAutodiscoveryLogEntrys = AutodiscoveryLogEntryQuery::create(null, $criteria)
-					->filterByAutodiscoveryJob($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collAutodiscoveryLogEntrys;
+
+				$criteria->add(AutodiscoveryLogEntryPeer::JOB, $this->id);
+
+				AutodiscoveryLogEntryPeer::addSelectColumns($criteria);
+				$this->collAutodiscoveryLogEntrys = AutodiscoveryLogEntryPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(AutodiscoveryLogEntryPeer::JOB, $this->id);
+
+				AutodiscoveryLogEntryPeer::addSelectColumns($criteria);
+				if (!isset($this->lastAutodiscoveryLogEntryCriteria) || !$this->lastAutodiscoveryLogEntryCriteria->equals($criteria)) {
+					$this->collAutodiscoveryLogEntrys = AutodiscoveryLogEntryPeer::doSelect($criteria, $con);
 				}
-				$this->collAutodiscoveryLogEntrys = $collAutodiscoveryLogEntrys;
 			}
 		}
+		$this->lastAutodiscoveryLogEntryCriteria = $criteria;
 		return $this->collAutodiscoveryLogEntrys;
 	}
 
@@ -1356,21 +1424,47 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	 */
 	public function countAutodiscoveryLogEntrys(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collAutodiscoveryLogEntrys || null !== $criteria) {
-			if ($this->isNew() && null === $this->collAutodiscoveryLogEntrys) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryJobPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collAutodiscoveryLogEntrys === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = AutodiscoveryLogEntryQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByAutodiscoveryJob($this)
-					->count($con);
+
+				$criteria->add(AutodiscoveryLogEntryPeer::JOB, $this->id);
+
+				$count = AutodiscoveryLogEntryPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collAutodiscoveryLogEntrys);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(AutodiscoveryLogEntryPeer::JOB, $this->id);
+
+				if (!isset($this->lastAutodiscoveryLogEntryCriteria) || !$this->lastAutodiscoveryLogEntryCriteria->equals($criteria)) {
+					$count = AutodiscoveryLogEntryPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collAutodiscoveryLogEntrys);
+				}
+			} else {
+				$count = count($this->collAutodiscoveryLogEntrys);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -1386,14 +1480,14 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 		if ($this->collAutodiscoveryLogEntrys === null) {
 			$this->initAutodiscoveryLogEntrys();
 		}
-		if (!$this->collAutodiscoveryLogEntrys->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collAutodiscoveryLogEntrys[]= $l;
+		if (!in_array($l, $this->collAutodiscoveryLogEntrys, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collAutodiscoveryLogEntrys, $l);
 			$l->setAutodiscoveryJob($this);
 		}
 	}
 
 	/**
-	 * Clears out the collAutodiscoveryDevices collection
+	 * Clears out the collAutodiscoveryDevices collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -1407,56 +1501,69 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collAutodiscoveryDevices collection.
+	 * Initializes the collAutodiscoveryDevices collection (array).
 	 *
 	 * By default this just sets the collAutodiscoveryDevices collection to an empty array (like clearcollAutodiscoveryDevices());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initAutodiscoveryDevices($overrideExisting = true)
+	public function initAutodiscoveryDevices()
 	{
-		if (null !== $this->collAutodiscoveryDevices && !$overrideExisting) {
-			return;
-		}
-		$this->collAutodiscoveryDevices = new PropelObjectCollection();
-		$this->collAutodiscoveryDevices->setModel('AutodiscoveryDevice');
+		$this->collAutodiscoveryDevices = array();
 	}
 
 	/**
 	 * Gets an array of AutodiscoveryDevice objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this AutodiscoveryJob is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this AutodiscoveryJob has previously been saved, it will retrieve
+	 * related AutodiscoveryDevices from storage. If this AutodiscoveryJob is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array AutodiscoveryDevice[] List of AutodiscoveryDevice objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array AutodiscoveryDevice[]
 	 * @throws     PropelException
 	 */
 	public function getAutodiscoveryDevices($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collAutodiscoveryDevices || null !== $criteria) {
-			if ($this->isNew() && null === $this->collAutodiscoveryDevices) {
-				// return empty collection
-				$this->initAutodiscoveryDevices();
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryJobPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collAutodiscoveryDevices === null) {
+			if ($this->isNew()) {
+			   $this->collAutodiscoveryDevices = array();
 			} else {
-				$collAutodiscoveryDevices = AutodiscoveryDeviceQuery::create(null, $criteria)
-					->filterByAutodiscoveryJob($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collAutodiscoveryDevices;
+
+				$criteria->add(AutodiscoveryDevicePeer::JOB_ID, $this->id);
+
+				AutodiscoveryDevicePeer::addSelectColumns($criteria);
+				$this->collAutodiscoveryDevices = AutodiscoveryDevicePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(AutodiscoveryDevicePeer::JOB_ID, $this->id);
+
+				AutodiscoveryDevicePeer::addSelectColumns($criteria);
+				if (!isset($this->lastAutodiscoveryDeviceCriteria) || !$this->lastAutodiscoveryDeviceCriteria->equals($criteria)) {
+					$this->collAutodiscoveryDevices = AutodiscoveryDevicePeer::doSelect($criteria, $con);
 				}
-				$this->collAutodiscoveryDevices = $collAutodiscoveryDevices;
 			}
 		}
+		$this->lastAutodiscoveryDeviceCriteria = $criteria;
 		return $this->collAutodiscoveryDevices;
 	}
 
@@ -1471,21 +1578,47 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	 */
 	public function countAutodiscoveryDevices(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collAutodiscoveryDevices || null !== $criteria) {
-			if ($this->isNew() && null === $this->collAutodiscoveryDevices) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryJobPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collAutodiscoveryDevices === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = AutodiscoveryDeviceQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByAutodiscoveryJob($this)
-					->count($con);
+
+				$criteria->add(AutodiscoveryDevicePeer::JOB_ID, $this->id);
+
+				$count = AutodiscoveryDevicePeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collAutodiscoveryDevices);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(AutodiscoveryDevicePeer::JOB_ID, $this->id);
+
+				if (!isset($this->lastAutodiscoveryDeviceCriteria) || !$this->lastAutodiscoveryDeviceCriteria->equals($criteria)) {
+					$count = AutodiscoveryDevicePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collAutodiscoveryDevices);
+				}
+			} else {
+				$count = count($this->collAutodiscoveryDevices);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -1501,8 +1634,8 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 		if ($this->collAutodiscoveryDevices === null) {
 			$this->initAutodiscoveryDevices();
 		}
-		if (!$this->collAutodiscoveryDevices->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collAutodiscoveryDevices[]= $l;
+		if (!in_array($l, $this->collAutodiscoveryDevices, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collAutodiscoveryDevices, $l);
 			$l->setAutodiscoveryJob($this);
 		}
 	}
@@ -1518,18 +1651,40 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in AutodiscoveryJob.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array AutodiscoveryDevice[] List of AutodiscoveryDevice objects
 	 */
 	public function getAutodiscoveryDevicesJoinNagiosHostTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = AutodiscoveryDeviceQuery::create(null, $criteria);
-		$query->joinWith('NagiosHostTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryJobPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getAutodiscoveryDevices($query, $con);
+		if ($this->collAutodiscoveryDevices === null) {
+			if ($this->isNew()) {
+				$this->collAutodiscoveryDevices = array();
+			} else {
+
+				$criteria->add(AutodiscoveryDevicePeer::JOB_ID, $this->id);
+
+				$this->collAutodiscoveryDevices = AutodiscoveryDevicePeer::doSelectJoinNagiosHostTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(AutodiscoveryDevicePeer::JOB_ID, $this->id);
+
+			if (!isset($this->lastAutodiscoveryDeviceCriteria) || !$this->lastAutodiscoveryDeviceCriteria->equals($criteria)) {
+				$this->collAutodiscoveryDevices = AutodiscoveryDevicePeer::doSelectJoinNagiosHostTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastAutodiscoveryDeviceCriteria = $criteria;
+
+		return $this->collAutodiscoveryDevices;
 	}
 
 
@@ -1543,105 +1698,68 @@ abstract class BaseAutodiscoveryJob extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in AutodiscoveryJob.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array AutodiscoveryDevice[] List of AutodiscoveryDevice objects
 	 */
 	public function getAutodiscoveryDevicesJoinNagiosHost($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = AutodiscoveryDeviceQuery::create(null, $criteria);
-		$query->joinWith('NagiosHost', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryJobPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getAutodiscoveryDevices($query, $con);
+		if ($this->collAutodiscoveryDevices === null) {
+			if ($this->isNew()) {
+				$this->collAutodiscoveryDevices = array();
+			} else {
+
+				$criteria->add(AutodiscoveryDevicePeer::JOB_ID, $this->id);
+
+				$this->collAutodiscoveryDevices = AutodiscoveryDevicePeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(AutodiscoveryDevicePeer::JOB_ID, $this->id);
+
+			if (!isset($this->lastAutodiscoveryDeviceCriteria) || !$this->lastAutodiscoveryDeviceCriteria->equals($criteria)) {
+				$this->collAutodiscoveryDevices = AutodiscoveryDevicePeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastAutodiscoveryDeviceCriteria = $criteria;
+
+		return $this->collAutodiscoveryDevices;
 	}
 
 	/**
-	 * Clears the current object and sets all attributes to their default values
-	 */
-	public function clear()
-	{
-		$this->id = null;
-		$this->name = null;
-		$this->description = null;
-		$this->config = null;
-		$this->start_time = null;
-		$this->end_time = null;
-		$this->status = null;
-		$this->status_code = null;
-		$this->status_change_time = null;
-		$this->stats = null;
-		$this->cmd = null;
-		$this->alreadyInSave = false;
-		$this->alreadyInValidation = false;
-		$this->clearAllReferences();
-		$this->resetModified();
-		$this->setNew(true);
-		$this->setDeleted(false);
-	}
-
-	/**
-	 * Resets all references to other model objects or collections of model objects.
+	 * Resets all collections of referencing foreign keys.
 	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect
-	 * objects with circular references (even in PHP 5.3). This is currently necessary
-	 * when using Propel in certain daemon or large-volumne/high-memory operations.
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
 	 *
-	 * @param      boolean $deep Whether to also clear the references on all referrer objects.
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
 	 */
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
 			if ($this->collAutodiscoveryLogEntrys) {
-				foreach ($this->collAutodiscoveryLogEntrys as $o) {
+				foreach ((array) $this->collAutodiscoveryLogEntrys as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collAutodiscoveryDevices) {
-				foreach ($this->collAutodiscoveryDevices as $o) {
+				foreach ((array) $this->collAutodiscoveryDevices as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 		} // if ($deep)
 
-		if ($this->collAutodiscoveryLogEntrys instanceof PropelCollection) {
-			$this->collAutodiscoveryLogEntrys->clearIterator();
-		}
 		$this->collAutodiscoveryLogEntrys = null;
-		if ($this->collAutodiscoveryDevices instanceof PropelCollection) {
-			$this->collAutodiscoveryDevices->clearIterator();
-		}
 		$this->collAutodiscoveryDevices = null;
-	}
-
-	/**
-	 * Return the string representation of this object
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string) $this->exportTo(AutodiscoveryJobPeer::DEFAULT_STRING_FORMAT);
-	}
-
-	/**
-	 * Catches calls to virtual methods
-	 */
-	public function __call($name, $params)
-	{
-		if (preg_match('/get(\w+)/', $name, $matches)) {
-			$virtualColumn = $matches[1];
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-			// no lcfirst in php<5.3...
-			$virtualColumn[0] = strtolower($virtualColumn[0]);
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-		}
-		return parent::__call($name, $params);
 	}
 
 } // BaseAutodiscoveryJob

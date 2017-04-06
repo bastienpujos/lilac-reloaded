@@ -1,31 +1,41 @@
 <?php
 
-/**
- * This file is part of the Propel package.
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+/*
+ *  $Id: DBSQLite.php 989 2008-03-11 14:29:30Z heltem $
  *
- * @license    MIT License
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the LGPL. For more information please see
+ * <http://propel.phpdb.org>.
  */
 
 /**
  * This is used in order to connect to a SQLite database.
  *
  * @author     Hans Lellelid <hans@xmpl.org>
- * @version    $Revision: 2295 $
- * @package    propel.runtime.adapter
+ * @version    $Revision: 989 $
+ * @package    propel.adapter
  */
-class DBSQLite extends DBAdapter
-{
+class DBSQLite extends DBAdapter {
 
 	/**
 	 * For SQLite this method has no effect, since SQLite doesn't support specifying a character
 	 * set (or, another way to look at it, it doesn't require a single character set per DB).
 	 *
-	 * @param     PDO     $con  A PDO connection instance.
-	 * @param     string  $charset  The charset encoding.
-	 *
-	 * @throws    PropelException If the specified charset doesn't match sqlite_libencoding()
+	 * @param      PDO   A PDO connection instance.
+	 * @param      string The charset encoding.
+	 * @throws     PropelException If the specified charset doesn't match sqlite_libencoding()
 	 */
 	public function setCharset(PDO $con, $charset)
 	{
@@ -34,8 +44,8 @@ class DBSQLite extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param     string  $in  The string to transform to upper case.
-	 * @return    string  The upper case string.
+	 * @param      in The string to transform to upper case.
+	 * @return     The upper case string.
 	 */
 	public function toUpperCase($in)
 	{
@@ -45,8 +55,8 @@ class DBSQLite extends DBAdapter
 	/**
 	 * This method is used to ignore case.
 	 *
-	 * @param     string  $in  The string whose case to ignore.
-	 * @return    string  The string in a case that can be ignored.
+	 * @param      in The string whose case to ignore.
+	 * @return     The string in a case that can be ignored.
 	 */
 	public function ignoreCase($in)
 	{
@@ -56,10 +66,9 @@ class DBSQLite extends DBAdapter
 	/**
 	 * Returns SQL which concatenates the second string to the first.
 	 *
-	 * @param     string  $s1  String to concatenate.
-	 * @param     string  $s2  String to append.
-	 *
-	 * @return    string
+	 * @param      string String to concatenate.
+	 * @param      string String to append.
+	 * @return     string
 	 */
 	public function concatString($s1, $s2)
 	{
@@ -69,11 +78,10 @@ class DBSQLite extends DBAdapter
 	/**
 	 * Returns SQL which extracts a substring.
 	 *
-	 * @param     string   $s  String to extract from.
-	 * @param     integer  $pos  Offset to start from.
-	 * @param     integer  $len  Number of characters to extract.
-	 *
-	 * @return    string
+	 * @param      string String to extract from.
+	 * @param      int Offset to start from.
+	 * @param      int Number of characters to extract.
+	 * @return     string
 	 */
 	public function subString($s, $pos, $len)
 	{
@@ -83,8 +91,8 @@ class DBSQLite extends DBAdapter
 	/**
 	 * Returns SQL which calculates the length (in chars) of a string.
 	 *
-	 * @param     string  $s  String to calculate length of.
-	 * @return    string
+	 * @param      string String to calculate length of.
+	 * @return     string
 	 */
 	public function strLength($s)
 	{
@@ -93,9 +101,6 @@ class DBSQLite extends DBAdapter
 
 	/**
 	 * @see        DBAdapter::quoteIdentifier()
-	 *
-	 * @param     string  $text
-	 * @return    string
 	 */
 	public function quoteIdentifier($text)
 	{
@@ -104,10 +109,6 @@ class DBSQLite extends DBAdapter
 
 	/**
 	 * @see        DBAdapter::applyLimit()
-	 *
-	 * @param     string   $sql
-	 * @param     integer  $offset
-	 * @param     integer  $limit
 	 */
 	public function applyLimit(&$sql, $offset, $limit)
 	{
@@ -118,12 +119,9 @@ class DBSQLite extends DBAdapter
 		}
 	}
 
-	/**
-	 * @param     string  $seed
-	 * @return    string
-	 */
-	public function random($seed = NULL)
+	public function random($seed=NULL)
 	{
 		return 'random()';
 	}
+
 }

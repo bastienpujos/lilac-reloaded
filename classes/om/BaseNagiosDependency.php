@@ -1,20 +1,14 @@
 <?php
 
-
 /**
  * Base class that represents a row from the 'nagios_dependency' table.
  *
  * Nagios Dependency
  *
- * @package    propel.generator..om
+ * @package    .om
  */
-abstract class BaseNagiosDependency extends BaseObject  implements Persistent
-{
+abstract class BaseNagiosDependency extends BaseObject  implements Persistent {
 
-	/**
-	 * Peer class name
-	 */
-	const PEER = 'NagiosDependencyPeer';
 
 	/**
 	 * The Peer class.
@@ -210,6 +204,11 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	protected $collNagiosDependencyTargets;
 
 	/**
+	 * @var        Criteria The criteria used to select the current contents of collNagiosDependencyTargets.
+	 */
+	private $lastNagiosDependencyTargetCriteria = null;
+
+	/**
 	 * Flag to prevent endless save loop, if this object is referenced
 	 * by another object which falls in this transaction.
 	 * @var        boolean
@@ -222,6 +221,26 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	 * @var        boolean
 	 */
 	protected $alreadyInValidation = false;
+
+	/**
+	 * Initializes internal state of BaseNagiosDependency object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
 
 	/**
 	 * Get the [id] column value.
@@ -634,23 +653,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setName()
 
 	/**
-	 * Sets the value of the [execution_failure_criteria_up] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [execution_failure_criteria_up] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setExecutionFailureCriteriaUp($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->execution_failure_criteria_up !== $v) {
@@ -662,23 +673,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setExecutionFailureCriteriaUp()
 
 	/**
-	 * Sets the value of the [execution_failure_criteria_down] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [execution_failure_criteria_down] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setExecutionFailureCriteriaDown($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->execution_failure_criteria_down !== $v) {
@@ -690,23 +693,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setExecutionFailureCriteriaDown()
 
 	/**
-	 * Sets the value of the [execution_failure_criteria_unreachable] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [execution_failure_criteria_unreachable] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setExecutionFailureCriteriaUnreachable($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->execution_failure_criteria_unreachable !== $v) {
@@ -718,23 +713,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setExecutionFailureCriteriaUnreachable()
 
 	/**
-	 * Sets the value of the [execution_failure_criteria_pending] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [execution_failure_criteria_pending] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setExecutionFailureCriteriaPending($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->execution_failure_criteria_pending !== $v) {
@@ -746,23 +733,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setExecutionFailureCriteriaPending()
 
 	/**
-	 * Sets the value of the [execution_failure_criteria_ok] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [execution_failure_criteria_ok] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setExecutionFailureCriteriaOk($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->execution_failure_criteria_ok !== $v) {
@@ -774,23 +753,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setExecutionFailureCriteriaOk()
 
 	/**
-	 * Sets the value of the [execution_failure_criteria_warning] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [execution_failure_criteria_warning] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setExecutionFailureCriteriaWarning($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->execution_failure_criteria_warning !== $v) {
@@ -802,23 +773,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setExecutionFailureCriteriaWarning()
 
 	/**
-	 * Sets the value of the [execution_failure_criteria_unknown] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [execution_failure_criteria_unknown] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setExecutionFailureCriteriaUnknown($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->execution_failure_criteria_unknown !== $v) {
@@ -830,23 +793,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setExecutionFailureCriteriaUnknown()
 
 	/**
-	 * Sets the value of the [execution_failure_criteria_critical] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [execution_failure_criteria_critical] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setExecutionFailureCriteriaCritical($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->execution_failure_criteria_critical !== $v) {
@@ -858,23 +813,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setExecutionFailureCriteriaCritical()
 
 	/**
-	 * Sets the value of the [notification_failure_criteria_ok] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_failure_criteria_ok] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setNotificationFailureCriteriaOk($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_failure_criteria_ok !== $v) {
@@ -886,23 +833,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setNotificationFailureCriteriaOk()
 
 	/**
-	 * Sets the value of the [notification_failure_criteria_warning] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_failure_criteria_warning] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setNotificationFailureCriteriaWarning($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_failure_criteria_warning !== $v) {
@@ -914,23 +853,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setNotificationFailureCriteriaWarning()
 
 	/**
-	 * Sets the value of the [notification_failure_criteria_unknown] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_failure_criteria_unknown] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setNotificationFailureCriteriaUnknown($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_failure_criteria_unknown !== $v) {
@@ -942,23 +873,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setNotificationFailureCriteriaUnknown()
 
 	/**
-	 * Sets the value of the [notification_failure_criteria_critical] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_failure_criteria_critical] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setNotificationFailureCriteriaCritical($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_failure_criteria_critical !== $v) {
@@ -970,23 +893,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setNotificationFailureCriteriaCritical()
 
 	/**
-	 * Sets the value of the [notification_failure_criteria_pending] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_failure_criteria_pending] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setNotificationFailureCriteriaPending($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_failure_criteria_pending !== $v) {
@@ -998,23 +913,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setNotificationFailureCriteriaPending()
 
 	/**
-	 * Sets the value of the [notification_failure_criteria_up] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_failure_criteria_up] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setNotificationFailureCriteriaUp($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_failure_criteria_up !== $v) {
@@ -1026,23 +933,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setNotificationFailureCriteriaUp()
 
 	/**
-	 * Sets the value of the [notification_failure_criteria_down] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_failure_criteria_down] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setNotificationFailureCriteriaDown($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_failure_criteria_down !== $v) {
@@ -1054,23 +953,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setNotificationFailureCriteriaDown()
 
 	/**
-	 * Sets the value of the [notification_failure_criteria_unreachable] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_failure_criteria_unreachable] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setNotificationFailureCriteriaUnreachable($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_failure_criteria_unreachable !== $v) {
@@ -1082,23 +973,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	} // setNotificationFailureCriteriaUnreachable()
 
 	/**
-	 * Sets the value of the [inherits_parent] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [inherits_parent] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosDependency The current object (for fluent API support)
 	 */
 	public function setInheritsParent($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->inherits_parent !== $v) {
@@ -1143,6 +1026,11 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	 */
 	public function hasOnlyDefaultValues()
 	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
 		// otherwise, everything was equal, so return TRUE
 		return true;
 	} // hasOnlyDefaultValues()
@@ -1198,7 +1086,8 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 25; // 25 = NagiosDependencyPeer::NUM_HYDRATE_COLUMNS.
+			// FIXME - using NUM_COLUMNS may be clearer.
+			return $startcol + 25; // 25 = NagiosDependencyPeer::NUM_COLUMNS - NagiosDependencyPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating NagiosDependency object", $e);
@@ -1285,6 +1174,7 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 			$this->aNagiosHostgroup = null;
 			$this->aNagiosTimeperiod = null;
 			$this->collNagiosDependencyTargets = null;
+			$this->lastNagiosDependencyTargetCriteria = null;
 
 		} // if (deep)
 	}
@@ -1307,20 +1197,12 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosDependencyPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
 		try {
-			$ret = $this->preDelete($con);
-			if ($ret) {
-				NagiosDependencyQuery::create()
-					->filterByPrimaryKey($this->getPrimaryKey())
-					->delete($con);
-				$this->postDelete($con);
-				$con->commit();
-				$this->setDeleted(true);
-			} else {
-				$con->commit();
-			}
+			NagiosDependencyPeer::doDelete($this, $con);
+			$this->setDeleted(true);
+			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollBack();
 			throw $e;
@@ -1349,29 +1231,12 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosDependencyPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
-		$isInsert = $this->isNew();
 		try {
-			$ret = $this->preSave($con);
-			if ($isInsert) {
-				$ret = $ret && $this->preInsert($con);
-			} else {
-				$ret = $ret && $this->preUpdate($con);
-			}
-			if ($ret) {
-				$affectedRows = $this->doSave($con);
-				if ($isInsert) {
-					$this->postInsert($con);
-				} else {
-					$this->postUpdate($con);
-				}
-				$this->postSave($con);
-				NagiosDependencyPeer::addInstanceToPool($this);
-			} else {
-				$affectedRows = 0;
-			}
+			$affectedRows = $this->doSave($con);
 			$con->commit();
+			NagiosDependencyPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollBack();
@@ -1450,14 +1315,13 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(NagiosDependencyPeer::ID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.NagiosDependencyPeer::ID.')');
-					}
+					$pk = NagiosDependencyPeer::doInsert($this, $con);
+					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
+										 // should always be true here (even though technically
+										 // BasePeer::doInsert() can insert multiple rows).
 
-					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows += 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
+
 					$this->setNew(false);
 				} else {
 					$affectedRows += NagiosDependencyPeer::doUpdate($this, $con);
@@ -1715,21 +1579,13 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param     string  $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-	 *                    Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
-	 *
-	 * @return    array an associative array containing the field names (as keys) and field values
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
+	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
-		if (isset($alreadyDumpedObjects['NagiosDependency'][$this->getPrimaryKey()])) {
-			return '*RECURSION*';
-		}
-		$alreadyDumpedObjects['NagiosDependency'][$this->getPrimaryKey()] = true;
 		$keys = NagiosDependencyPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
@@ -1758,29 +1614,6 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 			$keys[23] => $this->getInheritsParent(),
 			$keys[24] => $this->getDependencyPeriod(),
 		);
-		if ($includeForeignObjects) {
-			if (null !== $this->aNagiosHostTemplate) {
-				$result['NagiosHostTemplate'] = $this->aNagiosHostTemplate->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHost) {
-				$result['NagiosHost'] = $this->aNagiosHost->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosServiceTemplate) {
-				$result['NagiosServiceTemplate'] = $this->aNagiosServiceTemplate->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosService) {
-				$result['NagiosService'] = $this->aNagiosService->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHostgroup) {
-				$result['NagiosHostgroup'] = $this->aNagiosHostgroup->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosTimeperiod) {
-				$result['NagiosTimeperiod'] = $this->aNagiosTimeperiod->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->collNagiosDependencyTargets) {
-				$result['NagiosDependencyTargets'] = $this->collNagiosDependencyTargets->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-		}
 		return $result;
 	}
 
@@ -1986,6 +1819,7 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	public function buildPkeyCriteria()
 	{
 		$criteria = new Criteria(NagiosDependencyPeer::DATABASE_NAME);
+
 		$criteria->add(NagiosDependencyPeer::ID, $this->id);
 
 		return $criteria;
@@ -2012,15 +1846,6 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Returns true if the primary key for this object is null.
-	 * @return     boolean
-	 */
-	public function isPrimaryKeyNull()
-	{
-		return null === $this->getId();
-	}
-
-	/**
 	 * Sets contents of passed object to values from current object.
 	 *
 	 * If desired, this method can also make copies of all associated (fkey referrers)
@@ -2028,35 +1853,59 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	 *
 	 * @param      object $copyObj An object of NagiosDependency (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
 	 * @throws     PropelException
 	 */
-	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
+	public function copyInto($copyObj, $deepCopy = false)
 	{
-		$copyObj->setHostTemplate($this->getHostTemplate());
-		$copyObj->setHost($this->getHost());
-		$copyObj->setServiceTemplate($this->getServiceTemplate());
-		$copyObj->setService($this->getService());
-		$copyObj->setHostgroup($this->getHostgroup());
-		$copyObj->setName($this->getName());
-		$copyObj->setExecutionFailureCriteriaUp($this->getExecutionFailureCriteriaUp());
-		$copyObj->setExecutionFailureCriteriaDown($this->getExecutionFailureCriteriaDown());
-		$copyObj->setExecutionFailureCriteriaUnreachable($this->getExecutionFailureCriteriaUnreachable());
-		$copyObj->setExecutionFailureCriteriaPending($this->getExecutionFailureCriteriaPending());
-		$copyObj->setExecutionFailureCriteriaOk($this->getExecutionFailureCriteriaOk());
-		$copyObj->setExecutionFailureCriteriaWarning($this->getExecutionFailureCriteriaWarning());
-		$copyObj->setExecutionFailureCriteriaUnknown($this->getExecutionFailureCriteriaUnknown());
-		$copyObj->setExecutionFailureCriteriaCritical($this->getExecutionFailureCriteriaCritical());
-		$copyObj->setNotificationFailureCriteriaOk($this->getNotificationFailureCriteriaOk());
-		$copyObj->setNotificationFailureCriteriaWarning($this->getNotificationFailureCriteriaWarning());
-		$copyObj->setNotificationFailureCriteriaUnknown($this->getNotificationFailureCriteriaUnknown());
-		$copyObj->setNotificationFailureCriteriaCritical($this->getNotificationFailureCriteriaCritical());
-		$copyObj->setNotificationFailureCriteriaPending($this->getNotificationFailureCriteriaPending());
-		$copyObj->setNotificationFailureCriteriaUp($this->getNotificationFailureCriteriaUp());
-		$copyObj->setNotificationFailureCriteriaDown($this->getNotificationFailureCriteriaDown());
-		$copyObj->setNotificationFailureCriteriaUnreachable($this->getNotificationFailureCriteriaUnreachable());
-		$copyObj->setInheritsParent($this->getInheritsParent());
-		$copyObj->setDependencyPeriod($this->getDependencyPeriod());
+
+		$copyObj->setHostTemplate($this->host_template);
+
+		$copyObj->setHost($this->host);
+
+		$copyObj->setServiceTemplate($this->service_template);
+
+		$copyObj->setService($this->service);
+
+		$copyObj->setHostgroup($this->hostgroup);
+
+		$copyObj->setName($this->name);
+
+		$copyObj->setExecutionFailureCriteriaUp($this->execution_failure_criteria_up);
+
+		$copyObj->setExecutionFailureCriteriaDown($this->execution_failure_criteria_down);
+
+		$copyObj->setExecutionFailureCriteriaUnreachable($this->execution_failure_criteria_unreachable);
+
+		$copyObj->setExecutionFailureCriteriaPending($this->execution_failure_criteria_pending);
+
+		$copyObj->setExecutionFailureCriteriaOk($this->execution_failure_criteria_ok);
+
+		$copyObj->setExecutionFailureCriteriaWarning($this->execution_failure_criteria_warning);
+
+		$copyObj->setExecutionFailureCriteriaUnknown($this->execution_failure_criteria_unknown);
+
+		$copyObj->setExecutionFailureCriteriaCritical($this->execution_failure_criteria_critical);
+
+		$copyObj->setNotificationFailureCriteriaOk($this->notification_failure_criteria_ok);
+
+		$copyObj->setNotificationFailureCriteriaWarning($this->notification_failure_criteria_warning);
+
+		$copyObj->setNotificationFailureCriteriaUnknown($this->notification_failure_criteria_unknown);
+
+		$copyObj->setNotificationFailureCriteriaCritical($this->notification_failure_criteria_critical);
+
+		$copyObj->setNotificationFailureCriteriaPending($this->notification_failure_criteria_pending);
+
+		$copyObj->setNotificationFailureCriteriaUp($this->notification_failure_criteria_up);
+
+		$copyObj->setNotificationFailureCriteriaDown($this->notification_failure_criteria_down);
+
+		$copyObj->setNotificationFailureCriteriaUnreachable($this->notification_failure_criteria_unreachable);
+
+		$copyObj->setInheritsParent($this->inherits_parent);
+
+		$copyObj->setDependencyPeriod($this->dependency_period);
+
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -2071,10 +1920,11 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 
 		} // if ($deepCopy)
 
-		if ($makeNew) {
-			$copyObj->setNew(true);
-			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
-		}
+
+		$copyObj->setNew(true);
+
+		$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+
 	}
 
 	/**
@@ -2152,13 +2002,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	public function getNagiosHostTemplate(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostTemplate === null && ($this->host_template !== null)) {
-			$this->aNagiosHostTemplate = NagiosHostTemplateQuery::create()->findPk($this->host_template, $con);
+			$c = new Criteria(NagiosHostTemplatePeer::DATABASE_NAME);
+			$c->add(NagiosHostTemplatePeer::ID, $this->host_template);
+			$this->aNagiosHostTemplate = NagiosHostTemplatePeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostTemplate->addNagiosDependencys($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostTemplate->addNagiosDependencys($this);
 			 */
 		}
 		return $this->aNagiosHostTemplate;
@@ -2201,13 +2053,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	public function getNagiosHost(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHost === null && ($this->host !== null)) {
-			$this->aNagiosHost = NagiosHostQuery::create()->findPk($this->host, $con);
+			$c = new Criteria(NagiosHostPeer::DATABASE_NAME);
+			$c->add(NagiosHostPeer::ID, $this->host);
+			$this->aNagiosHost = NagiosHostPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHost->addNagiosDependencys($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHost->addNagiosDependencys($this);
 			 */
 		}
 		return $this->aNagiosHost;
@@ -2250,13 +2104,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	public function getNagiosServiceTemplate(PropelPDO $con = null)
 	{
 		if ($this->aNagiosServiceTemplate === null && ($this->service_template !== null)) {
-			$this->aNagiosServiceTemplate = NagiosServiceTemplateQuery::create()->findPk($this->service_template, $con);
+			$c = new Criteria(NagiosServiceTemplatePeer::DATABASE_NAME);
+			$c->add(NagiosServiceTemplatePeer::ID, $this->service_template);
+			$this->aNagiosServiceTemplate = NagiosServiceTemplatePeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosServiceTemplate->addNagiosDependencys($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosServiceTemplate->addNagiosDependencys($this);
 			 */
 		}
 		return $this->aNagiosServiceTemplate;
@@ -2299,13 +2155,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	public function getNagiosService(PropelPDO $con = null)
 	{
 		if ($this->aNagiosService === null && ($this->service !== null)) {
-			$this->aNagiosService = NagiosServiceQuery::create()->findPk($this->service, $con);
+			$c = new Criteria(NagiosServicePeer::DATABASE_NAME);
+			$c->add(NagiosServicePeer::ID, $this->service);
+			$this->aNagiosService = NagiosServicePeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosService->addNagiosDependencys($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosService->addNagiosDependencys($this);
 			 */
 		}
 		return $this->aNagiosService;
@@ -2348,13 +2206,15 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	public function getNagiosHostgroup(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostgroup === null && ($this->hostgroup !== null)) {
-			$this->aNagiosHostgroup = NagiosHostgroupQuery::create()->findPk($this->hostgroup, $con);
+			$c = new Criteria(NagiosHostgroupPeer::DATABASE_NAME);
+			$c->add(NagiosHostgroupPeer::ID, $this->hostgroup);
+			$this->aNagiosHostgroup = NagiosHostgroupPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostgroup->addNagiosDependencys($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostgroup->addNagiosDependencys($this);
 			 */
 		}
 		return $this->aNagiosHostgroup;
@@ -2397,36 +2257,22 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	public function getNagiosTimeperiod(PropelPDO $con = null)
 	{
 		if ($this->aNagiosTimeperiod === null && ($this->dependency_period !== null)) {
-			$this->aNagiosTimeperiod = NagiosTimeperiodQuery::create()->findPk($this->dependency_period, $con);
+			$c = new Criteria(NagiosTimeperiodPeer::DATABASE_NAME);
+			$c->add(NagiosTimeperiodPeer::ID, $this->dependency_period);
+			$this->aNagiosTimeperiod = NagiosTimeperiodPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosTimeperiod->addNagiosDependencys($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosTimeperiod->addNagiosDependencys($this);
 			 */
 		}
 		return $this->aNagiosTimeperiod;
 	}
 
-
 	/**
-	 * Initializes a collection based on the name of a relation.
-	 * Avoids crafting an 'init[$relationName]s' method name 
-	 * that wouldn't work when StandardEnglishPluralizer is used.
-	 *
-	 * @param      string $relationName The name of the relation to initialize
-	 * @return     void
-	 */
-	public function initRelation($relationName)
-	{
-		if ('NagiosDependencyTarget' == $relationName) {
-			return $this->initNagiosDependencyTargets();
-		}
-	}
-
-	/**
-	 * Clears out the collNagiosDependencyTargets collection
+	 * Clears out the collNagiosDependencyTargets collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -2440,56 +2286,69 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosDependencyTargets collection.
+	 * Initializes the collNagiosDependencyTargets collection (array).
 	 *
 	 * By default this just sets the collNagiosDependencyTargets collection to an empty array (like clearcollNagiosDependencyTargets());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosDependencyTargets($overrideExisting = true)
+	public function initNagiosDependencyTargets()
 	{
-		if (null !== $this->collNagiosDependencyTargets && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosDependencyTargets = new PropelObjectCollection();
-		$this->collNagiosDependencyTargets->setModel('NagiosDependencyTarget');
+		$this->collNagiosDependencyTargets = array();
 	}
 
 	/**
 	 * Gets an array of NagiosDependencyTarget objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosDependency is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosDependency has previously been saved, it will retrieve
+	 * related NagiosDependencyTargets from storage. If this NagiosDependency is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosDependencyTarget[] List of NagiosDependencyTarget objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosDependencyTarget[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosDependencyTargets($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosDependencyTargets || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosDependencyTargets) {
-				// return empty collection
-				$this->initNagiosDependencyTargets();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosDependencyPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosDependencyTargets = array();
 			} else {
-				$collNagiosDependencyTargets = NagiosDependencyTargetQuery::create(null, $criteria)
-					->filterByNagiosDependency($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosDependencyTargets;
+
+				$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+				NagiosDependencyTargetPeer::addSelectColumns($criteria);
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+				NagiosDependencyTargetPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+					$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosDependencyTargets = $collNagiosDependencyTargets;
 			}
 		}
+		$this->lastNagiosDependencyTargetCriteria = $criteria;
 		return $this->collNagiosDependencyTargets;
 	}
 
@@ -2504,21 +2363,47 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	 */
 	public function countNagiosDependencyTargets(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosDependencyTargets || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosDependencyTargets) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosDependencyPeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosDependencyTargetQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosDependency($this)
-					->count($con);
+
+				$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+				$count = NagiosDependencyTargetPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosDependencyTargets);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+				if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+					$count = NagiosDependencyTargetPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosDependencyTargets);
+				}
+			} else {
+				$count = count($this->collNagiosDependencyTargets);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -2534,8 +2419,8 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 		if ($this->collNagiosDependencyTargets === null) {
 			$this->initNagiosDependencyTargets();
 		}
-		if (!$this->collNagiosDependencyTargets->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosDependencyTargets[]= $l;
+		if (!in_array($l, $this->collNagiosDependencyTargets, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosDependencyTargets, $l);
 			$l->setNagiosDependency($this);
 		}
 	}
@@ -2551,18 +2436,40 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosDependency.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependencyTarget[] List of NagiosDependencyTarget objects
 	 */
 	public function getNagiosDependencyTargetsJoinNagiosHost($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyTargetQuery::create(null, $criteria);
-		$query->joinWith('NagiosHost', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosDependencyPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencyTargets($query, $con);
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencyTargets = array();
+			} else {
+
+				$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+			if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyTargetCriteria = $criteria;
+
+		return $this->collNagiosDependencyTargets;
 	}
 
 
@@ -2576,18 +2483,40 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosDependency.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependencyTarget[] List of NagiosDependencyTarget objects
 	 */
 	public function getNagiosDependencyTargetsJoinNagiosService($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyTargetQuery::create(null, $criteria);
-		$query->joinWith('NagiosService', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosDependencyPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencyTargets($query, $con);
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencyTargets = array();
+			} else {
+
+				$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosService($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+			if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosService($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyTargetCriteria = $criteria;
+
+		return $this->collNagiosDependencyTargets;
 	}
 
 
@@ -2601,116 +2530,68 @@ abstract class BaseNagiosDependency extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosDependency.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependencyTarget[] List of NagiosDependencyTarget objects
 	 */
 	public function getNagiosDependencyTargetsJoinNagiosHostgroup($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyTargetQuery::create(null, $criteria);
-		$query->joinWith('NagiosHostgroup', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosDependencyPeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencyTargets($query, $con);
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencyTargets = array();
+			} else {
+
+				$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosHostgroup($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyTargetPeer::DEPENDENCY, $this->id);
+
+			if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosHostgroup($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyTargetCriteria = $criteria;
+
+		return $this->collNagiosDependencyTargets;
 	}
 
 	/**
-	 * Clears the current object and sets all attributes to their default values
-	 */
-	public function clear()
-	{
-		$this->id = null;
-		$this->host_template = null;
-		$this->host = null;
-		$this->service_template = null;
-		$this->service = null;
-		$this->hostgroup = null;
-		$this->name = null;
-		$this->execution_failure_criteria_up = null;
-		$this->execution_failure_criteria_down = null;
-		$this->execution_failure_criteria_unreachable = null;
-		$this->execution_failure_criteria_pending = null;
-		$this->execution_failure_criteria_ok = null;
-		$this->execution_failure_criteria_warning = null;
-		$this->execution_failure_criteria_unknown = null;
-		$this->execution_failure_criteria_critical = null;
-		$this->notification_failure_criteria_ok = null;
-		$this->notification_failure_criteria_warning = null;
-		$this->notification_failure_criteria_unknown = null;
-		$this->notification_failure_criteria_critical = null;
-		$this->notification_failure_criteria_pending = null;
-		$this->notification_failure_criteria_up = null;
-		$this->notification_failure_criteria_down = null;
-		$this->notification_failure_criteria_unreachable = null;
-		$this->inherits_parent = null;
-		$this->dependency_period = null;
-		$this->alreadyInSave = false;
-		$this->alreadyInValidation = false;
-		$this->clearAllReferences();
-		$this->resetModified();
-		$this->setNew(true);
-		$this->setDeleted(false);
-	}
-
-	/**
-	 * Resets all references to other model objects or collections of model objects.
+	 * Resets all collections of referencing foreign keys.
 	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect
-	 * objects with circular references (even in PHP 5.3). This is currently necessary
-	 * when using Propel in certain daemon or large-volumne/high-memory operations.
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
 	 *
-	 * @param      boolean $deep Whether to also clear the references on all referrer objects.
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
 	 */
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
 			if ($this->collNagiosDependencyTargets) {
-				foreach ($this->collNagiosDependencyTargets as $o) {
+				foreach ((array) $this->collNagiosDependencyTargets as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 		} // if ($deep)
 
-		if ($this->collNagiosDependencyTargets instanceof PropelCollection) {
-			$this->collNagiosDependencyTargets->clearIterator();
-		}
 		$this->collNagiosDependencyTargets = null;
-		$this->aNagiosHostTemplate = null;
-		$this->aNagiosHost = null;
-		$this->aNagiosServiceTemplate = null;
-		$this->aNagiosService = null;
-		$this->aNagiosHostgroup = null;
-		$this->aNagiosTimeperiod = null;
-	}
-
-	/**
-	 * Return the string representation of this object
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string) $this->exportTo(NagiosDependencyPeer::DEFAULT_STRING_FORMAT);
-	}
-
-	/**
-	 * Catches calls to virtual methods
-	 */
-	public function __call($name, $params)
-	{
-		if (preg_match('/get(\w+)/', $name, $matches)) {
-			$virtualColumn = $matches[1];
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-			// no lcfirst in php<5.3...
-			$virtualColumn[0] = strtolower($virtualColumn[0]);
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-		}
-		return parent::__call($name, $params);
+			$this->aNagiosHostTemplate = null;
+			$this->aNagiosHost = null;
+			$this->aNagiosServiceTemplate = null;
+			$this->aNagiosService = null;
+			$this->aNagiosHostgroup = null;
+			$this->aNagiosTimeperiod = null;
 	}
 
 } // BaseNagiosDependency

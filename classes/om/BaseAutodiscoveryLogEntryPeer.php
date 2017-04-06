@@ -1,12 +1,11 @@
 <?php
 
-
 /**
  * Base static class for performing query and update operations on the 'autodiscovery_log_entry' table.
  *
  * Export Job Entry
  *
- * @package    propel.generator..om
+ * @package    .om
  */
 abstract class BaseAutodiscoveryLogEntryPeer {
 
@@ -16,23 +15,14 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	/** the table name for this class */
 	const TABLE_NAME = 'autodiscovery_log_entry';
 
-	/** the related Propel class for this table */
-	const OM_CLASS = 'AutodiscoveryLogEntry';
-
 	/** A class that can be returned by this peer. */
 	const CLASS_DEFAULT = 'AutodiscoveryLogEntry';
 
-	/** the related TableMap class for this table */
-	const TM_CLASS = 'AutodiscoveryLogEntryTableMap';
-	
 	/** The total number of columns. */
 	const NUM_COLUMNS = 5;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
-
-	/** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-	const NUM_HYDRATE_COLUMNS = 5;
 
 	/** the column name for the ID field */
 	const ID = 'autodiscovery_log_entry.ID';
@@ -49,9 +39,6 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	/** the column name for the TYPE field */
 	const TYPE = 'autodiscovery_log_entry.TYPE';
 
-	/** The default string format for model objects of the related table **/
-	const DEFAULT_STRING_FORMAT = 'YAML';
-	
 	/**
 	 * An identiy map to hold any loaded instances of AutodiscoveryLogEntry objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -60,6 +47,11 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	 */
 	public static $instances = array();
 
+	/**
+	 * The MapBuilder instance for this peer.
+	 * @var        MapBuilder
+	 */
+	private static $mapBuilder = null;
 
 	/**
 	 * holds an array of fieldnames
@@ -67,11 +59,10 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
-	protected static $fieldNames = array (
+	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('Id', 'Job', 'Time', 'Text', 'Type', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'job', 'time', 'text', 'type', ),
 		BasePeer::TYPE_COLNAME => array (self::ID, self::JOB, self::TIME, self::TEXT, self::TYPE, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID', 'JOB', 'TIME', 'TEXT', 'TYPE', ),
 		BasePeer::TYPE_FIELDNAME => array ('id', 'job', 'time', 'text', 'type', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
@@ -82,15 +73,25 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
-	protected static $fieldKeys = array (
+	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Job' => 1, 'Time' => 2, 'Text' => 3, 'Type' => 4, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'job' => 1, 'time' => 2, 'text' => 3, 'type' => 4, ),
 		BasePeer::TYPE_COLNAME => array (self::ID => 0, self::JOB => 1, self::TIME => 2, self::TEXT => 3, self::TYPE => 4, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'JOB' => 1, 'TIME' => 2, 'TEXT' => 3, 'TYPE' => 4, ),
 		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'job' => 1, 'time' => 2, 'text' => 3, 'type' => 4, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
 	);
 
+	/**
+	 * Get a (singleton) instance of the MapBuilder for this peer class.
+	 * @return     MapBuilder The map builder for this peer
+	 */
+	public static function getMapBuilder()
+	{
+		if (self::$mapBuilder === null) {
+			self::$mapBuilder = new AutodiscoveryLogEntryMapBuilder();
+		}
+		return self::$mapBuilder;
+	}
 	/**
 	 * Translates a fieldname to another type
 	 *
@@ -152,26 +153,23 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param      Criteria $criteria object containing the columns to add.
-	 * @param      string   $alias    optional table alias
+	 * @param      criteria object containing the columns to add.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function addSelectColumns(Criteria $criteria, $alias = null)
+	public static function addSelectColumns(Criteria $criteria)
 	{
-		if (null === $alias) {
-			$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::ID);
-			$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::JOB);
-			$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::TIME);
-			$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::TEXT);
-			$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::TYPE);
-		} else {
-			$criteria->addSelectColumn($alias . '.ID');
-			$criteria->addSelectColumn($alias . '.JOB');
-			$criteria->addSelectColumn($alias . '.TIME');
-			$criteria->addSelectColumn($alias . '.TEXT');
-			$criteria->addSelectColumn($alias . '.TYPE');
-		}
+
+		$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::ID);
+
+		$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::JOB);
+
+		$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::TIME);
+
+		$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::TEXT);
+
+		$criteria->addSelectColumn(AutodiscoveryLogEntryPeer::TYPE);
+
 	}
 
 	/**
@@ -218,7 +216,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 		return $count;
 	}
 	/**
-	 * Selects one object from the DB.
+	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      PropelPDO $con
@@ -237,7 +235,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 		return null;
 	}
 	/**
-	 * Selects several row from the DB.
+	 * Method to do selects.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
 	 * @param      PropelPDO $con
@@ -291,7 +289,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	 * @param      AutodiscoveryLogEntry $value A AutodiscoveryLogEntry object.
 	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool($obj, $key = null)
+	public static function addInstanceToPool(AutodiscoveryLogEntry $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
@@ -359,14 +357,6 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	}
 	
 	/**
-	 * Method to invalidate the instance pool of all tables related to autodiscovery_log_entry
-	 * by a foreign key with ON DELETE CASCADE
-	 */
-	public static function clearRelatedInstancePool()
-	{
-	}
-
-	/**
 	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
 	 *
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
@@ -379,26 +369,12 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol] === null) {
+		if ($row[$startcol + 0] === null) {
 			return null;
 		}
-		return (string) $row[$startcol];
+		return (string) $row[$startcol + 0];
 	}
 
-	/**
-	 * Retrieves the primary key from the DB resultset row 
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, an array of the primary key columns will be returned.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @return     mixed The primary key of the row
-	 */
-	public static function getPrimaryKeyFromRow($row, $startcol = 0)
-	{
-		return (int) $row[$startcol];
-	}
-	
 	/**
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
@@ -411,16 +387,18 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = AutodiscoveryLogEntryPeer::getOMClass(false);
+		$cls = AutodiscoveryLogEntryPeer::getOMClass();
+		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key = AutodiscoveryLogEntryPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj = AutodiscoveryLogEntryPeer::getInstanceFromPool($key))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj->hydrate($row, 0, true); // rehydrate
 				$results[] = $obj;
 			} else {
+		
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
@@ -430,37 +408,11 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 		$stmt->closeCursor();
 		return $results;
 	}
-	/**
-	 * Populates an object of the default type or an object that inherit from the default.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @return     array (AutodiscoveryLogEntry object, last column rank)
-	 */
-	public static function populateObject($row, $startcol = 0)
-	{
-		$key = AutodiscoveryLogEntryPeer::getPrimaryKeyHashFromRow($row, $startcol);
-		if (null !== ($obj = AutodiscoveryLogEntryPeer::getInstanceFromPool($key))) {
-			// We no longer rehydrate the object, since this can cause data loss.
-			// See http://www.propelorm.org/ticket/509
-			// $obj->hydrate($row, $startcol, true); // rehydrate
-			$col = $startcol + AutodiscoveryLogEntryPeer::NUM_HYDRATE_COLUMNS;
-		} else {
-			$cls = AutodiscoveryLogEntryPeer::OM_CLASS;
-			$obj = new $cls();
-			$col = $obj->hydrate($row, $startcol);
-			AutodiscoveryLogEntryPeer::addInstanceToPool($obj, $key);
-		}
-		return array($obj, $col);
-	}
-
 
 	/**
 	 * Returns the number of rows matching criteria, joining the related AutodiscoveryJob table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -493,8 +445,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 			$con = Propel::getConnection(AutodiscoveryLogEntryPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(AutodiscoveryLogEntryPeer::JOB, AutodiscoveryJobPeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(AutodiscoveryLogEntryPeer::JOB,), array(AutodiscoveryJobPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -509,41 +460,41 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 
 	/**
 	 * Selects a collection of AutodiscoveryLogEntry objects pre-filled with their AutodiscoveryJob objects.
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of AutodiscoveryLogEntry objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAutodiscoveryJob(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAutodiscoveryJob(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		AutodiscoveryLogEntryPeer::addSelectColumns($criteria);
-		$startcol = AutodiscoveryLogEntryPeer::NUM_HYDRATE_COLUMNS;
-		AutodiscoveryJobPeer::addSelectColumns($criteria);
+		AutodiscoveryLogEntryPeer::addSelectColumns($c);
+		$startcol = (AutodiscoveryLogEntryPeer::NUM_COLUMNS - AutodiscoveryLogEntryPeer::NUM_LAZY_LOAD_COLUMNS);
+		AutodiscoveryJobPeer::addSelectColumns($c);
 
-		$criteria->addJoin(AutodiscoveryLogEntryPeer::JOB, AutodiscoveryJobPeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(AutodiscoveryLogEntryPeer::JOB,), array(AutodiscoveryJobPeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = AutodiscoveryLogEntryPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = AutodiscoveryLogEntryPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$cls = AutodiscoveryLogEntryPeer::getOMClass(false);
+				$omClass = AutodiscoveryLogEntryPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				AutodiscoveryLogEntryPeer::addInstanceToPool($obj1, $key1);
@@ -554,8 +505,9 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 				$obj2 = AutodiscoveryJobPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = AutodiscoveryJobPeer::getOMClass(false);
+					$omClass = AutodiscoveryJobPeer::getOMClass();
 
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					AutodiscoveryJobPeer::addInstanceToPool($obj2, $key2);
@@ -576,7 +528,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -609,8 +561,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 			$con = Propel::getConnection(AutodiscoveryLogEntryPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(AutodiscoveryLogEntryPeer::JOB, AutodiscoveryJobPeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(AutodiscoveryLogEntryPeer::JOB,), array(AutodiscoveryJobPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -625,42 +576,42 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	/**
 	 * Selects a collection of AutodiscoveryLogEntry objects pre-filled with all related objects.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of AutodiscoveryLogEntry objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		AutodiscoveryLogEntryPeer::addSelectColumns($criteria);
-		$startcol2 = AutodiscoveryLogEntryPeer::NUM_HYDRATE_COLUMNS;
+		AutodiscoveryLogEntryPeer::addSelectColumns($c);
+		$startcol2 = (AutodiscoveryLogEntryPeer::NUM_COLUMNS - AutodiscoveryLogEntryPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		AutodiscoveryJobPeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + AutodiscoveryJobPeer::NUM_HYDRATE_COLUMNS;
+		AutodiscoveryJobPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (AutodiscoveryJobPeer::NUM_COLUMNS - AutodiscoveryJobPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(AutodiscoveryLogEntryPeer::JOB, AutodiscoveryJobPeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(AutodiscoveryLogEntryPeer::JOB,), array(AutodiscoveryJobPeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = AutodiscoveryLogEntryPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = AutodiscoveryLogEntryPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = AutodiscoveryLogEntryPeer::getOMClass(false);
+				$omClass = AutodiscoveryLogEntryPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				AutodiscoveryLogEntryPeer::addInstanceToPool($obj1, $key1);
@@ -673,8 +624,10 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 				$obj2 = AutodiscoveryJobPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = AutodiscoveryJobPeer::getOMClass(false);
+					$omClass = AutodiscoveryJobPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					AutodiscoveryJobPeer::addInstanceToPool($obj2, $key2);
@@ -703,35 +656,21 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	}
 
 	/**
-	 * Add a TableMap instance to the database for this peer class.
-	 */
-	public static function buildTableMap()
-	{
-	  $dbMap = Propel::getDatabaseMap(BaseAutodiscoveryLogEntryPeer::DATABASE_NAME);
-	  if (!$dbMap->hasTable(BaseAutodiscoveryLogEntryPeer::TABLE_NAME))
-	  {
-	    $dbMap->addTableObject(new AutodiscoveryLogEntryTableMap());
-	  }
-	}
-
-	/**
 	 * The class that the Peer will make instances of.
 	 *
-	 * If $withPrefix is true, the returned path
-	 * uses a dot-path notation which is tranalted into a path
+	 * This uses a dot-path notation which is tranalted into a path
 	 * relative to a location on the PHP include_path.
 	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
 	 *
-	 * @param      boolean $withPrefix Whether or not to return the path with the class name
 	 * @return     string path.to.ClassName
 	 */
-	public static function getOMClass($withPrefix = true)
+	public static function getOMClass()
 	{
-		return $withPrefix ? AutodiscoveryLogEntryPeer::CLASS_DEFAULT : AutodiscoveryLogEntryPeer::OM_CLASS;
+		return AutodiscoveryLogEntryPeer::CLASS_DEFAULT;
 	}
 
 	/**
-	 * Performs an INSERT on the database, given a AutodiscoveryLogEntry or Criteria object.
+	 * Method perform an INSERT on the database, given a AutodiscoveryLogEntry or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or AutodiscoveryLogEntry object containing data that is used to create the INSERT statement.
 	 * @param      PropelPDO $con the PropelPDO connection to use
@@ -774,7 +713,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	}
 
 	/**
-	 * Performs an UPDATE on the database, given a AutodiscoveryLogEntry or Criteria object.
+	 * Method perform an UPDATE on the database, given a AutodiscoveryLogEntry or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or AutodiscoveryLogEntry object containing data that is used to create the UPDATE statement.
 	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -794,12 +733,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 			$criteria = clone $values; // rename for clarity
 
 			$comparison = $criteria->getComparison(AutodiscoveryLogEntryPeer::ID);
-			$value = $criteria->remove(AutodiscoveryLogEntryPeer::ID);
-			if ($value) {
-				$selectCriteria->add(AutodiscoveryLogEntryPeer::ID, $value, $comparison);
-			} else {
-				$selectCriteria->setPrimaryTableName(AutodiscoveryLogEntryPeer::TABLE_NAME);
-			}
+			$selectCriteria->add(AutodiscoveryLogEntryPeer::ID, $criteria->remove(AutodiscoveryLogEntryPeer::ID), $comparison);
 
 		} else { // $values is AutodiscoveryLogEntry object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -813,12 +747,11 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	}
 
 	/**
-	 * Deletes all rows from the autodiscovery_log_entry table.
+	 * Method to DELETE all rows from the autodiscovery_log_entry table.
 	 *
-	 * @param      PropelPDO $con the connection to use
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
-	public static function doDeleteAll(PropelPDO $con = null)
+	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(AutodiscoveryLogEntryPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -828,12 +761,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
-			$affectedRows += BasePeer::doDeleteAll(AutodiscoveryLogEntryPeer::TABLE_NAME, $con, AutodiscoveryLogEntryPeer::DATABASE_NAME);
-			// Because this db requires some delete cascade/set null emulation, we have to
-			// clear the cached instance *after* the emulation has happened (since
-			// instances get re-added by the select statement contained therein).
-			AutodiscoveryLogEntryPeer::clearInstancePool();
-			AutodiscoveryLogEntryPeer::clearRelatedInstancePool();
+			$affectedRows += BasePeer::doDeleteAll(AutodiscoveryLogEntryPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -843,7 +771,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	}
 
 	/**
-	 * Performs a DELETE on the database, given a AutodiscoveryLogEntry or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a AutodiscoveryLogEntry or Criteria object OR a primary key value.
 	 *
 	 * @param      mixed $values Criteria or AutodiscoveryLogEntry object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
@@ -864,18 +792,24 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 			// way of knowing (without running a query) what objects should be invalidated
 			// from the cache based on this Criteria.
 			AutodiscoveryLogEntryPeer::clearInstancePool();
+
 			// rename for clarity
 			$criteria = clone $values;
-		} elseif ($values instanceof AutodiscoveryLogEntry) { // it's a model object
+		} elseif ($values instanceof AutodiscoveryLogEntry) {
 			// invalidate the cache for this single object
 			AutodiscoveryLogEntryPeer::removeInstanceFromPool($values);
 			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
-		} else { // it's a primary key, or an array of pks
+		} else {
+			// it must be the primary key
+
+
+
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(AutodiscoveryLogEntryPeer::ID, (array) $values, Criteria::IN);
-			// invalidate the cache for this object(s)
+
 			foreach ((array) $values as $singleval) {
+				// we can invalidate the cache for this single object
 				AutodiscoveryLogEntryPeer::removeInstanceFromPool($singleval);
 			}
 		}
@@ -891,7 +825,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 			$con->beginTransaction();
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
-			AutodiscoveryLogEntryPeer::clearRelatedInstancePool();
+
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -912,7 +846,7 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate($obj, $cols = null)
+	public static function doValidate(AutodiscoveryLogEntry $obj, $cols = null)
 	{
 		$columns = array();
 
@@ -990,7 +924,14 @@ abstract class BaseAutodiscoveryLogEntryPeer {
 
 } // BaseAutodiscoveryLogEntryPeer
 
-// This is the static code needed to register the TableMap for this table with the main Propel class.
+// This is the static code needed to register the MapBuilder for this table with the main Propel class.
 //
-BaseAutodiscoveryLogEntryPeer::buildTableMap();
+// NOTE: This static code cannot call methods on the AutodiscoveryLogEntryPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the AutodiscoveryLogEntryPeer class:
+//
+// Propel::getDatabaseMap(AutodiscoveryLogEntryPeer::DATABASE_NAME)->addTableBuilder(AutodiscoveryLogEntryPeer::TABLE_NAME, AutodiscoveryLogEntryPeer::getMapBuilder());
+//
+// Doing so will effectively overwrite the registration below.
+
+Propel::getDatabaseMap(BaseAutodiscoveryLogEntryPeer::DATABASE_NAME)->addTableBuilder(BaseAutodiscoveryLogEntryPeer::TABLE_NAME, BaseAutodiscoveryLogEntryPeer::getMapBuilder());
 

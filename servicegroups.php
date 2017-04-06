@@ -22,15 +22,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 Lilac Service Groups Management Page
 */
 include_once('includes/config.inc');
-
 require_once('NagiosServiceGroupMember.php');
 
-// SF BUG# 1449764
-// servicegroup session data not being unset
-// Resolution: 
-// if(!isset($_GET['id']))
-// unset($serviceGroup);
-
+// EoN_Actions
+EoN_Actions_Process("ServiceGroup");
 
 if(!isset($_GET['section']) && isset($_GET['id']))
 	$_GET['section'] = 'general';
@@ -164,13 +159,13 @@ print_header("Service Group Editor");
 						<input type="hidden" name="request" value="modify_servicegroup" />
 						<input type="hidden" name="servicegroup_id" value="<?php echo $_GET['id'];?>">
 
-						<b>Service Group Name:</b> <input type="text" name="servicegroup_name" value="<?php echo $serviceGroup->getName();?>"><br />
+						<b>Service Group Name:</b> <input type="text" name="servicegroup_name" value="<?php echo $serviceGroup->getName();?>">
 						<?php echo $lilac->element_desc("servicegroup_name", "nagios_servicegroups_desc"); ?><br />
 						<br />
 						<b>Description:</b><br />
-						<input type="text" size="80" name="alias" value="<?php echo $serviceGroup->getAlias();?>"><br />
+						<input type="text" size="80" name="alias" value="<?php echo $serviceGroup->getAlias();?>">
 						<?php echo $lilac->element_desc("alias", "nagios_servicegroups_desc"); ?><br />
-						<input type="submit" value="Modify Service Group" />&nbsp;<a href="servicegroups.php?id=<?php echo $_GET['id'];?>">Cancel</a>
+						<input class="btn btn-primary" type="submit" value="Modify Service Group" /> <a class="btn btn-default" href="servicegroups.php?id=<?php echo $_GET['id'];?>">Cancel</a>
 					</form>
 			<?php
 				}
@@ -179,7 +174,7 @@ print_header("Service Group Editor");
 					<b>Service Group Name:</b> <?php echo $serviceGroup->getName();?><br />
 					<b>Description:</b> <?php echo $serviceGroup->getAlias();?><br />
 					<br />
-					[ <a href="servicegroups.php?id=<?php echo $_GET['id'];?>&section=general&edit=1">Edit</a> ]
+					<a class="btn btn-primary" href="servicegroups.php?id=<?php echo $_GET['id'];?>&section=general&edit=1">Edit</a>
 					<?php
 				}
 				?>
@@ -187,7 +182,7 @@ print_header("Service Group Editor");
 			</tr>
 			</table>
 			<br />
-			[ <a href="servicegroups.php?id=<?php echo $_GET['id'];?>&request=delete" onClick="javascript:return confirmDelete();" onClick="javascript:return confirmDelete();">Delete This Service Group</a> ]
+			<a class="btn btn-danger" href="servicegroups.php?id=<?php echo $_GET['id'];?>&request=delete" onClick="javascript:return confirmDelete();" onClick="javascript:return confirmDelete();">Delete This Service Group</a>
 			<?php
 		}
 		if($_GET['section'] == 'extended') {
@@ -203,17 +198,17 @@ print_header("Service Group Editor");
 					?>
 					<form name="command_form" method="post" action="servicegroups.php?id=<?php echo $_GET['id'];?>&section=extended&edit=1">
 						<input type="hidden" name="request" value="modify_servicegroup_extended" />
-						<b>Notes:</b> <input type="text" name="notes" value="<?php echo $serviceGroup->getNotes();?>"><br />
+						<b>Notes:</b> <input type="text" name="notes" value="<?php echo $serviceGroup->getNotes();?>">
 						<?php echo $lilac->element_desc("notes", "nagios_servicegroups_desc"); ?><br />
 						<br />
-						<b>Notes URL:</b> <input type="text" name="notes_url" value="<?php echo $serviceGroup->getNotesUrl();?>"><br />
+						<b>Notes URL:</b> <input type="text" name="notes_url" value="<?php echo $serviceGroup->getNotesUrl();?>">
 						<?php echo $lilac->element_desc("notes", "nagios_servicegroups_desc"); ?><br />
 						<br />
-						<b>Action URL:</b> <input type="text" name="action_url" value="<?php echo $serviceGroup->getActionUrl();?>"><br />
+						<b>Action URL:</b> <input type="text" name="action_url" value="<?php echo $serviceGroup->getActionUrl();?>">
 						<?php echo $lilac->element_desc("notes", "nagios_servicegroups_desc"); ?><br />
 						<br />
 						<br />
-						<input type="submit" value="Modify Host Group Extended Information" />&nbsp; [<a href="servicegroups.php">Cancel</a> ]
+						<input class="btn btn-primary" type="submit" value="Modify Host Group Extended Information" /> <a class="btn btn-default" href="servicegroups.php">Cancel</a>
 					</form>
 					<?php
 				}
@@ -235,7 +230,7 @@ print_header("Service Group Editor");
 					}
 					?>
 					<br />
-					[ <a href="servicegroups.php?id=<?php echo $_GET['id'];?>&section=extended&edit=1">Edit</a> ]
+					<a class="btn btn-primary" href="servicegroups.php?id=<?php echo $_GET['id'];?>&section=extended&edit=1">Edit</a>
 					<?php
 				}
 				?>
@@ -290,7 +285,7 @@ print_header("Service Group Editor");
 							<?php
 						}
 						?>
-						<td height="20" width="80" nowrap="nowrap" class="altLeft">&nbsp;[ <a href="servicegroups.php?id=<?php echo $_GET['id'];?>&section=members&request=delete&member_id=<?php echo $member->getId();?>" onClick="javascript:return confirmDelete();" onClick="javascript:return confirmDelete();">Delete</a> ]</td>
+						<td height="20" width="80" nowrap="nowrap" class="altLeft"><a class="btn btn-danger btn-xs" href="servicegroups.php?id=<?php echo $_GET['id'];?>&section=members&request=delete&member_id=<?php echo $member->getId();?>" onClick="javascript:return confirmDelete();" onClick="javascript:return confirmDelete();">Delete</a></td>
 						<td height="20" class="altRight"><b><?php echo $text;?></b></td>
 						</tr>
 						<?php
@@ -311,37 +306,42 @@ print_header("Service Group Editor");
 	if(!isset($_GET['servicegroup_add'])) {	
 		print_window_header("Service Group Listing", "100%");
 		?>
-		&nbsp;<a class="sublink" href="servicegroups.php?servicegroup_add=1">Add A New Service Group</a><br />
+		<a class="sublink btn btn-success" href="servicegroups.php?servicegroup_add=1">Add A New Service Group</a><br />
 		<br />
 		<?php
 		if($numOfServiceGroups) {
 			?>
+                        <form name="EoN_Actions_Form" method="post">
+                        <?php echo EoN_Actions("ServiceGroup");?>
 			<table width="100%" align="center" cellspacing="0" cellpadding="2" border="0">
 			<tr class="altTop">
 			<td>Group Name</td>
 			<td>Description</td>
+			<td align="center"><a href="#" onClick="checkUncheckAll('EoN_Actions_Checks_ServiceGroup');">ALL</a></td>
 			</tr>
 	
 			<?php
 			for($counter = 0; $counter < $numOfServiceGroups; $counter++) {
 				if($counter % 2) {
 					?>
-					<tr class="altRow1">
+					<tr class="altRow1" id="line<?php echo $counter?>">
 					<?php
 				}
 				else {
 					?>
-					<tr class="altRow2">
+					<tr class="altRow2" id="line<?php echo $counter?>">
 					<?php
 				}
 				?>
-				<td height="20" class="altLeft">&nbsp;<a href="servicegroups.php?id=<?php echo $servicegroups_list[$counter]->getId();?>"><?php echo $servicegroups_list[$counter]->getName();?></a></td>
-				<td height="20" class="altRight"><?php echo $servicegroups_list[$counter]->getAlias();?></td>
+				<td height="20" class="altLeft" onclick="checkLine('line<?php echo $counter?>','check<?php echo $counter?>');">&nbsp;<a href="servicegroups.php?id=<?php echo $servicegroups_list[$counter]->getId();?>"><?php echo $servicegroups_list[$counter]->getName();?></a></td>
+				<td height="20" class="altRight" onclick="checkLine('line<?php echo $counter?>','check<?php echo $counter?>');"><?php echo $servicegroups_list[$counter]->getAlias();?></td>
+                <td align="center"><input type="checkbox" id="check<?php echo $counter?>" class="checkbox" name="EoN_Actions_Checks_ServiceGroup[]" value="<?php echo $servicegroups_list[$counter]->getId();?>" onclick="checkBox('line<?php echo $counter?>','check<?php echo $counter?>');"></td>
 				</tr>
 				<?php
 			}
 			?>
 			</table>
+			</form>
 			<?php
 		}
 		else {
@@ -359,15 +359,15 @@ print_header("Service Group Editor");
 		?>
 		<form name="servicegroup_form" method="post" action="servicegroups.php">
 			<input type="hidden" name="request" value="add_servicegroup" />
-			<b>Service Group Name:</b> <input type="text" name="servicegroup_name" value=""><br />
+			<b>Service Group Name:</b> <input type="text" name="servicegroup_name" value="">
 			<?php echo $lilac->element_desc("servicegroup_name", "nagios_servicegroups_desc"); ?><br />
 			<br />
 			<b>Description:</b><br />
-			<input type="text" size="80" name="alias" value=""><br />
+			<input type="text" size="80" name="alias" value="">
 			<?php echo $lilac->element_desc("alias", "nagios_servicegroups_desc"); ?><br />
 			<br />
 			<br />
-			<input type="submit" value="Add Service Group" /> [ <a href="servicegroups.php">Cancel</a> ]
+			<input class="btn btn-primary" type="submit" value="Add Service Group" /> <a class="btn btn-default" href="servicegroups.php">Cancel</a>
 			</form>
 			<br /><br />
 		<?php

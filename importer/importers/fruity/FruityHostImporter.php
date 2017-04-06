@@ -105,7 +105,7 @@ class FruityHostImporter extends FruityImporter {
 				$job->addNotice("Fruity Host Contact Group Importer: Could not find contact group with name: " . $contactGroupName);
 				continue;
 			}
-			$membership = new NagiosHostContactgroup();
+			$membership = new NagiosHostContactGroup();
 			$membership->setHost($host->getId());
 			$membership->setNagiosContactGroup($contactGroup);
 			$membership->save();
@@ -113,13 +113,13 @@ class FruityHostImporter extends FruityImporter {
 		// Host Extended Information
 		foreach($this->dbConn->query("SELECT * FROM nagios_hosts_extended_info", PDO::FETCH_ASSOC) as $extInfo) {
 			$hostName = $this->getHostNameById($extInfo['host_id']);
-			if(!$hostTemplateName) {
+			if(!$hostName) {
 				$job->addNotice("Fruity Host Extended Info Importer: Could not find host with id " . $extInfo['host_id']);
 				continue;
 			}
 			// Get the host
 			$host = NagiosHostPeer::getByName($hostName);
-			if(!$hostName) {
+			if(!$host) {
 				$job->addNotice("Fruity Host Extended Info Importer: Could not find host with name " . $hostTemplateName);
 				continue;
 			}
@@ -156,7 +156,7 @@ class FruityHostImporter extends FruityImporter {
 				continue;
 			}
 			$hostGroup = NagiosHostGroupPeer::getByName($hostGroupName);
-			if(!$contactGroup) {
+			if(!$hostGroup) {
 				$job->addNotice("Fruity Host Host Group Importer: Could not find host group with name: " . $hostGroupName);
 				continue;
 			}
@@ -232,10 +232,6 @@ class FruityHostImporter extends FruityImporter {
 				$key = "maximum_check_attempts";
 			if($key == "retry_check_interval")
 				$key = "retry_interval";
-
-            if($key == "display_name" && empty($val))
-                $val = "";
-
 			if($key == "check_command") {
 				$name = $this->getCommandNameById($val);
 				if($name) {

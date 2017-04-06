@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 	Filename:	add_host.php
 */
 include_once('includes/config.inc');
+session_start();	//Add a session for the template thing
 
 if(isset($_POST['request']) && $_POST['request'] == 'add_host') {
 	// Check for pre-existing host template with same name
@@ -53,14 +54,53 @@ if(isset($_POST['request']) && $_POST['request'] == 'add_host') {
 			}
 			$tempHost->setAddress($_POST['host_manage']['address']);
 			if(isset($_POST['host_manage']['display_name'])) {
-				$tempHost->setDisplayName($_POST['host_manage']['display_name']);
+				$tempVariable = trim($_POST['host_manage']['display_name']);
+				if ( ! empty($tempVariable) ) {
+					$tempHost->setDisplayName($tempVariable);
+				} else {
+					$tempHost->setDisplayName(null);
+				}
+			} else {
+				$tempHost->setDisplayName(null);
 			}
 			$tempHost->save();
+			//Host is save, now attach the template to it.
+			foreach($_SESSION['templates'] as $pk){
+				$template = NagiosHostTemplatePeer::retrieveByPK($pk);
+				if(!$template) {
+					$error = "That host template is not found.";
+				}
+				else {
+					// We need to get the count of templates already inherited
+					$templateList = $tempHost->getNagiosHostTemplateInheritances();
+					foreach($templateList as $tempTemplate) {
+						if($tempTemplate->getId() == $pk) {
+							$error = "That template already exists in the inheritance chain.";
+						}
+					}
+					if(empty($error)) {
+						$newInheritance = new NagiosHostTemplateInheritance();
+						$newInheritance->setNagiosHost($tempHost);
+						$newInheritance->setNagiosHostTemplateRelatedByTargetTemplate($template);
+						$newInheritance->setOrder(count($templateList));
+						try {
+							$newInheritance->save();
+							$success = "Template added to inheritance chain.";				
+						}
+						catch(Exception $e) {
+							$error = $e->getMessage();
+						}		
+					}
+				}
+			}
+			unset($_SESSION['templates']);	//Kill the Template we just save.
 			header("Location: hosts.php?id=" . $tempHost->getId());
 			die();
 		}
 	}
 }
+
+unset($_SESSION['templates']); //Kill any existing Template
 
 $add_template_list[] = array("host_template_id" => '', "template_name" => "None");
 $lilac->get_host_template_list( $template_list);
@@ -99,7 +139,7 @@ if(isset($_GET['parent_id']) && $_GET['parent_id'] != 0) {
 <tr bgcolor="f0f0f0">
 	<td colspan="2" class="formcell">
 	<b>Host Name:</b><br />
-	<input type="text" size="40" name="host_manage[host_name]" value=""><br />
+	<input type="text" size="40" name="host_manage[host_name]" value="">
 	<?php echo $lilac->element_desc("host_name", "nagios_hosts_desc"); ?><br />
 	<br />
 	</td>
@@ -107,7 +147,7 @@ if(isset($_GET['parent_id']) && $_GET['parent_id'] != 0) {
 <tr bgcolor="eeeeee">
 	<td colspan="2" class="formcell">
 	<b>Host Description:</b><br />
-	<input type="text" size="40" name="host_manage[alias]" value=""><br />
+	<input type="text" size="40" name="host_manage[alias]" value="">
 	<?php echo $lilac->element_desc("alias", "nagios_hosts_desc"); ?><br />
 	<br />
 	</td>
@@ -115,7 +155,7 @@ if(isset($_GET['parent_id']) && $_GET['parent_id'] != 0) {
 <tr bgcolor="f0f0f0">
 	<td colspan="2" class="formcell">
 	<b>Address:</b><br />
-	<input type="text" size="40" name="host_manage[address]" value=""><br />
+	<input type="text" size="40" name="host_manage[address]" value="">
 	<?php echo $lilac->element_desc("address", "nagios_hosts_desc"); ?><br />
 	<br />
 	</td>
@@ -123,15 +163,33 @@ if(isset($_GET['parent_id']) && $_GET['parent_id'] != 0) {
 <tr bgcolor="f0f0f0">
 	<td colspan="2" class="formcell">
 	<b>Display Name (Optional):</b><br />
-	<input type="text" size="40" name="host_manage[display_name]" value=""><br />
+	<input type="text" size="40" name="host_manage[display_name]" value="">
 	<?php echo $lilac->element_desc("display_name", "nagios_hosts_desc"); ?><br />
 	<br />
 	</td>
 </tr>
+<tr bgcolor="f0f0f0">
+	<span id="output"></span>	
+</tr>
 <?php double_pane_form_window_finish(); ?>
-<input type="submit" value="Add Host" />&nbsp;[ <a href="hosts.php">Cancel</a> ]
+<input class="btn btn-primary" type="submit" value="Add Host" /> <a class="btn btn-default" href="hosts.php">Cancel</a>
 <br /><br />
 </form>
+<script type="text/javascript">
+	function appel(id,option) {
+		params = "id="+id+"&option="+option;
+		$.post("add_host_ajax.php", params, result, "html");
+	}
+
+	function result(datas){
+		$("#output").html(datas);
+	}
+
+	function getID() {
+		appel($("select[name='<?php echo 'hostmanage[template_add][template_id]';?>']")[0].value);
+	}
+	appel(null);
+</script>
 
 <?php
 print_window_footer();

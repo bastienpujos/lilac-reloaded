@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header$
+ * $Header: /repository/pear/Log/Log.php,v 1.72 2008/09/05 05:00:39 jon Exp $
  * $Horde: horde/lib/Log.php,v 1.15 2000/06/29 23:39:45 jon Exp $
  *
- * @version $Revision: 310238 $
+ * @version $Revision: 1.72 $
  * @package Log
  */
 
@@ -24,7 +24,6 @@ define('PEAR_LOG_TYPE_SYSTEM',  0); /* Use PHP's system logger */
 define('PEAR_LOG_TYPE_MAIL',    1); /* Use PHP's mail() function */
 define('PEAR_LOG_TYPE_DEBUG',   2); /* Use PHP's debugging connection */
 define('PEAR_LOG_TYPE_FILE',    3); /* Append to a file */
-define('PEAR_LOG_TYPE_SAPI',    4); /* Use the SAPI logging handler */
 
 /**
  * The Log:: class implements both an abstraction for various logging
@@ -86,15 +85,6 @@ class Log
     var $_listeners = array();
 
     /**
-     * Starting depth to use when walking a backtrace in search of the 
-     * function that invoked the log system.
-     *
-     * @var integer
-     * @access protected
-     */
-    var $_backtrace_depth = 0;
-
-    /**
      * Maps canonical format keys to position arguments for use in building
      * "line format" strings.
      *
@@ -108,8 +98,29 @@ class Log
                             '%{file}'       => '%5$s',
                             '%{line}'       => '%6$s',
                             '%{function}'   => '%7$s',
-                            '%{class}'      => '%8$s',
                             '%\{'           => '%%{');
+
+    /**
+     * Utility function which wraps PHP's class_exists() function to ensure
+     * consistent behavior between PHP versions 4 and 5.  Autoloading behavior
+     * is always disabled.
+     *
+     * @param string $class     The name of the class whose existence should
+     *                          be tested.
+     *
+     * @return bool             True if the class exists.
+     *
+     * @access private
+     * @since Log 1.9.13
+     */
+    function _classExists($class)
+    {
+        if (version_compare(PHP_VERSION, '5.0.0', 'ge')) {
+            return class_exists($class, false);
+        }
+
+        return class_exists($class);
+    }
 
     /**
      * Attempts to return a concrete Log instance of type $handler.
@@ -136,8 +147,8 @@ class Log
      * @access public
      * @since Log 1.0
      */
-    public static function factory($handler, $name = '', $ident = '',
-                                   $conf = array(), $level = PEAR_LOG_DEBUG)
+    function &factory($handler, $name = '', $ident = '', $conf = array(),
+                      $level = PEAR_LOG_DEBUG)
     {
         $handler = strtolower($handler);
         $class = 'Log_' . $handler;
@@ -148,13 +159,13 @@ class Log
          * a failure as fatal.  The caller may have already included their own
          * version of the named class.
          */
-        if (!class_exists($class, false)) {
+        if (!Log::_classExists($class)) {
             include_once $classfile;
         }
 
         /* If the class exists, return a new instance of it. */
-        if (class_exists($class, false)) {
-            $obj = new $class($name, $ident, $conf, $level);
+        if (Log::_classExists($class)) {
+            $obj = &new $class($name, $ident, $conf, $level);
             return $obj;
         }
 
@@ -198,16 +209,16 @@ class Log
      * @access public
      * @since Log 1.0
      */
-    public static function singleton($handler, $name = '', $ident = '',
-                                     $conf = array(), $level = PEAR_LOG_DEBUG)
+    function &singleton($handler, $name = '', $ident = '', $conf = array(),
+                        $level = PEAR_LOG_DEBUG)
     {
         static $instances;
         if (!isset($instances)) $instances = array();
 
         $signature = serialize(array($handler, $name, $ident, $conf, $level));
         if (!isset($instances[$signature])) {
-            $instances[$signature] = Log::factory($handler, $name, $ident,
-                                                  $conf, $level);
+            $instances[$signature] = &Log::factory($handler, $name, $ident,
+                                                   $conf, $level);
         }
 
         return $instances[$signature];
@@ -417,17 +428,17 @@ class Log
             } else if (method_exists($message, 'tostring')) {
                 $message = $message->toString();
             } else if (method_exists($message, '__tostring')) {
-                $message = (string)$message;
+                if (version_compare(PHP_VERSION, '5.0.0', 'ge')) {
+                    $message = (string)$message;
+                } else {
+                    $message = $message->__toString();
+                }
             } else {
                 $message = var_export($message, true);
             }
         } else if (is_array($message)) {
             if (isset($message['message'])) {
-                if (is_scalar($message['message'])) {
-                    $message = $message['message'];
-                } else {
-                    $message = var_export($message['message'], true);
-                }
+                $message = $message['message'];
             } else {
                 $message = var_export($message, true);
             }
@@ -446,9 +457,8 @@ class Log
      * @param   int     $depth  The initial number of frames we should step
      *                          back into the trace.
      *
-     * @return  array   Array containing four strings: the filename, the line,
-     *                  the function name, and the class name from which log()
-     *                  was called.
+     * @return  array   Array containing three strings: the filename, the line,
+     *                  and the function name from which log() was called.
      *
      * @access  private
      * @since   Log 1.9.4
@@ -458,20 +468,13 @@ class Log
         /* Start by generating a backtrace from the current call (here). */
         $bt = debug_backtrace();
 
-        /* Store some handy shortcuts to our previous frames. */
-        $bt0 = isset($bt[$depth]) ? $bt[$depth] : null;
-        $bt1 = isset($bt[$depth + 1]) ? $bt[$depth + 1] : null;
-
         /*
          * If we were ultimately invoked by the composite handler, we need to
          * increase our depth one additional level to compensate.
          */
-        $class = isset($bt1['class']) ? $bt1['class'] : null;
+        $class = isset($bt[$depth+1]['class']) ? $bt[$depth+1]['class'] : null;
         if ($class !== null && strcasecmp($class, 'Log_composite') == 0) {
             $depth++;
-            $bt0 = isset($bt[$depth]) ? $bt[$depth] : null;
-            $bt1 = isset($bt[$depth + 1]) ? $bt[$depth + 1] : null;
-            $class = isset($bt1['class']) ? $bt1['class'] : null;
         }
 
         /*
@@ -481,9 +484,9 @@ class Log
          * further back to find the name of the encapsulating function from
          * which log() was called.
          */
-        $file = isset($bt0) ? $bt0['file'] : null;
-        $line = isset($bt0) ? $bt0['line'] : 0;
-        $func = isset($bt1) ? $bt1['function'] : null;
+        $file = isset($bt[$depth])     ? $bt[$depth]['file'] : null;
+        $line = isset($bt[$depth])     ? $bt[$depth]['line'] : 0;
+        $func = isset($bt[$depth + 1]) ? $bt[$depth + 1]['function'] : null;
 
         /*
          * However, if log() was called from one of our "shortcut" functions,
@@ -491,39 +494,21 @@ class Log
          */
         if (in_array($func, array('emerg', 'alert', 'crit', 'err', 'warning',
                                   'notice', 'info', 'debug'))) {
-            $bt2 = isset($bt[$depth + 2]) ? $bt[$depth + 2] : null;
-
-            $file = is_array($bt1) ? $bt1['file'] : null;
-            $line = is_array($bt1) ? $bt1['line'] : 0;
-            $func = is_array($bt2) ? $bt2['function'] : null;
-            $class = isset($bt2['class']) ? $bt2['class'] : null;
+            $file = isset($bt[$depth + 1]) ? $bt[$depth + 1]['file'] : null;
+            $line = isset($bt[$depth + 1]) ? $bt[$depth + 1]['line'] : 0;
+            $func = isset($bt[$depth + 2]) ? $bt[$depth + 2]['function'] : null;
         }
 
         /*
          * If we couldn't extract a function name (perhaps because we were
          * executed from the "main" context), provide a default value.
          */
-        if ($func === null) {
+        if (is_null($func)) {
             $func = '(none)';
         }
 
-        /* Return a 4-tuple containing (file, line, function, class). */
-        return array($file, $line, $func, $class);
-    }
-
-    /**
-     * Sets the starting depth to use when walking a backtrace in search of 
-     * the function that invoked the log system.  This is used on conjunction 
-     * with the 'file', 'line', 'function', and 'class' formatters.
-     *
-     * @param int $depth    The new backtrace depth.
-     *
-     * @access  public
-     * @since   Log 1.12.7
-     */
-    public function setBacktraceDepth($depth)
-    {
-        $this->_backtrace_depth = $depth;
+        /* Return a 3-tuple containing (file, line, function). */
+        return array($file, $line, $func);
     }
 
     /**
@@ -539,12 +524,10 @@ class Log
     {
         /*
          * If the format string references any of the backtrace-driven
-         * variables (%5 %6,%7,%8), generate the backtrace and fetch them.
+         * variables (%5, %6, %7), generate the backtrace and fetch them.
          */
-        if (preg_match('/%[5678]/', $format)) {
-            /* Plus 2 to account for our internal function calls. */
-            $d = $this->_backtrace_depth + 2;
-            list($file, $line, $func, $class) = $this->_getBacktraceVars($d);
+        if (strpos($format, '%5') || strpos($format, '%6') || strpos($format, '%7')) {
+            list($file, $line, $func) = $this->_getBacktraceVars(2);
         }
 
         /*
@@ -559,8 +542,7 @@ class Log
                        $message,
                        isset($file) ? $file : '',
                        isset($line) ? $line : '',
-                       isset($func) ? $func : '',
-                       isset($class) ? $class : '');
+                       isset($func) ? $func : '');
     }
 
     /**
@@ -630,7 +612,7 @@ class Log
      * @access  public
      * @since   Log 1.7.0
      */
-    public static function MASK($priority)
+    function MASK($priority)
     {
         return (1 << $priority);
     }
@@ -649,7 +631,7 @@ class Log
      *
      * @deprecated deprecated since Log 1.9.4; use Log::MAX() instead
      */
-    public static function UPTO($priority)
+    function UPTO($priority)
     {
         return Log::MAX($priority);
     }
@@ -668,7 +650,7 @@ class Log
      * @access  public
      * @since   Log 1.9.4
      */
-    public static function MIN($priority)
+    function MIN($priority)
     {
         return PEAR_LOG_ALL ^ ((1 << $priority) - 1);
     }
@@ -687,7 +669,7 @@ class Log
      * @access  public
      * @since   Log 1.9.4
      */
-    public static function MAX($priority)
+    function MAX($priority)
     {
         return ((1 << ($priority + 1)) - 1);
     }

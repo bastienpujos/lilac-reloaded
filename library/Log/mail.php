@@ -1,8 +1,8 @@
 <?php
 /**
- * $Header$
+ * $Header: /repository/pear/Log/Log/mail.php,v 1.27 2008/02/10 00:15:04 jon Exp $
  *
- * @version $Revision: 266658 $
+ * @version $Revision: 1.27 $
  * @package Log
  */
 
@@ -201,7 +201,7 @@ class Log_mail extends Log
             if ($this->_shouldSend && !empty($this->_message)) {
                 if ($this->_mailBackend === '') {  // use mail()
                     $headers = "From: $this->_from\r\n";
-                    $headers .= 'User-Agent: PEAR Log Package';
+                    $headers .= "User-Agent: Log_mail";
                     if (mail($this->_recipients, $this->_subject,
                              $this->_message, $headers) == false) {
                         return false;
@@ -210,7 +210,7 @@ class Log_mail extends Log
                     include_once 'Mail.php';
                     $headers = array('From' => $this->_from,
                                      'To' => $this->_recipients,
-                                     'User-Agent' => 'PEAR Log Package',
+                                     'User-Agent' => 'Log_mail',
                                      'Subject' => $this->_subject);
                     $mailer = &Mail::factory($this->_mailBackend,
                                              $this->_mailParams);

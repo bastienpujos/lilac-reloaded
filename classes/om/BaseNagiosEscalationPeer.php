@@ -1,12 +1,11 @@
 <?php
 
-
 /**
  * Base static class for performing query and update operations on the 'nagios_escalation' table.
  *
  * Nagios Escalation
  *
- * @package    propel.generator..om
+ * @package    .om
  */
 abstract class BaseNagiosEscalationPeer {
 
@@ -16,23 +15,14 @@ abstract class BaseNagiosEscalationPeer {
 	/** the table name for this class */
 	const TABLE_NAME = 'nagios_escalation';
 
-	/** the related Propel class for this table */
-	const OM_CLASS = 'NagiosEscalation';
-
 	/** A class that can be returned by this peer. */
 	const CLASS_DEFAULT = 'NagiosEscalation';
 
-	/** the related TableMap class for this table */
-	const TM_CLASS = 'NagiosEscalationTableMap';
-	
 	/** The total number of columns. */
 	const NUM_COLUMNS = 18;
 
 	/** The number of lazy-loaded columns. */
 	const NUM_LAZY_LOAD_COLUMNS = 0;
-
-	/** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-	const NUM_HYDRATE_COLUMNS = 18;
 
 	/** the column name for the ID field */
 	const ID = 'nagios_escalation.ID';
@@ -88,9 +78,6 @@ abstract class BaseNagiosEscalationPeer {
 	/** the column name for the ESCALATION_OPTIONS_CRITICAL field */
 	const ESCALATION_OPTIONS_CRITICAL = 'nagios_escalation.ESCALATION_OPTIONS_CRITICAL';
 
-	/** The default string format for model objects of the related table **/
-	const DEFAULT_STRING_FORMAT = 'YAML';
-	
 	/**
 	 * An identiy map to hold any loaded instances of NagiosEscalation objects.
 	 * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -99,6 +86,11 @@ abstract class BaseNagiosEscalationPeer {
 	 */
 	public static $instances = array();
 
+	/**
+	 * The MapBuilder instance for this peer.
+	 * @var        MapBuilder
+	 */
+	private static $mapBuilder = null;
 
 	/**
 	 * holds an array of fieldnames
@@ -106,11 +98,10 @@ abstract class BaseNagiosEscalationPeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
 	 */
-	protected static $fieldNames = array (
+	private static $fieldNames = array (
 		BasePeer::TYPE_PHPNAME => array ('Id', 'Description', 'HostTemplate', 'Host', 'Hostgroup', 'ServiceTemplate', 'Service', 'FirstNotification', 'LastNotification', 'NotificationInterval', 'EscalationPeriod', 'EscalationOptionsUp', 'EscalationOptionsDown', 'EscalationOptionsUnreachable', 'EscalationOptionsOk', 'EscalationOptionsWarning', 'EscalationOptionsUnknown', 'EscalationOptionsCritical', ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'description', 'hostTemplate', 'host', 'hostgroup', 'serviceTemplate', 'service', 'firstNotification', 'lastNotification', 'notificationInterval', 'escalationPeriod', 'escalationOptionsUp', 'escalationOptionsDown', 'escalationOptionsUnreachable', 'escalationOptionsOk', 'escalationOptionsWarning', 'escalationOptionsUnknown', 'escalationOptionsCritical', ),
 		BasePeer::TYPE_COLNAME => array (self::ID, self::DESCRIPTION, self::HOST_TEMPLATE, self::HOST, self::HOSTGROUP, self::SERVICE_TEMPLATE, self::SERVICE, self::FIRST_NOTIFICATION, self::LAST_NOTIFICATION, self::NOTIFICATION_INTERVAL, self::ESCALATION_PERIOD, self::ESCALATION_OPTIONS_UP, self::ESCALATION_OPTIONS_DOWN, self::ESCALATION_OPTIONS_UNREACHABLE, self::ESCALATION_OPTIONS_OK, self::ESCALATION_OPTIONS_WARNING, self::ESCALATION_OPTIONS_UNKNOWN, self::ESCALATION_OPTIONS_CRITICAL, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID', 'DESCRIPTION', 'HOST_TEMPLATE', 'HOST', 'HOSTGROUP', 'SERVICE_TEMPLATE', 'SERVICE', 'FIRST_NOTIFICATION', 'LAST_NOTIFICATION', 'NOTIFICATION_INTERVAL', 'ESCALATION_PERIOD', 'ESCALATION_OPTIONS_UP', 'ESCALATION_OPTIONS_DOWN', 'ESCALATION_OPTIONS_UNREACHABLE', 'ESCALATION_OPTIONS_OK', 'ESCALATION_OPTIONS_WARNING', 'ESCALATION_OPTIONS_UNKNOWN', 'ESCALATION_OPTIONS_CRITICAL', ),
 		BasePeer::TYPE_FIELDNAME => array ('id', 'description', 'host_template', 'host', 'hostgroup', 'service_template', 'service', 'first_notification', 'last_notification', 'notification_interval', 'escalation_period', 'escalation_options_up', 'escalation_options_down', 'escalation_options_unreachable', 'escalation_options_ok', 'escalation_options_warning', 'escalation_options_unknown', 'escalation_options_critical', ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
@@ -121,15 +112,25 @@ abstract class BaseNagiosEscalationPeer {
 	 * first dimension keys are the type constants
 	 * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
 	 */
-	protected static $fieldKeys = array (
+	private static $fieldKeys = array (
 		BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Description' => 1, 'HostTemplate' => 2, 'Host' => 3, 'Hostgroup' => 4, 'ServiceTemplate' => 5, 'Service' => 6, 'FirstNotification' => 7, 'LastNotification' => 8, 'NotificationInterval' => 9, 'EscalationPeriod' => 10, 'EscalationOptionsUp' => 11, 'EscalationOptionsDown' => 12, 'EscalationOptionsUnreachable' => 13, 'EscalationOptionsOk' => 14, 'EscalationOptionsWarning' => 15, 'EscalationOptionsUnknown' => 16, 'EscalationOptionsCritical' => 17, ),
 		BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'description' => 1, 'hostTemplate' => 2, 'host' => 3, 'hostgroup' => 4, 'serviceTemplate' => 5, 'service' => 6, 'firstNotification' => 7, 'lastNotification' => 8, 'notificationInterval' => 9, 'escalationPeriod' => 10, 'escalationOptionsUp' => 11, 'escalationOptionsDown' => 12, 'escalationOptionsUnreachable' => 13, 'escalationOptionsOk' => 14, 'escalationOptionsWarning' => 15, 'escalationOptionsUnknown' => 16, 'escalationOptionsCritical' => 17, ),
 		BasePeer::TYPE_COLNAME => array (self::ID => 0, self::DESCRIPTION => 1, self::HOST_TEMPLATE => 2, self::HOST => 3, self::HOSTGROUP => 4, self::SERVICE_TEMPLATE => 5, self::SERVICE => 6, self::FIRST_NOTIFICATION => 7, self::LAST_NOTIFICATION => 8, self::NOTIFICATION_INTERVAL => 9, self::ESCALATION_PERIOD => 10, self::ESCALATION_OPTIONS_UP => 11, self::ESCALATION_OPTIONS_DOWN => 12, self::ESCALATION_OPTIONS_UNREACHABLE => 13, self::ESCALATION_OPTIONS_OK => 14, self::ESCALATION_OPTIONS_WARNING => 15, self::ESCALATION_OPTIONS_UNKNOWN => 16, self::ESCALATION_OPTIONS_CRITICAL => 17, ),
-		BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'DESCRIPTION' => 1, 'HOST_TEMPLATE' => 2, 'HOST' => 3, 'HOSTGROUP' => 4, 'SERVICE_TEMPLATE' => 5, 'SERVICE' => 6, 'FIRST_NOTIFICATION' => 7, 'LAST_NOTIFICATION' => 8, 'NOTIFICATION_INTERVAL' => 9, 'ESCALATION_PERIOD' => 10, 'ESCALATION_OPTIONS_UP' => 11, 'ESCALATION_OPTIONS_DOWN' => 12, 'ESCALATION_OPTIONS_UNREACHABLE' => 13, 'ESCALATION_OPTIONS_OK' => 14, 'ESCALATION_OPTIONS_WARNING' => 15, 'ESCALATION_OPTIONS_UNKNOWN' => 16, 'ESCALATION_OPTIONS_CRITICAL' => 17, ),
 		BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'description' => 1, 'host_template' => 2, 'host' => 3, 'hostgroup' => 4, 'service_template' => 5, 'service' => 6, 'first_notification' => 7, 'last_notification' => 8, 'notification_interval' => 9, 'escalation_period' => 10, 'escalation_options_up' => 11, 'escalation_options_down' => 12, 'escalation_options_unreachable' => 13, 'escalation_options_ok' => 14, 'escalation_options_warning' => 15, 'escalation_options_unknown' => 16, 'escalation_options_critical' => 17, ),
 		BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, )
 	);
 
+	/**
+	 * Get a (singleton) instance of the MapBuilder for this peer class.
+	 * @return     MapBuilder The map builder for this peer
+	 */
+	public static function getMapBuilder()
+	{
+		if (self::$mapBuilder === null) {
+			self::$mapBuilder = new NagiosEscalationMapBuilder();
+		}
+		return self::$mapBuilder;
+	}
 	/**
 	 * Translates a fieldname to another type
 	 *
@@ -191,52 +192,49 @@ abstract class BaseNagiosEscalationPeer {
 	 * XML schema will not be added to the select list and only loaded
 	 * on demand.
 	 *
-	 * @param      Criteria $criteria object containing the columns to add.
-	 * @param      string   $alias    optional table alias
+	 * @param      criteria object containing the columns to add.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function addSelectColumns(Criteria $criteria, $alias = null)
+	public static function addSelectColumns(Criteria $criteria)
 	{
-		if (null === $alias) {
-			$criteria->addSelectColumn(NagiosEscalationPeer::ID);
-			$criteria->addSelectColumn(NagiosEscalationPeer::DESCRIPTION);
-			$criteria->addSelectColumn(NagiosEscalationPeer::HOST_TEMPLATE);
-			$criteria->addSelectColumn(NagiosEscalationPeer::HOST);
-			$criteria->addSelectColumn(NagiosEscalationPeer::HOSTGROUP);
-			$criteria->addSelectColumn(NagiosEscalationPeer::SERVICE_TEMPLATE);
-			$criteria->addSelectColumn(NagiosEscalationPeer::SERVICE);
-			$criteria->addSelectColumn(NagiosEscalationPeer::FIRST_NOTIFICATION);
-			$criteria->addSelectColumn(NagiosEscalationPeer::LAST_NOTIFICATION);
-			$criteria->addSelectColumn(NagiosEscalationPeer::NOTIFICATION_INTERVAL);
-			$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_PERIOD);
-			$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_UP);
-			$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_DOWN);
-			$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_UNREACHABLE);
-			$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_OK);
-			$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_WARNING);
-			$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_UNKNOWN);
-			$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_CRITICAL);
-		} else {
-			$criteria->addSelectColumn($alias . '.ID');
-			$criteria->addSelectColumn($alias . '.DESCRIPTION');
-			$criteria->addSelectColumn($alias . '.HOST_TEMPLATE');
-			$criteria->addSelectColumn($alias . '.HOST');
-			$criteria->addSelectColumn($alias . '.HOSTGROUP');
-			$criteria->addSelectColumn($alias . '.SERVICE_TEMPLATE');
-			$criteria->addSelectColumn($alias . '.SERVICE');
-			$criteria->addSelectColumn($alias . '.FIRST_NOTIFICATION');
-			$criteria->addSelectColumn($alias . '.LAST_NOTIFICATION');
-			$criteria->addSelectColumn($alias . '.NOTIFICATION_INTERVAL');
-			$criteria->addSelectColumn($alias . '.ESCALATION_PERIOD');
-			$criteria->addSelectColumn($alias . '.ESCALATION_OPTIONS_UP');
-			$criteria->addSelectColumn($alias . '.ESCALATION_OPTIONS_DOWN');
-			$criteria->addSelectColumn($alias . '.ESCALATION_OPTIONS_UNREACHABLE');
-			$criteria->addSelectColumn($alias . '.ESCALATION_OPTIONS_OK');
-			$criteria->addSelectColumn($alias . '.ESCALATION_OPTIONS_WARNING');
-			$criteria->addSelectColumn($alias . '.ESCALATION_OPTIONS_UNKNOWN');
-			$criteria->addSelectColumn($alias . '.ESCALATION_OPTIONS_CRITICAL');
-		}
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ID);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::DESCRIPTION);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::HOST_TEMPLATE);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::HOST);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::HOSTGROUP);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::SERVICE_TEMPLATE);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::SERVICE);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::FIRST_NOTIFICATION);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::LAST_NOTIFICATION);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::NOTIFICATION_INTERVAL);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_PERIOD);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_UP);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_DOWN);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_UNREACHABLE);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_OK);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_WARNING);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_UNKNOWN);
+
+		$criteria->addSelectColumn(NagiosEscalationPeer::ESCALATION_OPTIONS_CRITICAL);
+
 	}
 
 	/**
@@ -283,7 +281,7 @@ abstract class BaseNagiosEscalationPeer {
 		return $count;
 	}
 	/**
-	 * Selects one object from the DB.
+	 * Method to select one object from the DB.
 	 *
 	 * @param      Criteria $criteria object used to create the SELECT statement.
 	 * @param      PropelPDO $con
@@ -302,7 +300,7 @@ abstract class BaseNagiosEscalationPeer {
 		return null;
 	}
 	/**
-	 * Selects several row from the DB.
+	 * Method to do selects.
 	 *
 	 * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
 	 * @param      PropelPDO $con
@@ -356,7 +354,7 @@ abstract class BaseNagiosEscalationPeer {
 	 * @param      NagiosEscalation $value A NagiosEscalation object.
 	 * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
 	 */
-	public static function addInstanceToPool($obj, $key = null)
+	public static function addInstanceToPool(NagiosEscalation $obj, $key = null)
 	{
 		if (Propel::isInstancePoolingEnabled()) {
 			if ($key === null) {
@@ -424,20 +422,6 @@ abstract class BaseNagiosEscalationPeer {
 	}
 	
 	/**
-	 * Method to invalidate the instance pool of all tables related to nagios_escalation
-	 * by a foreign key with ON DELETE CASCADE
-	 */
-	public static function clearRelatedInstancePool()
-	{
-		// Invalidate objects in NagiosEscalationContactPeer instance pool, 
-		// since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-		NagiosEscalationContactPeer::clearInstancePool();
-		// Invalidate objects in NagiosEscalationContactgroupPeer instance pool, 
-		// since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-		NagiosEscalationContactgroupPeer::clearInstancePool();
-	}
-
-	/**
 	 * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
 	 *
 	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
@@ -450,26 +434,12 @@ abstract class BaseNagiosEscalationPeer {
 	public static function getPrimaryKeyHashFromRow($row, $startcol = 0)
 	{
 		// If the PK cannot be derived from the row, return NULL.
-		if ($row[$startcol] === null) {
+		if ($row[$startcol + 0] === null) {
 			return null;
 		}
-		return (string) $row[$startcol];
+		return (string) $row[$startcol + 0];
 	}
 
-	/**
-	 * Retrieves the primary key from the DB resultset row 
-	 * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
-	 * a multi-column primary key, an array of the primary key columns will be returned.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @return     mixed The primary key of the row
-	 */
-	public static function getPrimaryKeyFromRow($row, $startcol = 0)
-	{
-		return (int) $row[$startcol];
-	}
-	
 	/**
 	 * The returned array will contain objects of the default type or
 	 * objects that inherit from the default.
@@ -482,16 +452,18 @@ abstract class BaseNagiosEscalationPeer {
 		$results = array();
 	
 		// set the class once to avoid overhead in the loop
-		$cls = NagiosEscalationPeer::getOMClass(false);
+		$cls = NagiosEscalationPeer::getOMClass();
+		$cls = substr('.'.$cls, strrpos('.'.$cls, '.') + 1);
 		// populate the object(s)
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj = NagiosEscalationPeer::getInstanceFromPool($key))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj->hydrate($row, 0, true); // rehydrate
 				$results[] = $obj;
 			} else {
+		
 				$obj = new $cls();
 				$obj->hydrate($row);
 				$results[] = $obj;
@@ -501,37 +473,11 @@ abstract class BaseNagiosEscalationPeer {
 		$stmt->closeCursor();
 		return $results;
 	}
-	/**
-	 * Populates an object of the default type or an object that inherit from the default.
-	 *
-	 * @param      array $row PropelPDO resultset row.
-	 * @param      int $startcol The 0-based offset for reading from the resultset row.
-	 * @throws     PropelException Any exceptions caught during processing will be
-	 *		 rethrown wrapped into a PropelException.
-	 * @return     array (NagiosEscalation object, last column rank)
-	 */
-	public static function populateObject($row, $startcol = 0)
-	{
-		$key = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, $startcol);
-		if (null !== ($obj = NagiosEscalationPeer::getInstanceFromPool($key))) {
-			// We no longer rehydrate the object, since this can cause data loss.
-			// See http://www.propelorm.org/ticket/509
-			// $obj->hydrate($row, $startcol, true); // rehydrate
-			$col = $startcol + NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
-		} else {
-			$cls = NagiosEscalationPeer::OM_CLASS;
-			$obj = new $cls();
-			$col = $obj->hydrate($row, $startcol);
-			NagiosEscalationPeer::addInstanceToPool($obj, $key);
-		}
-		return array($obj, $col);
-	}
-
 
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosHostTemplate table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -564,8 +510,7 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -581,7 +526,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosHost table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -614,8 +559,7 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -631,7 +575,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosServiceTemplate table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -664,8 +608,7 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -681,7 +624,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosService table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -714,8 +657,7 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -731,7 +673,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosHostgroup table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -764,8 +706,7 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -781,7 +722,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosTimeperiod table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -814,8 +755,7 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -830,41 +770,41 @@ abstract class BaseNagiosEscalationPeer {
 
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with their NagiosHostTemplate objects.
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinNagiosHostTemplate(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinNagiosHostTemplate(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
+		NagiosHostTemplatePeer::addSelectColumns($c);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -875,8 +815,9 @@ abstract class BaseNagiosEscalationPeer {
 				$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosHostTemplatePeer::getOMClass(false);
+					$omClass = NagiosHostTemplatePeer::getOMClass();
 
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -896,41 +837,41 @@ abstract class BaseNagiosEscalationPeer {
 
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with their NagiosHost objects.
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinNagiosHost(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinNagiosHost(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
-		NagiosHostPeer::addSelectColumns($criteria);
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
+		NagiosHostPeer::addSelectColumns($c);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -941,8 +882,9 @@ abstract class BaseNagiosEscalationPeer {
 				$obj2 = NagiosHostPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosHostPeer::getOMClass(false);
+					$omClass = NagiosHostPeer::getOMClass();
 
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					NagiosHostPeer::addInstanceToPool($obj2, $key2);
@@ -962,41 +904,41 @@ abstract class BaseNagiosEscalationPeer {
 
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with their NagiosServiceTemplate objects.
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinNagiosServiceTemplate(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinNagiosServiceTemplate(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
-		NagiosServiceTemplatePeer::addSelectColumns($criteria);
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
+		NagiosServiceTemplatePeer::addSelectColumns($c);
 
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -1007,8 +949,9 @@ abstract class BaseNagiosEscalationPeer {
 				$obj2 = NagiosServiceTemplatePeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosServiceTemplatePeer::getOMClass(false);
+					$omClass = NagiosServiceTemplatePeer::getOMClass();
 
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					NagiosServiceTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -1028,41 +971,41 @@ abstract class BaseNagiosEscalationPeer {
 
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with their NagiosService objects.
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinNagiosService(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinNagiosService(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
-		NagiosServicePeer::addSelectColumns($criteria);
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
+		NagiosServicePeer::addSelectColumns($c);
 
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -1073,8 +1016,9 @@ abstract class BaseNagiosEscalationPeer {
 				$obj2 = NagiosServicePeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosServicePeer::getOMClass(false);
+					$omClass = NagiosServicePeer::getOMClass();
 
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					NagiosServicePeer::addInstanceToPool($obj2, $key2);
@@ -1094,41 +1038,41 @@ abstract class BaseNagiosEscalationPeer {
 
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with their NagiosHostgroup objects.
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinNagiosHostgroup(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinNagiosHostgroup(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
-		NagiosHostgroupPeer::addSelectColumns($criteria);
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
+		NagiosHostgroupPeer::addSelectColumns($c);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -1139,8 +1083,9 @@ abstract class BaseNagiosEscalationPeer {
 				$obj2 = NagiosHostgroupPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosHostgroupPeer::getOMClass(false);
+					$omClass = NagiosHostgroupPeer::getOMClass();
 
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					NagiosHostgroupPeer::addInstanceToPool($obj2, $key2);
@@ -1160,41 +1105,41 @@ abstract class BaseNagiosEscalationPeer {
 
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with their NagiosTimeperiod objects.
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinNagiosTimeperiod(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinNagiosTimeperiod(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
-		NagiosTimeperiodPeer::addSelectColumns($criteria);
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
+		NagiosTimeperiodPeer::addSelectColumns($c);
 
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
 
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -1205,8 +1150,9 @@ abstract class BaseNagiosEscalationPeer {
 				$obj2 = NagiosTimeperiodPeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosTimeperiodPeer::getOMClass(false);
+					$omClass = NagiosTimeperiodPeer::getOMClass();
 
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol);
 					NagiosTimeperiodPeer::addInstanceToPool($obj2, $key2);
@@ -1227,7 +1173,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining all related tables
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -1260,18 +1206,12 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
+		$criteria->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+		$criteria->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+		$criteria->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+		$criteria->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+		$criteria->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+		$criteria->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1286,67 +1226,62 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with all related objects.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAll(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol2 = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol2 = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + NagiosHostTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostTemplatePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NagiosHostTemplatePeer::NUM_COLUMNS - NagiosHostTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostPeer::addSelectColumns($criteria);
-		$startcol4 = $startcol3 + NagiosHostPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NagiosHostPeer::NUM_COLUMNS - NagiosHostPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServiceTemplatePeer::addSelectColumns($criteria);
-		$startcol5 = $startcol4 + NagiosServiceTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServiceTemplatePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NagiosServiceTemplatePeer::NUM_COLUMNS - NagiosServiceTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServicePeer::addSelectColumns($criteria);
-		$startcol6 = $startcol5 + NagiosServicePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServicePeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (NagiosServicePeer::NUM_COLUMNS - NagiosServicePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostgroupPeer::addSelectColumns($criteria);
-		$startcol7 = $startcol6 + NagiosHostgroupPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostgroupPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (NagiosHostgroupPeer::NUM_COLUMNS - NagiosHostgroupPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosTimeperiodPeer::addSelectColumns($criteria);
-		$startcol8 = $startcol7 + NagiosTimeperiodPeer::NUM_HYDRATE_COLUMNS;
+		NagiosTimeperiodPeer::addSelectColumns($c);
+		$startcol8 = $startcol7 + (NagiosTimeperiodPeer::NUM_COLUMNS - NagiosTimeperiodPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$c->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+		$c->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+		$c->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+		$c->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+		$c->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+		$c->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -1359,8 +1294,10 @@ abstract class BaseNagiosEscalationPeer {
 				$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 				if (!$obj2) {
 
-					$cls = NagiosHostTemplatePeer::getOMClass(false);
+					$omClass = NagiosHostTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -1377,8 +1314,10 @@ abstract class BaseNagiosEscalationPeer {
 				$obj3 = NagiosHostPeer::getInstanceFromPool($key3);
 				if (!$obj3) {
 
-					$cls = NagiosHostPeer::getOMClass(false);
+					$omClass = NagiosHostPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					NagiosHostPeer::addInstanceToPool($obj3, $key3);
@@ -1395,8 +1334,10 @@ abstract class BaseNagiosEscalationPeer {
 				$obj4 = NagiosServiceTemplatePeer::getInstanceFromPool($key4);
 				if (!$obj4) {
 
-					$cls = NagiosServiceTemplatePeer::getOMClass(false);
+					$omClass = NagiosServiceTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					NagiosServiceTemplatePeer::addInstanceToPool($obj4, $key4);
@@ -1413,8 +1354,10 @@ abstract class BaseNagiosEscalationPeer {
 				$obj5 = NagiosServicePeer::getInstanceFromPool($key5);
 				if (!$obj5) {
 
-					$cls = NagiosServicePeer::getOMClass(false);
+					$omClass = NagiosServicePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					NagiosServicePeer::addInstanceToPool($obj5, $key5);
@@ -1431,8 +1374,10 @@ abstract class BaseNagiosEscalationPeer {
 				$obj6 = NagiosHostgroupPeer::getInstanceFromPool($key6);
 				if (!$obj6) {
 
-					$cls = NagiosHostgroupPeer::getOMClass(false);
+					$omClass = NagiosHostgroupPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					NagiosHostgroupPeer::addInstanceToPool($obj6, $key6);
@@ -1449,8 +1394,10 @@ abstract class BaseNagiosEscalationPeer {
 				$obj7 = NagiosTimeperiodPeer::getInstanceFromPool($key7);
 				if (!$obj7) {
 
-					$cls = NagiosTimeperiodPeer::getOMClass(false);
+					$omClass = NagiosTimeperiodPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj7 = new $cls();
 					$obj7->hydrate($row, $startcol7);
 					NagiosTimeperiodPeer::addInstanceToPool($obj7, $key7);
@@ -1470,7 +1417,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosHostTemplate table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -1503,16 +1450,11 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1528,7 +1470,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosHost table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -1561,16 +1503,11 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1586,7 +1523,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosServiceTemplate table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -1619,16 +1556,11 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1644,7 +1576,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosService table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -1677,16 +1609,11 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1702,7 +1629,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosHostgroup table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -1735,16 +1662,11 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1760,7 +1682,7 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Returns the number of rows matching criteria, joining the related NagiosTimeperiod table
 	 *
-	 * @param      Criteria $criteria
+	 * @param      Criteria $c
 	 * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
@@ -1793,16 +1715,11 @@ abstract class BaseNagiosEscalationPeer {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 	
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$criteria->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
 		$stmt = BasePeer::doCount($criteria, $con);
 
 		if ($row = $stmt->fetch(PDO::FETCH_NUM)) {
@@ -1818,65 +1735,61 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with all related objects except NagiosHostTemplate.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptNagiosHostTemplate(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptNagiosHostTemplate(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		// $criteria->getDbName() will return the same object if not set to another value
+		// $c->getDbName() will return the same object if not set to another value
 		// so == check is okay and faster
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol2 = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol2 = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostPeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + NagiosHostPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostPeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NagiosHostPeer::NUM_COLUMNS - NagiosHostPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServiceTemplatePeer::addSelectColumns($criteria);
-		$startcol4 = $startcol3 + NagiosServiceTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServiceTemplatePeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NagiosServiceTemplatePeer::NUM_COLUMNS - NagiosServiceTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServicePeer::addSelectColumns($criteria);
-		$startcol5 = $startcol4 + NagiosServicePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServicePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NagiosServicePeer::NUM_COLUMNS - NagiosServicePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostgroupPeer::addSelectColumns($criteria);
-		$startcol6 = $startcol5 + NagiosHostgroupPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostgroupPeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (NagiosHostgroupPeer::NUM_COLUMNS - NagiosHostgroupPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosTimeperiodPeer::addSelectColumns($criteria);
-		$startcol7 = $startcol6 + NagiosTimeperiodPeer::NUM_HYDRATE_COLUMNS;
+		NagiosTimeperiodPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (NagiosTimeperiodPeer::NUM_COLUMNS - NagiosTimeperiodPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -1889,8 +1802,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj2 = NagiosHostPeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$cls = NagiosHostPeer::getOMClass(false);
+						$omClass = NagiosHostPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					NagiosHostPeer::addInstanceToPool($obj2, $key2);
@@ -1908,8 +1823,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj3 = NagiosServiceTemplatePeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$cls = NagiosServiceTemplatePeer::getOMClass(false);
+						$omClass = NagiosServiceTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					NagiosServiceTemplatePeer::addInstanceToPool($obj3, $key3);
@@ -1927,8 +1844,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj4 = NagiosServicePeer::getInstanceFromPool($key4);
 					if (!$obj4) {
 	
-						$cls = NagiosServicePeer::getOMClass(false);
+						$omClass = NagiosServicePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					NagiosServicePeer::addInstanceToPool($obj4, $key4);
@@ -1946,8 +1865,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj5 = NagiosHostgroupPeer::getInstanceFromPool($key5);
 					if (!$obj5) {
 	
-						$cls = NagiosHostgroupPeer::getOMClass(false);
+						$omClass = NagiosHostgroupPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					NagiosHostgroupPeer::addInstanceToPool($obj5, $key5);
@@ -1965,8 +1886,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj6 = NagiosTimeperiodPeer::getInstanceFromPool($key6);
 					if (!$obj6) {
 	
-						$cls = NagiosTimeperiodPeer::getOMClass(false);
+						$omClass = NagiosTimeperiodPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					NagiosTimeperiodPeer::addInstanceToPool($obj6, $key6);
@@ -1987,65 +1910,61 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with all related objects except NagiosHost.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptNagiosHost(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptNagiosHost(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		// $criteria->getDbName() will return the same object if not set to another value
+		// $c->getDbName() will return the same object if not set to another value
 		// so == check is okay and faster
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol2 = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol2 = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + NagiosHostTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostTemplatePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NagiosHostTemplatePeer::NUM_COLUMNS - NagiosHostTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServiceTemplatePeer::addSelectColumns($criteria);
-		$startcol4 = $startcol3 + NagiosServiceTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServiceTemplatePeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NagiosServiceTemplatePeer::NUM_COLUMNS - NagiosServiceTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServicePeer::addSelectColumns($criteria);
-		$startcol5 = $startcol4 + NagiosServicePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServicePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NagiosServicePeer::NUM_COLUMNS - NagiosServicePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostgroupPeer::addSelectColumns($criteria);
-		$startcol6 = $startcol5 + NagiosHostgroupPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostgroupPeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (NagiosHostgroupPeer::NUM_COLUMNS - NagiosHostgroupPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosTimeperiodPeer::addSelectColumns($criteria);
-		$startcol7 = $startcol6 + NagiosTimeperiodPeer::NUM_HYDRATE_COLUMNS;
+		NagiosTimeperiodPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (NagiosTimeperiodPeer::NUM_COLUMNS - NagiosTimeperiodPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -2058,8 +1977,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$cls = NagiosHostTemplatePeer::getOMClass(false);
+						$omClass = NagiosHostTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -2077,8 +1998,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj3 = NagiosServiceTemplatePeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$cls = NagiosServiceTemplatePeer::getOMClass(false);
+						$omClass = NagiosServiceTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					NagiosServiceTemplatePeer::addInstanceToPool($obj3, $key3);
@@ -2096,8 +2019,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj4 = NagiosServicePeer::getInstanceFromPool($key4);
 					if (!$obj4) {
 	
-						$cls = NagiosServicePeer::getOMClass(false);
+						$omClass = NagiosServicePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					NagiosServicePeer::addInstanceToPool($obj4, $key4);
@@ -2115,8 +2040,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj5 = NagiosHostgroupPeer::getInstanceFromPool($key5);
 					if (!$obj5) {
 	
-						$cls = NagiosHostgroupPeer::getOMClass(false);
+						$omClass = NagiosHostgroupPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					NagiosHostgroupPeer::addInstanceToPool($obj5, $key5);
@@ -2134,8 +2061,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj6 = NagiosTimeperiodPeer::getInstanceFromPool($key6);
 					if (!$obj6) {
 	
-						$cls = NagiosTimeperiodPeer::getOMClass(false);
+						$omClass = NagiosTimeperiodPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					NagiosTimeperiodPeer::addInstanceToPool($obj6, $key6);
@@ -2156,65 +2085,61 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with all related objects except NagiosServiceTemplate.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptNagiosServiceTemplate(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptNagiosServiceTemplate(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		// $criteria->getDbName() will return the same object if not set to another value
+		// $c->getDbName() will return the same object if not set to another value
 		// so == check is okay and faster
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol2 = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol2 = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + NagiosHostTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostTemplatePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NagiosHostTemplatePeer::NUM_COLUMNS - NagiosHostTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostPeer::addSelectColumns($criteria);
-		$startcol4 = $startcol3 + NagiosHostPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NagiosHostPeer::NUM_COLUMNS - NagiosHostPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServicePeer::addSelectColumns($criteria);
-		$startcol5 = $startcol4 + NagiosServicePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServicePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NagiosServicePeer::NUM_COLUMNS - NagiosServicePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostgroupPeer::addSelectColumns($criteria);
-		$startcol6 = $startcol5 + NagiosHostgroupPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostgroupPeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (NagiosHostgroupPeer::NUM_COLUMNS - NagiosHostgroupPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosTimeperiodPeer::addSelectColumns($criteria);
-		$startcol7 = $startcol6 + NagiosTimeperiodPeer::NUM_HYDRATE_COLUMNS;
+		NagiosTimeperiodPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (NagiosTimeperiodPeer::NUM_COLUMNS - NagiosTimeperiodPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -2227,8 +2152,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$cls = NagiosHostTemplatePeer::getOMClass(false);
+						$omClass = NagiosHostTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -2246,8 +2173,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj3 = NagiosHostPeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$cls = NagiosHostPeer::getOMClass(false);
+						$omClass = NagiosHostPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					NagiosHostPeer::addInstanceToPool($obj3, $key3);
@@ -2265,8 +2194,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj4 = NagiosServicePeer::getInstanceFromPool($key4);
 					if (!$obj4) {
 	
-						$cls = NagiosServicePeer::getOMClass(false);
+						$omClass = NagiosServicePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					NagiosServicePeer::addInstanceToPool($obj4, $key4);
@@ -2284,8 +2215,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj5 = NagiosHostgroupPeer::getInstanceFromPool($key5);
 					if (!$obj5) {
 	
-						$cls = NagiosHostgroupPeer::getOMClass(false);
+						$omClass = NagiosHostgroupPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					NagiosHostgroupPeer::addInstanceToPool($obj5, $key5);
@@ -2303,8 +2236,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj6 = NagiosTimeperiodPeer::getInstanceFromPool($key6);
 					if (!$obj6) {
 	
-						$cls = NagiosTimeperiodPeer::getOMClass(false);
+						$omClass = NagiosTimeperiodPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					NagiosTimeperiodPeer::addInstanceToPool($obj6, $key6);
@@ -2325,65 +2260,61 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with all related objects except NagiosService.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptNagiosService(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptNagiosService(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		// $criteria->getDbName() will return the same object if not set to another value
+		// $c->getDbName() will return the same object if not set to another value
 		// so == check is okay and faster
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol2 = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol2 = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + NagiosHostTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostTemplatePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NagiosHostTemplatePeer::NUM_COLUMNS - NagiosHostTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostPeer::addSelectColumns($criteria);
-		$startcol4 = $startcol3 + NagiosHostPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NagiosHostPeer::NUM_COLUMNS - NagiosHostPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServiceTemplatePeer::addSelectColumns($criteria);
-		$startcol5 = $startcol4 + NagiosServiceTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServiceTemplatePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NagiosServiceTemplatePeer::NUM_COLUMNS - NagiosServiceTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostgroupPeer::addSelectColumns($criteria);
-		$startcol6 = $startcol5 + NagiosHostgroupPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostgroupPeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (NagiosHostgroupPeer::NUM_COLUMNS - NagiosHostgroupPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosTimeperiodPeer::addSelectColumns($criteria);
-		$startcol7 = $startcol6 + NagiosTimeperiodPeer::NUM_HYDRATE_COLUMNS;
+		NagiosTimeperiodPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (NagiosTimeperiodPeer::NUM_COLUMNS - NagiosTimeperiodPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -2396,8 +2327,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$cls = NagiosHostTemplatePeer::getOMClass(false);
+						$omClass = NagiosHostTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -2415,8 +2348,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj3 = NagiosHostPeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$cls = NagiosHostPeer::getOMClass(false);
+						$omClass = NagiosHostPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					NagiosHostPeer::addInstanceToPool($obj3, $key3);
@@ -2434,8 +2369,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj4 = NagiosServiceTemplatePeer::getInstanceFromPool($key4);
 					if (!$obj4) {
 	
-						$cls = NagiosServiceTemplatePeer::getOMClass(false);
+						$omClass = NagiosServiceTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					NagiosServiceTemplatePeer::addInstanceToPool($obj4, $key4);
@@ -2453,8 +2390,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj5 = NagiosHostgroupPeer::getInstanceFromPool($key5);
 					if (!$obj5) {
 	
-						$cls = NagiosHostgroupPeer::getOMClass(false);
+						$omClass = NagiosHostgroupPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					NagiosHostgroupPeer::addInstanceToPool($obj5, $key5);
@@ -2472,8 +2411,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj6 = NagiosTimeperiodPeer::getInstanceFromPool($key6);
 					if (!$obj6) {
 	
-						$cls = NagiosTimeperiodPeer::getOMClass(false);
+						$omClass = NagiosTimeperiodPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					NagiosTimeperiodPeer::addInstanceToPool($obj6, $key6);
@@ -2494,65 +2435,61 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with all related objects except NagiosHostgroup.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptNagiosHostgroup(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptNagiosHostgroup(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		// $criteria->getDbName() will return the same object if not set to another value
+		// $c->getDbName() will return the same object if not set to another value
 		// so == check is okay and faster
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol2 = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol2 = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + NagiosHostTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostTemplatePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NagiosHostTemplatePeer::NUM_COLUMNS - NagiosHostTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostPeer::addSelectColumns($criteria);
-		$startcol4 = $startcol3 + NagiosHostPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NagiosHostPeer::NUM_COLUMNS - NagiosHostPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServiceTemplatePeer::addSelectColumns($criteria);
-		$startcol5 = $startcol4 + NagiosServiceTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServiceTemplatePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NagiosServiceTemplatePeer::NUM_COLUMNS - NagiosServiceTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServicePeer::addSelectColumns($criteria);
-		$startcol6 = $startcol5 + NagiosServicePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServicePeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (NagiosServicePeer::NUM_COLUMNS - NagiosServicePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosTimeperiodPeer::addSelectColumns($criteria);
-		$startcol7 = $startcol6 + NagiosTimeperiodPeer::NUM_HYDRATE_COLUMNS;
+		NagiosTimeperiodPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (NagiosTimeperiodPeer::NUM_COLUMNS - NagiosTimeperiodPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::ESCALATION_PERIOD,), array(NagiosTimeperiodPeer::ID,), $join_behavior);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::ESCALATION_PERIOD, NagiosTimeperiodPeer::ID, $join_behavior);
-
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -2565,8 +2502,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$cls = NagiosHostTemplatePeer::getOMClass(false);
+						$omClass = NagiosHostTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -2584,8 +2523,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj3 = NagiosHostPeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$cls = NagiosHostPeer::getOMClass(false);
+						$omClass = NagiosHostPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					NagiosHostPeer::addInstanceToPool($obj3, $key3);
@@ -2603,8 +2544,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj4 = NagiosServiceTemplatePeer::getInstanceFromPool($key4);
 					if (!$obj4) {
 	
-						$cls = NagiosServiceTemplatePeer::getOMClass(false);
+						$omClass = NagiosServiceTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					NagiosServiceTemplatePeer::addInstanceToPool($obj4, $key4);
@@ -2622,8 +2565,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj5 = NagiosServicePeer::getInstanceFromPool($key5);
 					if (!$obj5) {
 	
-						$cls = NagiosServicePeer::getOMClass(false);
+						$omClass = NagiosServicePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					NagiosServicePeer::addInstanceToPool($obj5, $key5);
@@ -2641,8 +2586,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj6 = NagiosTimeperiodPeer::getInstanceFromPool($key6);
 					if (!$obj6) {
 	
-						$cls = NagiosTimeperiodPeer::getOMClass(false);
+						$omClass = NagiosTimeperiodPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					NagiosTimeperiodPeer::addInstanceToPool($obj6, $key6);
@@ -2663,65 +2610,61 @@ abstract class BaseNagiosEscalationPeer {
 	/**
 	 * Selects a collection of NagiosEscalation objects pre-filled with all related objects except NagiosTimeperiod.
 	 *
-	 * @param      Criteria  $criteria
+	 * @param      Criteria  $c
 	 * @param      PropelPDO $con
 	 * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
 	 * @return     array Array of NagiosEscalation objects.
 	 * @throws     PropelException Any exceptions caught during processing will be
 	 *		 rethrown wrapped into a PropelException.
 	 */
-	public static function doSelectJoinAllExceptNagiosTimeperiod(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+	public static function doSelectJoinAllExceptNagiosTimeperiod(Criteria $c, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$criteria = clone $criteria;
+		$c = clone $c;
 
 		// Set the correct dbName if it has not been overridden
-		// $criteria->getDbName() will return the same object if not set to another value
+		// $c->getDbName() will return the same object if not set to another value
 		// so == check is okay and faster
-		if ($criteria->getDbName() == Propel::getDefaultDB()) {
-			$criteria->setDbName(self::DATABASE_NAME);
+		if ($c->getDbName() == Propel::getDefaultDB()) {
+			$c->setDbName(self::DATABASE_NAME);
 		}
 
-		NagiosEscalationPeer::addSelectColumns($criteria);
-		$startcol2 = NagiosEscalationPeer::NUM_HYDRATE_COLUMNS;
+		NagiosEscalationPeer::addSelectColumns($c);
+		$startcol2 = (NagiosEscalationPeer::NUM_COLUMNS - NagiosEscalationPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostTemplatePeer::addSelectColumns($criteria);
-		$startcol3 = $startcol2 + NagiosHostTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostTemplatePeer::addSelectColumns($c);
+		$startcol3 = $startcol2 + (NagiosHostTemplatePeer::NUM_COLUMNS - NagiosHostTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostPeer::addSelectColumns($criteria);
-		$startcol4 = $startcol3 + NagiosHostPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostPeer::addSelectColumns($c);
+		$startcol4 = $startcol3 + (NagiosHostPeer::NUM_COLUMNS - NagiosHostPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServiceTemplatePeer::addSelectColumns($criteria);
-		$startcol5 = $startcol4 + NagiosServiceTemplatePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServiceTemplatePeer::addSelectColumns($c);
+		$startcol5 = $startcol4 + (NagiosServiceTemplatePeer::NUM_COLUMNS - NagiosServiceTemplatePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosServicePeer::addSelectColumns($criteria);
-		$startcol6 = $startcol5 + NagiosServicePeer::NUM_HYDRATE_COLUMNS;
+		NagiosServicePeer::addSelectColumns($c);
+		$startcol6 = $startcol5 + (NagiosServicePeer::NUM_COLUMNS - NagiosServicePeer::NUM_LAZY_LOAD_COLUMNS);
 
-		NagiosHostgroupPeer::addSelectColumns($criteria);
-		$startcol7 = $startcol6 + NagiosHostgroupPeer::NUM_HYDRATE_COLUMNS;
+		NagiosHostgroupPeer::addSelectColumns($c);
+		$startcol7 = $startcol6 + (NagiosHostgroupPeer::NUM_COLUMNS - NagiosHostgroupPeer::NUM_LAZY_LOAD_COLUMNS);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST_TEMPLATE, NagiosHostTemplatePeer::ID, $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST_TEMPLATE,), array(NagiosHostTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOST,), array(NagiosHostPeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE_TEMPLATE,), array(NagiosServiceTemplatePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::SERVICE,), array(NagiosServicePeer::ID,), $join_behavior);
+				$c->addJoin(array(NagiosEscalationPeer::HOSTGROUP,), array(NagiosHostgroupPeer::ID,), $join_behavior);
 
-		$criteria->addJoin(NagiosEscalationPeer::HOST, NagiosHostPeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE_TEMPLATE, NagiosServiceTemplatePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::SERVICE, NagiosServicePeer::ID, $join_behavior);
-
-		$criteria->addJoin(NagiosEscalationPeer::HOSTGROUP, NagiosHostgroupPeer::ID, $join_behavior);
-
-
-		$stmt = BasePeer::doSelect($criteria, $con);
+		$stmt = BasePeer::doSelect($c, $con);
 		$results = array();
 
 		while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
 			$key1 = NagiosEscalationPeer::getPrimaryKeyHashFromRow($row, 0);
 			if (null !== ($obj1 = NagiosEscalationPeer::getInstanceFromPool($key1))) {
 				// We no longer rehydrate the object, since this can cause data loss.
-				// See http://www.propelorm.org/ticket/509
+				// See http://propel.phpdb.org/trac/ticket/509
 				// $obj1->hydrate($row, 0, true); // rehydrate
 			} else {
-				$cls = NagiosEscalationPeer::getOMClass(false);
+				$omClass = NagiosEscalationPeer::getOMClass();
 
+				$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 				$obj1 = new $cls();
 				$obj1->hydrate($row);
 				NagiosEscalationPeer::addInstanceToPool($obj1, $key1);
@@ -2734,8 +2677,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj2 = NagiosHostTemplatePeer::getInstanceFromPool($key2);
 					if (!$obj2) {
 	
-						$cls = NagiosHostTemplatePeer::getOMClass(false);
+						$omClass = NagiosHostTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj2 = new $cls();
 					$obj2->hydrate($row, $startcol2);
 					NagiosHostTemplatePeer::addInstanceToPool($obj2, $key2);
@@ -2753,8 +2698,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj3 = NagiosHostPeer::getInstanceFromPool($key3);
 					if (!$obj3) {
 	
-						$cls = NagiosHostPeer::getOMClass(false);
+						$omClass = NagiosHostPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj3 = new $cls();
 					$obj3->hydrate($row, $startcol3);
 					NagiosHostPeer::addInstanceToPool($obj3, $key3);
@@ -2772,8 +2719,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj4 = NagiosServiceTemplatePeer::getInstanceFromPool($key4);
 					if (!$obj4) {
 	
-						$cls = NagiosServiceTemplatePeer::getOMClass(false);
+						$omClass = NagiosServiceTemplatePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj4 = new $cls();
 					$obj4->hydrate($row, $startcol4);
 					NagiosServiceTemplatePeer::addInstanceToPool($obj4, $key4);
@@ -2791,8 +2740,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj5 = NagiosServicePeer::getInstanceFromPool($key5);
 					if (!$obj5) {
 	
-						$cls = NagiosServicePeer::getOMClass(false);
+						$omClass = NagiosServicePeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj5 = new $cls();
 					$obj5->hydrate($row, $startcol5);
 					NagiosServicePeer::addInstanceToPool($obj5, $key5);
@@ -2810,8 +2761,10 @@ abstract class BaseNagiosEscalationPeer {
 					$obj6 = NagiosHostgroupPeer::getInstanceFromPool($key6);
 					if (!$obj6) {
 	
-						$cls = NagiosHostgroupPeer::getOMClass(false);
+						$omClass = NagiosHostgroupPeer::getOMClass();
 
+
+					$cls = substr('.'.$omClass, strrpos('.'.$omClass, '.') + 1);
 					$obj6 = new $cls();
 					$obj6->hydrate($row, $startcol6);
 					NagiosHostgroupPeer::addInstanceToPool($obj6, $key6);
@@ -2841,35 +2794,21 @@ abstract class BaseNagiosEscalationPeer {
 	}
 
 	/**
-	 * Add a TableMap instance to the database for this peer class.
-	 */
-	public static function buildTableMap()
-	{
-	  $dbMap = Propel::getDatabaseMap(BaseNagiosEscalationPeer::DATABASE_NAME);
-	  if (!$dbMap->hasTable(BaseNagiosEscalationPeer::TABLE_NAME))
-	  {
-	    $dbMap->addTableObject(new NagiosEscalationTableMap());
-	  }
-	}
-
-	/**
 	 * The class that the Peer will make instances of.
 	 *
-	 * If $withPrefix is true, the returned path
-	 * uses a dot-path notation which is tranalted into a path
+	 * This uses a dot-path notation which is tranalted into a path
 	 * relative to a location on the PHP include_path.
 	 * (e.g. path.to.MyClass -> 'path/to/MyClass.php')
 	 *
-	 * @param      boolean $withPrefix Whether or not to return the path with the class name
 	 * @return     string path.to.ClassName
 	 */
-	public static function getOMClass($withPrefix = true)
+	public static function getOMClass()
 	{
-		return $withPrefix ? NagiosEscalationPeer::CLASS_DEFAULT : NagiosEscalationPeer::OM_CLASS;
+		return NagiosEscalationPeer::CLASS_DEFAULT;
 	}
 
 	/**
-	 * Performs an INSERT on the database, given a NagiosEscalation or Criteria object.
+	 * Method perform an INSERT on the database, given a NagiosEscalation or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or NagiosEscalation object containing data that is used to create the INSERT statement.
 	 * @param      PropelPDO $con the PropelPDO connection to use
@@ -2912,7 +2851,7 @@ abstract class BaseNagiosEscalationPeer {
 	}
 
 	/**
-	 * Performs an UPDATE on the database, given a NagiosEscalation or Criteria object.
+	 * Method perform an UPDATE on the database, given a NagiosEscalation or Criteria object.
 	 *
 	 * @param      mixed $values Criteria or NagiosEscalation object containing data that is used to create the UPDATE statement.
 	 * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -2932,12 +2871,7 @@ abstract class BaseNagiosEscalationPeer {
 			$criteria = clone $values; // rename for clarity
 
 			$comparison = $criteria->getComparison(NagiosEscalationPeer::ID);
-			$value = $criteria->remove(NagiosEscalationPeer::ID);
-			if ($value) {
-				$selectCriteria->add(NagiosEscalationPeer::ID, $value, $comparison);
-			} else {
-				$selectCriteria->setPrimaryTableName(NagiosEscalationPeer::TABLE_NAME);
-			}
+			$selectCriteria->add(NagiosEscalationPeer::ID, $criteria->remove(NagiosEscalationPeer::ID), $comparison);
 
 		} else { // $values is NagiosEscalation object
 			$criteria = $values->buildCriteria(); // gets full criteria
@@ -2951,12 +2885,11 @@ abstract class BaseNagiosEscalationPeer {
 	}
 
 	/**
-	 * Deletes all rows from the nagios_escalation table.
+	 * Method to DELETE all rows from the nagios_escalation table.
 	 *
-	 * @param      PropelPDO $con the connection to use
 	 * @return     int The number of affected rows (if supported by underlying database driver).
 	 */
-	public static function doDeleteAll(PropelPDO $con = null)
+	public static function doDeleteAll($con = null)
 	{
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosEscalationPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
@@ -2967,12 +2900,7 @@ abstract class BaseNagiosEscalationPeer {
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
 			$affectedRows += NagiosEscalationPeer::doOnDeleteCascade(new Criteria(NagiosEscalationPeer::DATABASE_NAME), $con);
-			$affectedRows += BasePeer::doDeleteAll(NagiosEscalationPeer::TABLE_NAME, $con, NagiosEscalationPeer::DATABASE_NAME);
-			// Because this db requires some delete cascade/set null emulation, we have to
-			// clear the cached instance *after* the emulation has happened (since
-			// instances get re-added by the select statement contained therein).
-			NagiosEscalationPeer::clearInstancePool();
-			NagiosEscalationPeer::clearRelatedInstancePool();
+			$affectedRows += BasePeer::doDeleteAll(NagiosEscalationPeer::TABLE_NAME, $con);
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -2982,7 +2910,7 @@ abstract class BaseNagiosEscalationPeer {
 	}
 
 	/**
-	 * Performs a DELETE on the database, given a NagiosEscalation or Criteria object OR a primary key value.
+	 * Method perform a DELETE on the database, given a NagiosEscalation or Criteria object OR a primary key value.
 	 *
 	 * @param      mixed $values Criteria or NagiosEscalation object or primary key or array of primary keys
 	 *              which is used to create the DELETE statement
@@ -2999,14 +2927,30 @@ abstract class BaseNagiosEscalationPeer {
 		}
 
 		if ($values instanceof Criteria) {
+			// invalidate the cache for all objects of this type, since we have no
+			// way of knowing (without running a query) what objects should be invalidated
+			// from the cache based on this Criteria.
+			NagiosEscalationPeer::clearInstancePool();
+
 			// rename for clarity
 			$criteria = clone $values;
-		} elseif ($values instanceof NagiosEscalation) { // it's a model object
+		} elseif ($values instanceof NagiosEscalation) {
+			// invalidate the cache for this single object
+			NagiosEscalationPeer::removeInstanceFromPool($values);
 			// create criteria based on pk values
 			$criteria = $values->buildPkeyCriteria();
-		} else { // it's a primary key, or an array of pks
+		} else {
+			// it must be the primary key
+
+
+
 			$criteria = new Criteria(self::DATABASE_NAME);
 			$criteria->add(NagiosEscalationPeer::ID, (array) $values, Criteria::IN);
+
+			foreach ((array) $values as $singleval) {
+				// we can invalidate the cache for this single object
+				NagiosEscalationPeer::removeInstanceFromPool($singleval);
+			}
 		}
 
 		// Set the correct dbName
@@ -3018,26 +2962,25 @@ abstract class BaseNagiosEscalationPeer {
 			// use transaction because $criteria could contain info
 			// for more than one table or we could emulating ON DELETE CASCADE, etc.
 			$con->beginTransaction();
+			$affectedRows += NagiosEscalationPeer::doOnDeleteCascade($criteria, $con);
 			
-			// cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
-			$c = clone $criteria;
-			$affectedRows += NagiosEscalationPeer::doOnDeleteCascade($c, $con);
-			
-			// Because this db requires some delete cascade/set null emulation, we have to
-			// clear the cached instance *after* the emulation has happened (since
-			// instances get re-added by the select statement contained therein).
-			if ($values instanceof Criteria) {
-				NagiosEscalationPeer::clearInstancePool();
-			} elseif ($values instanceof NagiosEscalation) { // it's a model object
-				NagiosEscalationPeer::removeInstanceFromPool($values);
-			} else { // it's a primary key, or an array of pks
-				foreach ((array) $values as $singleval) {
-					NagiosEscalationPeer::removeInstanceFromPool($singleval);
+				// Because this db requires some delete cascade/set null emulation, we have to
+				// clear the cached instance *after* the emulation has happened (since
+				// instances get re-added by the select statement contained therein).
+				if ($values instanceof Criteria) {
+					NagiosEscalationPeer::clearInstancePool();
+				} else { // it's a PK or object
+					NagiosEscalationPeer::removeInstanceFromPool($values);
 				}
-			}
 			
 			$affectedRows += BasePeer::doDelete($criteria, $con);
-			NagiosEscalationPeer::clearRelatedInstancePool();
+
+			// invalidate objects in NagiosEscalationContactPeer instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
+			NagiosEscalationContactPeer::clearInstancePool();
+
+			// invalidate objects in NagiosEscalationContactgroupPeer instance pool, since one or more of them may be deleted by ON DELETE CASCADE rule.
+			NagiosEscalationContactgroupPeer::clearInstancePool();
+
 			$con->commit();
 			return $affectedRows;
 		} catch (PropelException $e) {
@@ -3070,16 +3013,16 @@ abstract class BaseNagiosEscalationPeer {
 
 
 			// delete related NagiosEscalationContact objects
-			$criteria = new Criteria(NagiosEscalationContactPeer::DATABASE_NAME);
+			$c = new Criteria(NagiosEscalationContactPeer::DATABASE_NAME);
 			
-			$criteria->add(NagiosEscalationContactPeer::ESCALATION, $obj->getId());
-			$affectedRows += NagiosEscalationContactPeer::doDelete($criteria, $con);
+			$c->add(NagiosEscalationContactPeer::ESCALATION, $obj->getId());
+			$affectedRows += NagiosEscalationContactPeer::doDelete($c, $con);
 
 			// delete related NagiosEscalationContactgroup objects
-			$criteria = new Criteria(NagiosEscalationContactgroupPeer::DATABASE_NAME);
+			$c = new Criteria(NagiosEscalationContactgroupPeer::DATABASE_NAME);
 			
-			$criteria->add(NagiosEscalationContactgroupPeer::ESCALATION, $obj->getId());
-			$affectedRows += NagiosEscalationContactgroupPeer::doDelete($criteria, $con);
+			$c->add(NagiosEscalationContactgroupPeer::ESCALATION, $obj->getId());
+			$affectedRows += NagiosEscalationContactgroupPeer::doDelete($c, $con);
 		}
 		return $affectedRows;
 	}
@@ -3096,7 +3039,7 @@ abstract class BaseNagiosEscalationPeer {
 	 *
 	 * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
 	 */
-	public static function doValidate($obj, $cols = null)
+	public static function doValidate(NagiosEscalation $obj, $cols = null)
 	{
 		$columns = array();
 
@@ -3174,7 +3117,14 @@ abstract class BaseNagiosEscalationPeer {
 
 } // BaseNagiosEscalationPeer
 
-// This is the static code needed to register the TableMap for this table with the main Propel class.
+// This is the static code needed to register the MapBuilder for this table with the main Propel class.
 //
-BaseNagiosEscalationPeer::buildTableMap();
+// NOTE: This static code cannot call methods on the NagiosEscalationPeer class, because it is not defined yet.
+// If you need to use overridden methods, you can add this code to the bottom of the NagiosEscalationPeer class:
+//
+// Propel::getDatabaseMap(NagiosEscalationPeer::DATABASE_NAME)->addTableBuilder(NagiosEscalationPeer::TABLE_NAME, NagiosEscalationPeer::getMapBuilder());
+//
+// Doing so will effectively overwrite the registration below.
+
+Propel::getDatabaseMap(BaseNagiosEscalationPeer::DATABASE_NAME)->addTableBuilder(BaseNagiosEscalationPeer::TABLE_NAME, BaseNagiosEscalationPeer::getMapBuilder());
 

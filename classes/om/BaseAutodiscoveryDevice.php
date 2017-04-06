@@ -1,20 +1,14 @@
 <?php
 
-
 /**
  * Base class that represents a row from the 'autodiscovery_device' table.
  *
  * AutoDiscovery Found Device
  *
- * @package    propel.generator..om
+ * @package    .om
  */
-abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
-{
+abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent {
 
-	/**
-	 * Peer class name
-	 */
-	const PEER = 'AutodiscoveryDevicePeer';
 
 	/**
 	 * The Peer class.
@@ -111,9 +105,19 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	protected $collAutodiscoveryDeviceServices;
 
 	/**
+	 * @var        Criteria The criteria used to select the current contents of collAutodiscoveryDeviceServices.
+	 */
+	private $lastAutodiscoveryDeviceServiceCriteria = null;
+
+	/**
 	 * @var        array AutodiscoveryDeviceTemplateMatch[] Collection to store aggregation of AutodiscoveryDeviceTemplateMatch objects.
 	 */
 	protected $collAutodiscoveryDeviceTemplateMatchs;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collAutodiscoveryDeviceTemplateMatchs.
+	 */
+	private $lastAutodiscoveryDeviceTemplateMatchCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -128,6 +132,26 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	 * @var        boolean
 	 */
 	protected $alreadyInValidation = false;
+
+	/**
+	 * Initializes internal state of BaseAutodiscoveryDevice object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
 
 	/**
 	 * Get the [id] column value.
@@ -481,6 +505,11 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	 */
 	public function hasOnlyDefaultValues()
 	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
 		// otherwise, everything was equal, so return TRUE
 		return true;
 	} // hasOnlyDefaultValues()
@@ -522,7 +551,8 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 11; // 11 = AutodiscoveryDevicePeer::NUM_HYDRATE_COLUMNS.
+			// FIXME - using NUM_COLUMNS may be clearer.
+			return $startcol + 11; // 11 = AutodiscoveryDevicePeer::NUM_COLUMNS - AutodiscoveryDevicePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating AutodiscoveryDevice object", $e);
@@ -597,8 +627,10 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 			$this->aNagiosHostTemplate = null;
 			$this->aNagiosHost = null;
 			$this->collAutodiscoveryDeviceServices = null;
+			$this->lastAutodiscoveryDeviceServiceCriteria = null;
 
 			$this->collAutodiscoveryDeviceTemplateMatchs = null;
+			$this->lastAutodiscoveryDeviceTemplateMatchCriteria = null;
 
 		} // if (deep)
 	}
@@ -621,20 +653,12 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(AutodiscoveryDevicePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
 		try {
-			$ret = $this->preDelete($con);
-			if ($ret) {
-				AutodiscoveryDeviceQuery::create()
-					->filterByPrimaryKey($this->getPrimaryKey())
-					->delete($con);
-				$this->postDelete($con);
-				$con->commit();
-				$this->setDeleted(true);
-			} else {
-				$con->commit();
-			}
+			AutodiscoveryDevicePeer::doDelete($this, $con);
+			$this->setDeleted(true);
+			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollBack();
 			throw $e;
@@ -663,29 +687,12 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(AutodiscoveryDevicePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
-		$isInsert = $this->isNew();
 		try {
-			$ret = $this->preSave($con);
-			if ($isInsert) {
-				$ret = $ret && $this->preInsert($con);
-			} else {
-				$ret = $ret && $this->preUpdate($con);
-			}
-			if ($ret) {
-				$affectedRows = $this->doSave($con);
-				if ($isInsert) {
-					$this->postInsert($con);
-				} else {
-					$this->postUpdate($con);
-				}
-				$this->postSave($con);
-				AutodiscoveryDevicePeer::addInstanceToPool($this);
-			} else {
-				$affectedRows = 0;
-			}
+			$affectedRows = $this->doSave($con);
 			$con->commit();
+			AutodiscoveryDevicePeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollBack();
@@ -743,14 +750,13 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(AutodiscoveryDevicePeer::ID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.AutodiscoveryDevicePeer::ID.')');
-					}
+					$pk = AutodiscoveryDevicePeer::doInsert($this, $con);
+					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
+										 // should always be true here (even though technically
+										 // BasePeer::doInsert() can insert multiple rows).
 
-					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows += 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
+
 					$this->setNew(false);
 				} else {
 					$affectedRows += AutodiscoveryDevicePeer::doUpdate($this, $con);
@@ -964,21 +970,13 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param     string  $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-	 *                    Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
-	 *
-	 * @return    array an associative array containing the field names (as keys) and field values
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
+	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
-		if (isset($alreadyDumpedObjects['AutodiscoveryDevice'][$this->getPrimaryKey()])) {
-			return '*RECURSION*';
-		}
-		$alreadyDumpedObjects['AutodiscoveryDevice'][$this->getPrimaryKey()] = true;
 		$keys = AutodiscoveryDevicePeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
@@ -993,23 +991,6 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 			$keys[9] => $this->getHostTemplate(),
 			$keys[10] => $this->getProposedParent(),
 		);
-		if ($includeForeignObjects) {
-			if (null !== $this->aAutodiscoveryJob) {
-				$result['AutodiscoveryJob'] = $this->aAutodiscoveryJob->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHostTemplate) {
-				$result['NagiosHostTemplate'] = $this->aNagiosHostTemplate->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHost) {
-				$result['NagiosHost'] = $this->aNagiosHost->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->collAutodiscoveryDeviceServices) {
-				$result['AutodiscoveryDeviceServices'] = $this->collAutodiscoveryDeviceServices->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collAutodiscoveryDeviceTemplateMatchs) {
-				$result['AutodiscoveryDeviceTemplateMatchs'] = $this->collAutodiscoveryDeviceTemplateMatchs->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-		}
 		return $result;
 	}
 
@@ -1145,6 +1126,7 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	public function buildPkeyCriteria()
 	{
 		$criteria = new Criteria(AutodiscoveryDevicePeer::DATABASE_NAME);
+
 		$criteria->add(AutodiscoveryDevicePeer::ID, $this->id);
 
 		return $criteria;
@@ -1171,15 +1153,6 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Returns true if the primary key for this object is null.
-	 * @return     boolean
-	 */
-	public function isPrimaryKeyNull()
-	{
-		return null === $this->getId();
-	}
-
-	/**
 	 * Sets contents of passed object to values from current object.
 	 *
 	 * If desired, this method can also make copies of all associated (fkey referrers)
@@ -1187,21 +1160,31 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	 *
 	 * @param      object $copyObj An object of AutodiscoveryDevice (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
 	 * @throws     PropelException
 	 */
-	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
+	public function copyInto($copyObj, $deepCopy = false)
 	{
-		$copyObj->setJobId($this->getJobId());
-		$copyObj->setAddress($this->getAddress());
-		$copyObj->setName($this->getName());
-		$copyObj->setHostname($this->getHostname());
-		$copyObj->setDescription($this->getDescription());
-		$copyObj->setOsvendor($this->getOsvendor());
-		$copyObj->setOsfamily($this->getOsfamily());
-		$copyObj->setOsgen($this->getOsgen());
-		$copyObj->setHostTemplate($this->getHostTemplate());
-		$copyObj->setProposedParent($this->getProposedParent());
+
+		$copyObj->setJobId($this->job_id);
+
+		$copyObj->setAddress($this->address);
+
+		$copyObj->setName($this->name);
+
+		$copyObj->setHostname($this->hostname);
+
+		$copyObj->setDescription($this->description);
+
+		$copyObj->setOsvendor($this->osvendor);
+
+		$copyObj->setOsfamily($this->osfamily);
+
+		$copyObj->setOsgen($this->osgen);
+
+		$copyObj->setHostTemplate($this->host_template);
+
+		$copyObj->setProposedParent($this->proposed_parent);
+
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -1222,10 +1205,11 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 
 		} // if ($deepCopy)
 
-		if ($makeNew) {
-			$copyObj->setNew(true);
-			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
-		}
+
+		$copyObj->setNew(true);
+
+		$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+
 	}
 
 	/**
@@ -1303,13 +1287,15 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	public function getAutodiscoveryJob(PropelPDO $con = null)
 	{
 		if ($this->aAutodiscoveryJob === null && ($this->job_id !== null)) {
-			$this->aAutodiscoveryJob = AutodiscoveryJobQuery::create()->findPk($this->job_id, $con);
+			$c = new Criteria(AutodiscoveryJobPeer::DATABASE_NAME);
+			$c->add(AutodiscoveryJobPeer::ID, $this->job_id);
+			$this->aAutodiscoveryJob = AutodiscoveryJobPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aAutodiscoveryJob->addAutodiscoveryDevices($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aAutodiscoveryJob->addAutodiscoveryDevices($this);
 			 */
 		}
 		return $this->aAutodiscoveryJob;
@@ -1352,13 +1338,15 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	public function getNagiosHostTemplate(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostTemplate === null && ($this->host_template !== null)) {
-			$this->aNagiosHostTemplate = NagiosHostTemplateQuery::create()->findPk($this->host_template, $con);
+			$c = new Criteria(NagiosHostTemplatePeer::DATABASE_NAME);
+			$c->add(NagiosHostTemplatePeer::ID, $this->host_template);
+			$this->aNagiosHostTemplate = NagiosHostTemplatePeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostTemplate->addAutodiscoveryDevices($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostTemplate->addAutodiscoveryDevices($this);
 			 */
 		}
 		return $this->aNagiosHostTemplate;
@@ -1401,39 +1389,22 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	public function getNagiosHost(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHost === null && ($this->proposed_parent !== null)) {
-			$this->aNagiosHost = NagiosHostQuery::create()->findPk($this->proposed_parent, $con);
+			$c = new Criteria(NagiosHostPeer::DATABASE_NAME);
+			$c->add(NagiosHostPeer::ID, $this->proposed_parent);
+			$this->aNagiosHost = NagiosHostPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHost->addAutodiscoveryDevices($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHost->addAutodiscoveryDevices($this);
 			 */
 		}
 		return $this->aNagiosHost;
 	}
 
-
 	/**
-	 * Initializes a collection based on the name of a relation.
-	 * Avoids crafting an 'init[$relationName]s' method name 
-	 * that wouldn't work when StandardEnglishPluralizer is used.
-	 *
-	 * @param      string $relationName The name of the relation to initialize
-	 * @return     void
-	 */
-	public function initRelation($relationName)
-	{
-		if ('AutodiscoveryDeviceService' == $relationName) {
-			return $this->initAutodiscoveryDeviceServices();
-		}
-		if ('AutodiscoveryDeviceTemplateMatch' == $relationName) {
-			return $this->initAutodiscoveryDeviceTemplateMatchs();
-		}
-	}
-
-	/**
-	 * Clears out the collAutodiscoveryDeviceServices collection
+	 * Clears out the collAutodiscoveryDeviceServices collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -1447,56 +1418,69 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collAutodiscoveryDeviceServices collection.
+	 * Initializes the collAutodiscoveryDeviceServices collection (array).
 	 *
 	 * By default this just sets the collAutodiscoveryDeviceServices collection to an empty array (like clearcollAutodiscoveryDeviceServices());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initAutodiscoveryDeviceServices($overrideExisting = true)
+	public function initAutodiscoveryDeviceServices()
 	{
-		if (null !== $this->collAutodiscoveryDeviceServices && !$overrideExisting) {
-			return;
-		}
-		$this->collAutodiscoveryDeviceServices = new PropelObjectCollection();
-		$this->collAutodiscoveryDeviceServices->setModel('AutodiscoveryDeviceService');
+		$this->collAutodiscoveryDeviceServices = array();
 	}
 
 	/**
 	 * Gets an array of AutodiscoveryDeviceService objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this AutodiscoveryDevice is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this AutodiscoveryDevice has previously been saved, it will retrieve
+	 * related AutodiscoveryDeviceServices from storage. If this AutodiscoveryDevice is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array AutodiscoveryDeviceService[] List of AutodiscoveryDeviceService objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array AutodiscoveryDeviceService[]
 	 * @throws     PropelException
 	 */
 	public function getAutodiscoveryDeviceServices($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collAutodiscoveryDeviceServices || null !== $criteria) {
-			if ($this->isNew() && null === $this->collAutodiscoveryDeviceServices) {
-				// return empty collection
-				$this->initAutodiscoveryDeviceServices();
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryDevicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collAutodiscoveryDeviceServices === null) {
+			if ($this->isNew()) {
+			   $this->collAutodiscoveryDeviceServices = array();
 			} else {
-				$collAutodiscoveryDeviceServices = AutodiscoveryDeviceServiceQuery::create(null, $criteria)
-					->filterByAutodiscoveryDevice($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collAutodiscoveryDeviceServices;
+
+				$criteria->add(AutodiscoveryDeviceServicePeer::DEVICE_ID, $this->id);
+
+				AutodiscoveryDeviceServicePeer::addSelectColumns($criteria);
+				$this->collAutodiscoveryDeviceServices = AutodiscoveryDeviceServicePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(AutodiscoveryDeviceServicePeer::DEVICE_ID, $this->id);
+
+				AutodiscoveryDeviceServicePeer::addSelectColumns($criteria);
+				if (!isset($this->lastAutodiscoveryDeviceServiceCriteria) || !$this->lastAutodiscoveryDeviceServiceCriteria->equals($criteria)) {
+					$this->collAutodiscoveryDeviceServices = AutodiscoveryDeviceServicePeer::doSelect($criteria, $con);
 				}
-				$this->collAutodiscoveryDeviceServices = $collAutodiscoveryDeviceServices;
 			}
 		}
+		$this->lastAutodiscoveryDeviceServiceCriteria = $criteria;
 		return $this->collAutodiscoveryDeviceServices;
 	}
 
@@ -1511,21 +1495,47 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	 */
 	public function countAutodiscoveryDeviceServices(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collAutodiscoveryDeviceServices || null !== $criteria) {
-			if ($this->isNew() && null === $this->collAutodiscoveryDeviceServices) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryDevicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collAutodiscoveryDeviceServices === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = AutodiscoveryDeviceServiceQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByAutodiscoveryDevice($this)
-					->count($con);
+
+				$criteria->add(AutodiscoveryDeviceServicePeer::DEVICE_ID, $this->id);
+
+				$count = AutodiscoveryDeviceServicePeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collAutodiscoveryDeviceServices);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(AutodiscoveryDeviceServicePeer::DEVICE_ID, $this->id);
+
+				if (!isset($this->lastAutodiscoveryDeviceServiceCriteria) || !$this->lastAutodiscoveryDeviceServiceCriteria->equals($criteria)) {
+					$count = AutodiscoveryDeviceServicePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collAutodiscoveryDeviceServices);
+				}
+			} else {
+				$count = count($this->collAutodiscoveryDeviceServices);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -1541,14 +1551,14 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 		if ($this->collAutodiscoveryDeviceServices === null) {
 			$this->initAutodiscoveryDeviceServices();
 		}
-		if (!$this->collAutodiscoveryDeviceServices->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collAutodiscoveryDeviceServices[]= $l;
+		if (!in_array($l, $this->collAutodiscoveryDeviceServices, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collAutodiscoveryDeviceServices, $l);
 			$l->setAutodiscoveryDevice($this);
 		}
 	}
 
 	/**
-	 * Clears out the collAutodiscoveryDeviceTemplateMatchs collection
+	 * Clears out the collAutodiscoveryDeviceTemplateMatchs collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -1562,56 +1572,69 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collAutodiscoveryDeviceTemplateMatchs collection.
+	 * Initializes the collAutodiscoveryDeviceTemplateMatchs collection (array).
 	 *
 	 * By default this just sets the collAutodiscoveryDeviceTemplateMatchs collection to an empty array (like clearcollAutodiscoveryDeviceTemplateMatchs());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initAutodiscoveryDeviceTemplateMatchs($overrideExisting = true)
+	public function initAutodiscoveryDeviceTemplateMatchs()
 	{
-		if (null !== $this->collAutodiscoveryDeviceTemplateMatchs && !$overrideExisting) {
-			return;
-		}
-		$this->collAutodiscoveryDeviceTemplateMatchs = new PropelObjectCollection();
-		$this->collAutodiscoveryDeviceTemplateMatchs->setModel('AutodiscoveryDeviceTemplateMatch');
+		$this->collAutodiscoveryDeviceTemplateMatchs = array();
 	}
 
 	/**
 	 * Gets an array of AutodiscoveryDeviceTemplateMatch objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this AutodiscoveryDevice is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this AutodiscoveryDevice has previously been saved, it will retrieve
+	 * related AutodiscoveryDeviceTemplateMatchs from storage. If this AutodiscoveryDevice is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array AutodiscoveryDeviceTemplateMatch[] List of AutodiscoveryDeviceTemplateMatch objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array AutodiscoveryDeviceTemplateMatch[]
 	 * @throws     PropelException
 	 */
 	public function getAutodiscoveryDeviceTemplateMatchs($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collAutodiscoveryDeviceTemplateMatchs || null !== $criteria) {
-			if ($this->isNew() && null === $this->collAutodiscoveryDeviceTemplateMatchs) {
-				// return empty collection
-				$this->initAutodiscoveryDeviceTemplateMatchs();
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryDevicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collAutodiscoveryDeviceTemplateMatchs === null) {
+			if ($this->isNew()) {
+			   $this->collAutodiscoveryDeviceTemplateMatchs = array();
 			} else {
-				$collAutodiscoveryDeviceTemplateMatchs = AutodiscoveryDeviceTemplateMatchQuery::create(null, $criteria)
-					->filterByAutodiscoveryDevice($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collAutodiscoveryDeviceTemplateMatchs;
+
+				$criteria->add(AutodiscoveryDeviceTemplateMatchPeer::DEVICE_ID, $this->id);
+
+				AutodiscoveryDeviceTemplateMatchPeer::addSelectColumns($criteria);
+				$this->collAutodiscoveryDeviceTemplateMatchs = AutodiscoveryDeviceTemplateMatchPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(AutodiscoveryDeviceTemplateMatchPeer::DEVICE_ID, $this->id);
+
+				AutodiscoveryDeviceTemplateMatchPeer::addSelectColumns($criteria);
+				if (!isset($this->lastAutodiscoveryDeviceTemplateMatchCriteria) || !$this->lastAutodiscoveryDeviceTemplateMatchCriteria->equals($criteria)) {
+					$this->collAutodiscoveryDeviceTemplateMatchs = AutodiscoveryDeviceTemplateMatchPeer::doSelect($criteria, $con);
 				}
-				$this->collAutodiscoveryDeviceTemplateMatchs = $collAutodiscoveryDeviceTemplateMatchs;
 			}
 		}
+		$this->lastAutodiscoveryDeviceTemplateMatchCriteria = $criteria;
 		return $this->collAutodiscoveryDeviceTemplateMatchs;
 	}
 
@@ -1626,21 +1649,47 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	 */
 	public function countAutodiscoveryDeviceTemplateMatchs(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collAutodiscoveryDeviceTemplateMatchs || null !== $criteria) {
-			if ($this->isNew() && null === $this->collAutodiscoveryDeviceTemplateMatchs) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryDevicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collAutodiscoveryDeviceTemplateMatchs === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = AutodiscoveryDeviceTemplateMatchQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByAutodiscoveryDevice($this)
-					->count($con);
+
+				$criteria->add(AutodiscoveryDeviceTemplateMatchPeer::DEVICE_ID, $this->id);
+
+				$count = AutodiscoveryDeviceTemplateMatchPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collAutodiscoveryDeviceTemplateMatchs);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(AutodiscoveryDeviceTemplateMatchPeer::DEVICE_ID, $this->id);
+
+				if (!isset($this->lastAutodiscoveryDeviceTemplateMatchCriteria) || !$this->lastAutodiscoveryDeviceTemplateMatchCriteria->equals($criteria)) {
+					$count = AutodiscoveryDeviceTemplateMatchPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collAutodiscoveryDeviceTemplateMatchs);
+				}
+			} else {
+				$count = count($this->collAutodiscoveryDeviceTemplateMatchs);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -1656,8 +1705,8 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 		if ($this->collAutodiscoveryDeviceTemplateMatchs === null) {
 			$this->initAutodiscoveryDeviceTemplateMatchs();
 		}
-		if (!$this->collAutodiscoveryDeviceTemplateMatchs->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collAutodiscoveryDeviceTemplateMatchs[]= $l;
+		if (!in_array($l, $this->collAutodiscoveryDeviceTemplateMatchs, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collAutodiscoveryDeviceTemplateMatchs, $l);
 			$l->setAutodiscoveryDevice($this);
 		}
 	}
@@ -1673,108 +1722,71 @@ abstract class BaseAutodiscoveryDevice extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in AutodiscoveryDevice.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array AutodiscoveryDeviceTemplateMatch[] List of AutodiscoveryDeviceTemplateMatch objects
 	 */
 	public function getAutodiscoveryDeviceTemplateMatchsJoinNagiosHostTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = AutodiscoveryDeviceTemplateMatchQuery::create(null, $criteria);
-		$query->joinWith('NagiosHostTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(AutodiscoveryDevicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getAutodiscoveryDeviceTemplateMatchs($query, $con);
+		if ($this->collAutodiscoveryDeviceTemplateMatchs === null) {
+			if ($this->isNew()) {
+				$this->collAutodiscoveryDeviceTemplateMatchs = array();
+			} else {
+
+				$criteria->add(AutodiscoveryDeviceTemplateMatchPeer::DEVICE_ID, $this->id);
+
+				$this->collAutodiscoveryDeviceTemplateMatchs = AutodiscoveryDeviceTemplateMatchPeer::doSelectJoinNagiosHostTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(AutodiscoveryDeviceTemplateMatchPeer::DEVICE_ID, $this->id);
+
+			if (!isset($this->lastAutodiscoveryDeviceTemplateMatchCriteria) || !$this->lastAutodiscoveryDeviceTemplateMatchCriteria->equals($criteria)) {
+				$this->collAutodiscoveryDeviceTemplateMatchs = AutodiscoveryDeviceTemplateMatchPeer::doSelectJoinNagiosHostTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastAutodiscoveryDeviceTemplateMatchCriteria = $criteria;
+
+		return $this->collAutodiscoveryDeviceTemplateMatchs;
 	}
 
 	/**
-	 * Clears the current object and sets all attributes to their default values
-	 */
-	public function clear()
-	{
-		$this->id = null;
-		$this->job_id = null;
-		$this->address = null;
-		$this->name = null;
-		$this->hostname = null;
-		$this->description = null;
-		$this->osvendor = null;
-		$this->osfamily = null;
-		$this->osgen = null;
-		$this->host_template = null;
-		$this->proposed_parent = null;
-		$this->alreadyInSave = false;
-		$this->alreadyInValidation = false;
-		$this->clearAllReferences();
-		$this->resetModified();
-		$this->setNew(true);
-		$this->setDeleted(false);
-	}
-
-	/**
-	 * Resets all references to other model objects or collections of model objects.
+	 * Resets all collections of referencing foreign keys.
 	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect
-	 * objects with circular references (even in PHP 5.3). This is currently necessary
-	 * when using Propel in certain daemon or large-volumne/high-memory operations.
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
 	 *
-	 * @param      boolean $deep Whether to also clear the references on all referrer objects.
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
 	 */
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
 			if ($this->collAutodiscoveryDeviceServices) {
-				foreach ($this->collAutodiscoveryDeviceServices as $o) {
+				foreach ((array) $this->collAutodiscoveryDeviceServices as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collAutodiscoveryDeviceTemplateMatchs) {
-				foreach ($this->collAutodiscoveryDeviceTemplateMatchs as $o) {
+				foreach ((array) $this->collAutodiscoveryDeviceTemplateMatchs as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 		} // if ($deep)
 
-		if ($this->collAutodiscoveryDeviceServices instanceof PropelCollection) {
-			$this->collAutodiscoveryDeviceServices->clearIterator();
-		}
 		$this->collAutodiscoveryDeviceServices = null;
-		if ($this->collAutodiscoveryDeviceTemplateMatchs instanceof PropelCollection) {
-			$this->collAutodiscoveryDeviceTemplateMatchs->clearIterator();
-		}
 		$this->collAutodiscoveryDeviceTemplateMatchs = null;
-		$this->aAutodiscoveryJob = null;
-		$this->aNagiosHostTemplate = null;
-		$this->aNagiosHost = null;
-	}
-
-	/**
-	 * Return the string representation of this object
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string) $this->exportTo(AutodiscoveryDevicePeer::DEFAULT_STRING_FORMAT);
-	}
-
-	/**
-	 * Catches calls to virtual methods
-	 */
-	public function __call($name, $params)
-	{
-		if (preg_match('/get(\w+)/', $name, $matches)) {
-			$virtualColumn = $matches[1];
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-			// no lcfirst in php<5.3...
-			$virtualColumn[0] = strtolower($virtualColumn[0]);
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-		}
-		return parent::__call($name, $params);
+			$this->aAutodiscoveryJob = null;
+			$this->aNagiosHostTemplate = null;
+			$this->aNagiosHost = null;
 	}
 
 } // BaseAutodiscoveryDevice

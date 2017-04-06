@@ -1,7 +1,6 @@
 <?php
 /*
 Lilac - A Nagios Configuration Tool
-Copyright (C) 2012 Rene Hadler
 Copyright (C) 2007 Taylor Dondich
 
 This program is free software; you can redistribute it and/or
@@ -54,8 +53,6 @@ if(isset($_POST['request'])) {
          $cgiConfig->setAuthorizedForAllServices($_POST['cgi_config']['authorized_for_all_services']);
         if(isset($_POST['cgi_config']['authorized_for_all_service_commands']))
          $cgiConfig->setAuthorizedForAllServiceCommands($_POST['cgi_config']['authorized_for_all_service_commands']);
-        if(isset($_POST['cgi_config']['authorized_for_read_only']))
-         $cgiConfig->setAuthorizedForReadOnly($_POST['cgi_config']['authorized_for_read_only']);
         if(isset($_POST['cgi_config']['statusmap_background_image']))
          $cgiConfig->setStatusmapBackgroundImage($_POST['cgi_config']['statusmap_background_image']);
         if(isset($_POST['cgi_config']['default_statusmap_layout']))
@@ -66,15 +63,9 @@ if(isset($_POST['request'])) {
          $cgiConfig->setDefaultStatuswrlLayout($_POST['cgi_config']['default_statuswrl_layout']);
         if(isset($_POST['cgi_config']['refresh_rate']))
          $cgiConfig->setRefreshRate($_POST['cgi_config']['refresh_rate']);
-        if(isset($_POST['cgi_config']['color_transparency_index_r']))
-         $cgiConfig->setColorTransparencyIndexR($_POST['cgi_config']['color_transparency_index_r']);
-        if(isset($_POST['cgi_config']['color_transparency_index_g']))
-         $cgiConfig->setColorTransparencyIndexG($_POST['cgi_config']['color_transparency_index_g']);
-        if(isset($_POST['cgi_config']['color_transparency_index_b']))
-         $cgiConfig->setColorTransparencyIndexB($_POST['cgi_config']['color_transparency_index_b']);
         if(isset($_POST['cgi_config']['host_unreachable_sound']))
          $cgiConfig->setHostUnreachableSound($_POST['cgi_config']['host_unreachable_sound']);
-        if(isset($_POST['cgi_config']['host_down_sound']))
+        if(isset($_POST['cgi_config']['host_down_sound'])) 
          $cgiConfig->setHostDownSound($_POST['cgi_config']['host_down_sound']);
         if(isset($_POST['cgi_config']['service_critical_sound']))
          $cgiConfig->setServiceCriticalSound($_POST['cgi_config']['service_critical_sound']);
@@ -97,16 +88,14 @@ if(isset($_POST['request'])) {
          $cgiConfig->setEnableSplunkIntegration($_POST['cgi_config']['enable_splunk_integration']);
         if(isset($_POST['cgi_config']['splunk_url']))
          $cgiConfig->setSplunkUrl($_POST['cgi_config']['splunk_url']);
-        if(isset($_POST['cgi_config']['result_limit']))
-         $cgiConfig->setResultLimit($_POST['cgi_config']['result_limit']);
-        if(isset($_POST['cgi_config']['nagios_check_command']))
-            $cgiConfig->setNagiosCheckCommand($_POST['cgi_config']['nagios_check_command']);
-        $cgiConfig->save();
+        $cgiConfig->save();		
         $success = "Updated CGI Configuration.";
     }
 }
 
 
+
+	
 // Let's make the status map layout select list
 $statusmap_layout_list[] = array("values" => "0", "text" => "User-Defined Coordinates");
 $statusmap_layout_list[] = array("values" => "1", "text" => "Depth Layers");
@@ -127,7 +116,7 @@ $statuswrl_layout_list[] = array("values" => "4", "text" => "Circular");
 if(!isset($_GET['section']))
 	$_GET['section'] = 'paths';
 
-
+	
 // Build subnavigation
 $subnav = array(
 	'paths' => 'Paths',
@@ -149,16 +138,16 @@ print_header("CGI Configuration File Editor");
 		<input type="hidden" name="request" value="update" />
 		<div class="formbox">
 		<b>Physical HTML Path:</b><br />
-		<input type="text" size="80" name="cgi_config[physical_html_path]" VALUE="<?php echo $cgiConfig->getPhysicalHtmlPath();?>"><br />
+		<input type="text" size="80" name="cgi_config[physical_html_path]" VALUE="<?php echo $cgiConfig->getPhysicalHtmlPath();?>">
 		<?php echo $lilac->element_desc("physical_html_path", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
 		<b>URL HTML Path:</b><br />
-		<input type="text" size="80" name="cgi_config[url_html_path]" VALUE="<?php echo $cgiConfig->getUrlHtmlPath();?>"><br />
+		<input type="text" size="80" name="cgi_config[url_html_path]" VALUE="<?php echo $cgiConfig->getUrlHtmlPath();?>">
 		<?php echo $lilac->element_desc("url_html_path", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<input type="submit" value="Update Path Configuration" />
+		<input class="btn btn-primary" type="submit" value="Update Path Configuration" />
 		</div>
 		<?php
 	}
@@ -167,47 +156,43 @@ print_header("CGI Configuration File Editor");
 		<form name="cgi_authentication_config" method="post" action="cgi.php?section=authentication">
 		<input type="hidden" name="request" value="update" />
 		<div class="formbox">
-		<b>Use Authentication:</b> <?php print_select("cgi_config[use_authentication]", $enable_list, "values", "text", $cgiConfig->getUseAuthentication());?><br />
+		<b>Use Authentication:</b> <?php print_select("cgi_config[use_authentication]", $enable_list, "values", "text", $cgiConfig->getUseAuthentication());?>
 		<?php echo $lilac->element_desc("use_authentication", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Default Username:</b> <input type="text" name="cgi_config[default_user_name]" VALUE="<?php echo $cgiConfig->getDefaultUserName();?>"><br />
+		<b>Default Username:</b> <input type="text" name="cgi_config[default_user_name]" VALUE="<?php echo $cgiConfig->getDefaultUserName();?>">
 		<?php echo $lilac->element_desc("default_user_name", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Authorized for System Information:</b> <input type="text" name="cgi_config[authorized_for_system_information]" VALUE="<?php echo $cgiConfig->getAuthorizedForSystemInformation();?>"><br />
+		<b>Authorized for System Information:</b> <input type="text" name="cgi_config[authorized_for_system_information]" VALUE="<?php echo $cgiConfig->getAuthorizedForSystemInformation();?>">
 		<?php echo $lilac->element_desc("authorized_for_system_information", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Authorized for System Commands:</b> <input type="text" name="cgi_config[authorized_for_system_commands]" VALUE="<?php echo $cgiConfig->getAuthorizedForSystemCommands();?>"><br />
+		<b>Authorized for System Commands:</b> <input type="text" name="cgi_config[authorized_for_system_commands]" VALUE="<?php echo $cgiConfig->getAuthorizedForSystemCommands();?>">
 		<?php echo $lilac->element_desc("authorized_for_system_commands", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Authorized for Configuration Information:</b> <input type="text" name="cgi_config[authorized_for_configuration_information]" VALUE="<?php echo $cgiConfig->getAuthorizedForConfigurationInformation();?>"><br />
+		<b>Authorized for Configuration Information:</b> <input type="text" name="cgi_config[authorized_for_configuration_information]" VALUE="<?php echo $cgiConfig->getAuthorizedForConfigurationInformation();?>">
 		<?php echo $lilac->element_desc("authorized_for_configuration_information", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Authorized for All Hosts:</b> <input type="text" name="cgi_config[authorized_for_all_hosts]" VALUE="<?php echo $cgiConfig->getAuthorizedForAllHosts();?>"><br />
+		<b>Authorized for All Hosts:</b> <input type="text" name="cgi_config[authorized_for_all_hosts]" VALUE="<?php echo $cgiConfig->getAuthorizedForAllHosts();?>">
 		<?php echo $lilac->element_desc("authorized_for_all_hosts", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Authorized for All Host Commands:</b> <input type="text" name="cgi_config[authorized_for_all_host_commands]" VALUE="<?php echo $cgiConfig->getAuthorizedForAllHostCommands();?>"><br />
+		<b>Authorized for All Host Commands:</b> <input type="text" name="cgi_config[authorized_for_all_host_commands]" VALUE="<?php echo $cgiConfig->getAuthorizedForAllHostCommands();?>">
 		<?php echo $lilac->element_desc("authorized_for_all_host_commands", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Authorized for All Services:</b> <input type="text" name="cgi_config[authorized_for_all_services]" VALUE="<?php echo $cgiConfig->getAuthorizedForAllServices();?>"><br />
+		<b>Authorized for All Services:</b> <input type="text" name="cgi_config[authorized_for_all_services]" VALUE="<?php echo $cgiConfig->getAuthorizedForAllServices();?>">
 		<?php echo $lilac->element_desc("authorized_for_all_services", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Authorized for All Service Commands:</b> <input type="text" name="cgi_config[authorized_for_all_service_commands]" VALUE="<?php echo $cgiConfig->getAuthorizedForAllServiceCommands();?>"><br />
+		<b>Authorized for All Service Commands:</b> <input type="text" name="cgi_config[authorized_for_all_service_commands]" VALUE="<?php echo $cgiConfig->getAuthorizedForAllServiceCommands();?>">
 		<?php echo $lilac->element_desc("authorized_for_all_service_commands", "nagios_cgi_desc"); ?><br />
 		</div>
-        <div class="formbox">
-        <b>Authorized for Read Only:</b> <input type="text" name="cgi_config[authorized_for_read_only]" VALUE="<?php echo $cgiConfig->getAuthorizedForReadOnly();?>"><br />
-        <?php echo $lilac->element_desc("authorized_for_read_only", "nagios_cgi_desc"); ?><br />
-        </div>
 		<div class="formbox">
-		<input type="submit" value="Update Authentication Configuration" />
+		<input class="btn btn-primary" type="submit" value="Update Authentication Configuration" />
 		</div>
 		<?php
 	}
@@ -216,38 +201,27 @@ print_header("CGI Configuration File Editor");
 		<form name="cgi_authentication_config" method="post" action="cgi.php?section=status">
 		<input type="hidden" name="request" value="update" />
 		<div class="formbox">
-		<b>Statusmap Background Image:</b> <input type="text" name="cgi_config[statusmap_background_image]" VALUE="<?php echo $cgiConfig->getStatusmapBackgroundImage();?>"><br />
+		<b>Statusmap Background Image:</b> <input type="text" name="cgi_config[statusmap_background_image]" VALUE="<?php echo $cgiConfig->getStatusmapBackgroundImage();?>">
 		<?php echo $lilac->element_desc("statusmap_background_image", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Default Statusmap Layout</b> <?php print_select("cgi_config[default_statusmap_layout]", $statusmap_layout_list, "values", "text", $cgiConfig->getDefaultStatusmapLayout());?><br />
+		<b>Default Statusmap Layout</b> <?php print_select("cgi_config[default_statusmap_layout]", $statusmap_layout_list, "values", "text", $cgiConfig->getDefaultStatusmapLayout());?>
 		<?php echo $lilac->element_desc("default_statusmap_layout", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Statuswrl Include:</b> <input type="text" name="cgi_config[statuswrl_include]" VALUE="<?php echo $cgiConfig->getStatuswrlInclude();?>"><br />
+		<b>Statuswrl Include:</b> <input type="text" name="cgi_config[statuswrl_include]" VALUE="<?php echo $cgiConfig->getStatuswrlInclude();?>">
 		<?php echo $lilac->element_desc("statuswrl_include", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Default Statuswrl Layout</b> <?php print_select("cgi_config[default_statuswrl_layout]", $statuswrl_layout_list, "values", "text", $cgiConfig->getDefaultStatuswrlLayout());?><br />
+		<b>Default Statuswrl Layout</b> <?php print_select("cgi_config[default_statuswrl_layout]", $statuswrl_layout_list, "values", "text", $cgiConfig->getDefaultStatuswrlLayout());?>
 		<?php echo $lilac->element_desc("default_statuswrl_layout", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Refresh Rate:</b> <input type="text" name="cgi_config[refresh_rate]" VALUE="<?php echo $cgiConfig->getRefreshRate();?>"><br />
+		<b>Refresh Rate:</b> <input type="text" name="cgi_config[refresh_rate]" VALUE="<?php echo $cgiConfig->getRefreshRate();?>">
 		<?php echo $lilac->element_desc("refresh_rate", "nagios_cgi_desc"); ?><br />
 		</div>
-        <div class="formbox">
-        <b>Statusmap CGI Color Transparency Indexes (RGB format):</b>
-            <input type="text" name="cgi_config[color_transparency_index_r]" VALUE="<?php echo $cgiConfig->getColorTransparencyIndexR();?>" size="4" maxlength="3">
-            <input type="text" name="cgi_config[color_transparency_index_g]" VALUE="<?php echo $cgiConfig->getColorTransparencyIndexG();?>" size="4" maxlength="3">
-            <input type="text" name="cgi_config[color_transparency_index_b]" VALUE="<?php echo $cgiConfig->getColorTransparencyIndexB();?>" size="4" maxlength="3"><br />
-        <?php echo $lilac->element_desc("color_transparency_index", "nagios_cgi_desc"); ?><br />
-        </div>
-        <div class="formbox">
-            <b>Nagios Process Check Command:</b> <input type="text" size="80" name="cgi_config[nagios_check_command]" VALUE="<?php echo $cgiConfig->getNagiosCheckCommand();?>"><br />
-            <?php echo $lilac->element_desc("nagios_check_command", "nagios_cgi_desc"); ?><br />
-        </div>
 		<div class="formbox">
-		<input type="submit" value="Update Status Configuration" />
+		<input class="btn btn-primary" type="submit" value="Update Status Configuration" />
 		</div>
 		<?php
 	}
@@ -256,27 +230,27 @@ print_header("CGI Configuration File Editor");
 		<form name="cgi_authentication_config" method="post" action="cgi.php?section=sounds">
 		<input type="hidden" name="request" value="update" />
 		<div class="formbox">
-		<b>Host Unreachable Sound:</b> <input type="text" name="cgi_config[host_unreachable_sound]" VALUE="<?php echo $cgiConfig->getHostUnreachableSound();?>"><br />
+		<b>Host Unreachable Sound:</b> <input type="text" name="cgi_config[host_unreachable_sound]" VALUE="<?php echo $cgiConfig->getHostUnreachableSound();?>">
 		<?php echo $lilac->element_desc("host_unreachable_sound", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Host Down Sound:</b> <input type="text" name="cgi_config[host_down_sound]" VALUE="<?php echo $cgiConfig->getHostDownSound();?>"><br />
+		<b>Host Down Sound:</b> <input type="text" name="cgi_config[host_down_sound]" VALUE="<?php echo $cgiConfig->getHostDownSound();?>">
 		<?php echo $lilac->element_desc("host_down_sound", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Service Critical Sound:</b> <input type="text" name="cgi_config[service_critical_sound]" VALUE="<?php echo $cgiConfig->getServiceCriticalSound();?>"><br />
+		<b>Service Critical Sound:</b> <input type="text" name="cgi_config[service_critical_sound]" VALUE="<?php echo $cgiConfig->getServiceCriticalSound();?>">
 		<?php echo $lilac->element_desc("service_critical_sound", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Service Warning Sound:</b> <input type="text" name="cgi_config[service_warning_sound]" VALUE="<?php echo $cgiConfig->getServiceWarningSound();?>"><br />
+		<b>Service Warning Sound:</b> <input type="text" name="cgi_config[service_warning_sound]" VALUE="<?php echo $cgiConfig->getServiceWarningSound();?>">
 		<?php echo $lilac->element_desc("service_warning_sound", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Service Unknown Sound:</b> <input type="text" name="cgi_config[service_unknown_sound]" VALUE="<?php echo $cgiConfig->getServiceUnknownSound();?>"><br />
+		<b>Service Unknown Sound:</b> <input type="text" name="cgi_config[service_unknown_sound]" VALUE="<?php echo $cgiConfig->getServiceUnknownSound();?>">
 		<?php echo $lilac->element_desc("service_unknown_sound", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<input type="submit" value="Update Sound Configuration" />
+		<input class="btn btn-primary" type="submit" value="Update Sound Configuration" />
 		</div>
 		<?php
 	}
@@ -285,47 +259,42 @@ print_header("CGI Configuration File Editor");
 		<form name="cgi_authentication_config" method="post" action="cgi.php?section=other">
 		<input type="hidden" name="request" value="update" />
 		<div class="formbox">
-		<b>Lock Author Names:</b> <?php print_select("cgi_config[lock_author_names]", $enable_list, "values", "text", $cgiConfig->getLockAuthorNames());?><br />
+		<b>Lock Author Names:</b> <?php print_select("cgi_config[lock_author_names]", $enable_list, "values", "text", $cgiConfig->getLockAuthorNames());?>
 		<?php echo $lilac->element_desc("lock_author_names", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Escape HTML Tags:</b> <?php print_select("cgi_config[escape_html_tags]", $enable_list, "values", "text", $cgiConfig->getEscapeHtmlTags());?><br />
+		<b>Escape HTML Tags:</b> <?php print_select("cgi_config[escape_html_tags]", $enable_list, "values", "text", $cgiConfig->getEscapeHtmlTags());?>
 		<?php echo $lilac->element_desc("escape_html_tags", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
 		<b>Notes URL Target:</b><br />
-		<input type="text" size="40" name="cgi_config[notes_url_target]" VALUE="<?php echo $cgiConfig->getNotesUrlTarget();?>"><br />
+		<input type="text" size="40" name="cgi_config[notes_url_target]" VALUE="<?php echo $cgiConfig->getNotesUrlTarget();?>">
 		<?php echo $lilac->element_desc("notes_url_target", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
 		<b>Action URL Target:</b><br />
-		<input type="text" size="40" name="cgi_config[action_url_target]" VALUE="<?php echo $cgiConfig->getActionUrlTarget();?>"><br />
+		<input type="text" size="40" name="cgi_config[action_url_target]" VALUE="<?php echo $cgiConfig->getActionUrlTarget();?>">
 		<?php echo $lilac->element_desc("action_url_target", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
 		<b>Ping Syntax:</b><br />
-		<input type="text" size="80" name="cgi_config[ping_syntax]" VALUE="<?php echo $cgiConfig->getPingSyntax();?>"><br />
+		<input type="text" size="80" name="cgi_config[ping_syntax]" VALUE="<?php echo $cgiConfig->getPingSyntax();?>">
 		<?php echo $lilac->element_desc("ping_syntax", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
-		<b>Enable Splunk Integration:</b> <?php print_select("cgi_config[enable_splunk_integration]", $enable_list, "values", "text", $cgiConfig->getEnableSplunkIntegration());?><br />
+		<b>Enable Splunk Integration:</b> <?php print_select("cgi_config[enable_splunk_integration]", $enable_list, "values", "text", $cgiConfig->getEnableSplunkIntegration());?>
 		<?php echo $lilac->element_desc("enable_splunk_integration", "nagios_cgi_desc"); ?><br />
 		</div>
 		<div class="formbox">
 		<b>Splunk URL:</b><br />
-		<input type="text" size="80" name="cgi_config[splunk_url]" VALUE="<?php echo $cgiConfig->getSplunkUrl();?>"><br />
+		<input type="text" size="80" name="cgi_config[splunk_url]" VALUE="<?php echo $cgiConfig->getSplunkUrl();?>">
 		<?php echo $lilac->element_desc("splunk_url", "nagios_cgi_desc"); ?><br />
 		</div>
-        <div class="formbox">
-        <b>Result Limit:</b><br />
-        <input type="text" name="cgi_config[result_limit]" VALUE="<?php echo $cgiConfig->getResultLimit();?>"><br />
-        <?php echo $lilac->element_desc("result_limit", "nagios_cgi_desc"); ?><br />
-        </div>
 		<div class="formbox">
-		<input type="submit" value="Update Other Configuration" />
+		<input class="btn btn-primary" type="submit" value="Update Other Configuration" />
 		</div>
 		<?php
-	}
+	}		
 	print_window_footer();
 
 print_footer();

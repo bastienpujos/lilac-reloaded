@@ -1,7 +1,6 @@
 <?php
 /*
 Lilac - A Nagios Configuration Tool
-Copyright (C) 2012 Rene Hadler
 Copyright (C) 2007 Taylor Dondich
 
 This program is free software; you can redistribute it and/or
@@ -26,26 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 class Lilac {
-	
-	public static function getProcessUserInfo($attr)
-	{
-		$processUser = posix_getpwuid(posix_geteuid());
-		return $processUser[$attr];
-	}
-	
-	public static function getExecutablePath($exeName)
-	{
-		$env_path = getenv("PATH");
-		$paths = explode(":", $env_path);
-		foreach($paths as $path)
-		{
-			$exePath = $path . "/" . $exeName;
-			if(file_exists($exePath))
-				return $exePath;
-		}
-	
-		return 0;
-	}
 	
 	function get_children_hosts_list($host_id, &$children_lists) {
 		$c = new Criteria();
@@ -87,25 +66,9 @@ class Lilac {
 			return null;
 		}
 		else {
-			return $description->getLabel();
+			//return '<i> '.$description->getLabel().'</i>';
+			return '<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="'.htmlentities($description->getLabel()).'" style="cursor: pointer;"></i>';
 		}
-	}
-	
-	public static function get_physical_nagios_logos_path() {
-		if(!class_exists("NagiosCgiConfigurationPeer"))
-			return 0;
-
-        $cgiConfig = "";
-        try {
-		    $cgiConfig = NagiosCgiConfigurationPeer::doSelectOne(new Criteria());
-        }
-        catch(Exception $e) {
-            return 0;
-        }
-		if(empty($cgiConfig))
-			return 0;
-		
-		return $cgiConfig->getPhysicalHtmlPath();
 	}
 	
 	/**
@@ -129,7 +92,7 @@ class Lilac {
 		}
 	}
 	
-	function host_template_exists($template_name) {
+	function hosttemplate_exists($template_name) {
 		$c = new Criteria();
 		$c->add(NagiosHostTemplatePeer::NAME, $template_name);
 		$c->setIgnoreCase(true);
@@ -142,7 +105,7 @@ class Lilac {
 		}
 	}
 	
-	function service_template_exists($template_name) {
+	function servicetemplate_exists($template_name) {
 		$c = new Criteria();
 		$c->add(NagiosServiceTemplatePeer::NAME, $template_name);
 		$c->setIgnoreCase(true);
@@ -315,9 +278,9 @@ class Lilac {
 	}
 		
 	function return_command_list(&$command_list) {
-		$c = new Criteria();
-		$c->addAscendingOrderByColumn(NagiosCommandPeer::NAME);
-		$command_list = NagiosCommandPeer::doSelect($c);
+                $c=new Criteria();
+                $c->addAscendingOrderByColumn(NagiosCommandPeer::NAME);
+                $command_list = NagiosCommandPeer::doSelect($c);
 		return 1;
 	}
 	
@@ -348,6 +311,28 @@ class Lilac {
 			return false;
 		}
 	}
+
+	function service_exists($service_name,$id_host=false,$id_host_template=false) {
+		if($id_host!=false) {
+                        $this->get_host_services_list($id_host, $hostServiceList);
+                        for($i=0;$i<count($hostServiceList);$i++) {
+                                $desc=$hostServiceList[$i]->getDescription();
+                                if($desc==$service_name) {
+                                        return $hostServiceList[$i]->getId();
+                                }
+                        }
+                }
+		if($id_host_template!=false) {
+	        	$this->get_host_template_services_list($id_host_template, $hostTemplateServiceList);
+			for($i=0;$i<count($hostTemplateServiceList);$i++) {
+				$desc=$hostTemplateServiceList[$i]->getDescription();
+				if($desc==$service_name) {
+					return $hostTemplateServiceList[$i]->getId();
+				}
+			}
+		}
+		return false;
+        }
 		
 	/**
 	 * @todo Completed.  Should we deprecate.
@@ -398,7 +383,7 @@ class Lilac {
 		return ($group !== null);
 	}
 	
-	function period_exists($period_name) {
+	function timeperiod_exists($period_name) {
 		$c = new Criteria();
 		$c->add(NagiosTimeperiodPeer::NAME, $period_name);
 		
@@ -411,7 +396,7 @@ class Lilac {
 			return false;
 		}
 	}
-	
+
 	function add_command($command) {
 		$tempCommand = new NagiosCommand();
 		$tempCommand->setDescription($command['command_desc']);
@@ -489,24 +474,6 @@ class Lilac {
 		$param->save();
 		return true;
 	}
-	
-	function add_host_custom_object_variable($host_id, $parameter) {
-		$param = new NagiosHostCustomObjectVar();
-		$param->setNagiosHost(NagiosHostPeer::retrieveByPK($host_id));
-		$param->setVarName($parameter['custom_variable_name']);
-		$param->setVarValue($parameter['custom_variable_value']);
-		$param->save();
-		return true;
-	}
-	
-	function add_host_template_custom_object_variable($host_template_id, $parameter) {
-		$param = new NagiosHostCustomObjectVar();
-		$param->setNagiosHostTemplate(NagiosHostTemplatePeer::retrieveByPK($host_template_id));
-		$param->setVarName($parameter['custom_variable_name']);
-		$param->setVarValue($parameter['custom_variable_value']);
-		$param->save();
-		return true;
-	}
 
 	/**
 	 * @todo Finalized.  Should be moved to Contact.
@@ -575,15 +542,6 @@ class Lilac {
 		$tempPeriod->setFriday($period['friday']);
 		$tempPeriod->setSaturday($period['saturday']);
 		$tempPeriod->save();
-		return true;
-	}
-	
-	function add_contact_custom_object_variable($contact_id, $parameter) {
-		$param = new NagiosContactCustomObjectVar();
-		$param->setNagiosContact(NagiosContactPeer::retrieveByPK($contact_id));
-		$param->setVarName($parameter['custom_variable_name']);
-		$param->setVarValue($parameter['custom_variable_value']);
-		$param->save();
 		return true;
 	}
 
@@ -1114,10 +1072,8 @@ class Lilac {
 	
 
 	function get_hostgroup_list(&$hostgroups_list) {
-		
 		$c = new Criteria();
-		$c->addAscendingOrderByColumn(NagiosHostgroupPeer::NAME );
-		
+		$c->addAscendingOrderByColumn(NagiosHostgroupPeer::NAME);
 		$hostgroups_list = NagiosHostgroupPeer::doSelect($c);
 		return true;
 	}

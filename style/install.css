@@ -119,17 +119,8 @@ fieldset.regform label {
 	width: 30em;
 }
 
-input[type="text"] {
+input {
 	width: 200px;
-}
-
-input[type="password"] {
-	width: 200px;
-}
-
-input[type="checkbox"] {
-	width: 40px;
-	margin: 10px;
 }
 
 input.radio, input.checkbox, input.submit {

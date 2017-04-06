@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header$
+ * $Header: /repository/pear/Log/Log/syslog.php,v 1.25 2007/01/29 05:09:07 jon Exp $
  * $Horde: horde/lib/Log/syslog.php,v 1.6 2000/06/28 21:36:13 jon Exp $
  *
- * @version $Revision: 308379 $
+ * @version $Revision: 1.25 $
  * @package Log
  */
 
@@ -38,38 +38,6 @@ class Log_syslog extends Log
     var $_inherit = false;
 
     /**
-     * Should we re-open the syslog connection for each log event?
-     * @var boolean
-     * @access private
-     */
-    var $_reopen = false;
-
-    /**
-     * Maximum message length that will be sent to syslog().  If the handler 
-     * receives a message longer than this length limit, it will be split into 
-     * multiple syslog() calls.
-     * @var integer
-     * @access private
-     */
-    var $_maxLength = 500;
-
-    /**
-     * String containing the format of a message.
-     * @var string
-     * @access private
-     */
-    var $_lineFormat = '%4$s';
-
-    /**
-     * String containing the timestamp format.  It will be passed directly to
-     * strftime().  Note that the timestamp string will generated using the
-     * current locale.
-     * @var string
-     * @access private
-     */
-    var $_timeFormat = '%b %d %H:%M:%S';
-
-    /**
      * Constructs a new syslog object.
      *
      * @param string $name     The syslog facility.
@@ -90,20 +58,6 @@ class Log_syslog extends Log
             $this->_inherit = $conf['inherit'];
             $this->_opened = $this->_inherit;
         }
-        if (isset($conf['reopen'])) {
-            $this->_reopen = $conf['reopen'];
-        }
-        if (isset($conf['maxLength'])) {
-            $this->_maxLength = $conf['maxLength'];
-        }
-        if (!empty($conf['lineFormat'])) {
-            $this->_lineFormat = str_replace(array_keys($this->_formatMap),
-                                             array_values($this->_formatMap),
-                                             $conf['lineFormat']);
-        }
-        if (!empty($conf['timeFormat'])) {
-            $this->_timeFormat = $conf['timeFormat'];
-        }
 
         $this->_id = md5(microtime());
         $this->_name = $name;
@@ -118,7 +72,7 @@ class Log_syslog extends Log
      */
     function open()
     {
-        if (!$this->_opened || $this->_reopen) {
+        if (!$this->_opened) {
             $this->_opened = openlog($this->_ident, LOG_PID, $this->_name);
         }
 
@@ -164,8 +118,8 @@ class Log_syslog extends Log
             return false;
         }
 
-        /* If we need to (re)open the connection and open() fails, abort. */
-        if ((!$this->_opened || $this->_reopen) && !$this->open()) {
+        /* If the connection isn't open and can't be opened, return failure. */
+        if (!$this->_opened && !$this->open()) {
             return false;
         }
 
@@ -178,21 +132,8 @@ class Log_syslog extends Log
             $priority |= $this->_name;
         }
 
-        /* Apply the configured line format to the message string. */
-        $message = $this->_format($this->_lineFormat,
-                                  strftime($this->_timeFormat),
-                                  $priority, $message);
-
-        /* Split the string into parts based on our maximum length setting. */
-        $parts = str_split($message, $this->_maxLength);
-        if ($parts === false) {
+        if (!syslog($priority, $message)) {
             return false;
-        }
-
-        foreach ($parts as $part) {
-            if (!syslog($priority, $part)) {
-                return false;
-            }
         }
 
         $this->_announce(array('priority' => $priority, 'message' => $message));

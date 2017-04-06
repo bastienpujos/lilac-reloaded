@@ -1,5 +1,6 @@
 <?php
 
+require_once 'om/BaseImportLogEntry.php';
 
 
 /**
@@ -11,15 +12,16 @@
  * application requirements.  This class will only be generated as
  * long as it does not already exist in the output directory.
  *
- * @package    propel.generator.
+ * @package    
  */
 class ImportLogEntry extends BaseImportLogEntry {
-	
+
 	const TYPE_NOTICE = 1;
 	const TYPE_WARNING = 2;
 	const TYPE_ERROR = 3;
 
-	static public function isValidType($type) {
+	public function isValidType($type) {
+		return true;
 		if($type != ImportLogEntry::TYPE_NOTICE &&
 			$type != ImportLogEntry::TYPE_WARNING &&
 			$type != ImportLogEntry::TYPE_ERROR) {
@@ -39,5 +41,5 @@ class ImportLogEntry extends BaseImportLogEntry {
 			return "ERROR";
 		}
 	}
-
+	
 } // ImportLogEntry

@@ -1,7 +1,6 @@
 <?php
 require_once('NagiosServiceTemplate.php');
 require_once('NagiosService.php');
-require_once('NagiosServiceTemplateInheritance.php');
 
 class NagiosServiceImporter extends NagiosImporter {
 
@@ -111,10 +110,6 @@ class NagiosServiceImporter extends NagiosImporter {
 			foreach($entry as $lineValue) {
 				$value = $lineValue['value'];
 				$lineNum = $lineValue['line'];
-				
-				if($key[0] == "_")
-					continue;
-				
 				if(!key_exists($key, $this->regexValidators)) {
 					$job->addLogEntry("Variable in service object file not supported: " . $key . " on line " . $lineNum);
 					if(!$config->getVar('continue_error')) {
@@ -276,54 +271,43 @@ class NagiosServiceImporter extends NagiosImporter {
 		$segment = $this->getSegment();
 		$values = $segment->getValues();
 		$fileName = $segment->getFilename();
-		// First let's go and re-merge the check_commands
-		foreach($values as $key => $entries) {
-			if($key == "check_command") {
-				foreach($entries as $entry) {
-					if(empty($newEntry)) {
-						$newEntry = $entry;
-					}
-					else {
-						$newEntry['value'] .= "," . $entry['value'];
-					}
-				}
-				$entries = array($newEntry);
-			}
-		}
+
+                // First let's go and re-merge the check_commands
+                foreach($values as $key => $entries) {
+                        if($key == "check_command") {
+                                foreach($entries as $entry) {
+                                        if(empty($newEntry)) {
+                                                $newEntry = $entry;
+                                        }
+                                        else {
+                                                $newEntry['value'] .= "," . $entry['value'];
+                                        }
+                                }
+                                $options = explode("!", $newEntry['value']);
+
+                                // Okay, first we add the check command parameter.
+                                $obj->setCheckCommandByName($options[0]);
+
+                                if(count($options > 0)) {
+                                	for($counter = 1; $counter < count($options); $counter++) {
+                                		$obj->addCheckCommandParameter($options[$counter]);
+                                	}
+                                }
+                                continue;
+                        }
+                }
 		foreach($values as $key => $entries) {
 			foreach($entries as $entry) {
+
 				// Skips
 				$value = $entry['value'];
 				$lineNum = $entry['line'];
-				if($key == 'register' || $key == 'host_name' )
+				if($key == 'register' || $key == 'host_name' || $key == 'hostgroup_name' || $key == "hostgroup" )
 					continue;
-				
-				// Custom object variables
-				if($key[0] == "_")
-				{
-					$cov = new NagiosServiceCustomObjectVar();
-					$cov->setVarName(substr($key, 1));
-					$cov->setVarValue($value);
-						
-					$obj->addNagiosServiceCustomObjectVar($cov);
-					continue;
-				}
 
 				if($key == 'use') {
 					// We need to add a template inheritance
 					$obj->addTemplateInheritance($entry['value']);
-					continue;
-				}
-
-				if($key == 'check_command') {
-					$options = explode("!", $entry['value']);
-					// Okay, first we add the check command parameter.
-					$obj->setCheckCommandByName($options[0]);
-					if(count($options > 0)) {
-						for($counter = 1; $counter < count($options); $counter++) {
-							$obj->addCheckCommandParameter($options[$counter]);
-						}
-					}
 					continue;
 				}
 
@@ -372,7 +356,7 @@ class NagiosServiceImporter extends NagiosImporter {
 					$options = explode(",", $entry['value']);
 					foreach($options as $option) {
 						switch(strtolower(trim($option))) {
-							case 'd':
+							case 'w':
 								$obj->setNotificationOnWarning(true);
 								break;
 							case 'u':
@@ -394,48 +378,20 @@ class NagiosServiceImporter extends NagiosImporter {
 					}
 					continue;
 				}
-				
-				if($key == 'hostgroup_name' || $key == 'hostgroup') {
-					$options = explode(",",$entry['value']);
-					foreach($options as $hostGroupValue) {
-						$hostgroup = NagiosHostgroupPeer::getByName($hostGroupValue);
-						if(!$hostgroup)
-							continue;
-						// Okay, we got a proper hostgroup
-						$srv = new NagiosService();
-						$srv->setDescription($obj->getDescription());
-						$srv->setHostgroup($hostgroup->getId());
-						$obj->save();
-						$inh= new NagiosServiceTemplateInheritance();
-						$inh->setTargetTemplate( $obj->getId());
-						$srv->addNagiosServiceTemplateInheritance($inh);
-						$srv->save();
-						$hostgroup->clearAllReferences(true);
-						$srv->clearAllReferences(true);
-						$inh->clearAllReferences(true);
-					}
-				}
-				
 				// Okay, let's check that the method DOES exist
-				if(empty($this->fieldMethods[$key]))
-				{
-					// No method defined for field
-					continue;
-				}
-				elseif(!method_exists($obj, $this->fieldMethods[$key])) {
+				if(!method_exists($obj, $this->fieldMethods[$key])) {
 					$job->addError("Method " . $this->fieldMethods[$key] . " does not exist for variable: " . $key . " on line " . $lineNum . " in file " . $fileName);
 					if(!$config->getVar('continue_error')) {
 						return false;
 					}	
 				}
 				else {
-					call_user_func(array($obj, $this->fieldMethods[$key]), $value);
+					call_user_method($this->fieldMethods[$key], $obj, $value);
 				}
 		
 			}
 
 		}
-		
 		return true;
 	}
 

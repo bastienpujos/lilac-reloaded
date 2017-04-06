@@ -1,20 +1,14 @@
 <?php
 
-
 /**
  * Base class that represents a row from the 'nagios_service' table.
  *
  * Nagios Service
  *
- * @package    propel.generator..om
+ * @package    .om
  */
-abstract class BaseNagiosService extends BaseObject  implements Persistent
-{
+abstract class BaseNagiosService extends BaseObject  implements Persistent {
 
-	/**
-	 * Peer class name
-	 */
-	const PEER = 'NagiosServicePeer';
 
 	/**
 	 * The Peer class.
@@ -371,9 +365,19 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	protected $collNagiosServiceCheckCommandParameters;
 
 	/**
+	 * @var        Criteria The criteria used to select the current contents of collNagiosServiceCheckCommandParameters.
+	 */
+	private $lastNagiosServiceCheckCommandParameterCriteria = null;
+
+	/**
 	 * @var        array NagiosServiceGroupMember[] Collection to store aggregation of NagiosServiceGroupMember objects.
 	 */
 	protected $collNagiosServiceGroupMembers;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collNagiosServiceGroupMembers.
+	 */
+	private $lastNagiosServiceGroupMemberCriteria = null;
 
 	/**
 	 * @var        array NagiosServiceContactMember[] Collection to store aggregation of NagiosServiceContactMember objects.
@@ -381,9 +385,19 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	protected $collNagiosServiceContactMembers;
 
 	/**
+	 * @var        Criteria The criteria used to select the current contents of collNagiosServiceContactMembers.
+	 */
+	private $lastNagiosServiceContactMemberCriteria = null;
+
+	/**
 	 * @var        array NagiosServiceContactGroupMember[] Collection to store aggregation of NagiosServiceContactGroupMember objects.
 	 */
 	protected $collNagiosServiceContactGroupMembers;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collNagiosServiceContactGroupMembers.
+	 */
+	private $lastNagiosServiceContactGroupMemberCriteria = null;
 
 	/**
 	 * @var        array NagiosDependency[] Collection to store aggregation of NagiosDependency objects.
@@ -391,9 +405,19 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	protected $collNagiosDependencys;
 
 	/**
+	 * @var        Criteria The criteria used to select the current contents of collNagiosDependencys.
+	 */
+	private $lastNagiosDependencyCriteria = null;
+
+	/**
 	 * @var        array NagiosDependencyTarget[] Collection to store aggregation of NagiosDependencyTarget objects.
 	 */
 	protected $collNagiosDependencyTargets;
+
+	/**
+	 * @var        Criteria The criteria used to select the current contents of collNagiosDependencyTargets.
+	 */
+	private $lastNagiosDependencyTargetCriteria = null;
 
 	/**
 	 * @var        array NagiosEscalation[] Collection to store aggregation of NagiosEscalation objects.
@@ -401,14 +425,19 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	protected $collNagiosEscalations;
 
 	/**
+	 * @var        Criteria The criteria used to select the current contents of collNagiosEscalations.
+	 */
+	private $lastNagiosEscalationCriteria = null;
+
+	/**
 	 * @var        array NagiosServiceTemplateInheritance[] Collection to store aggregation of NagiosServiceTemplateInheritance objects.
 	 */
 	protected $collNagiosServiceTemplateInheritances;
 
 	/**
-	 * @var        array NagiosServiceCustomObjectVar[] Collection to store aggregation of NagiosServiceCustomObjectVar objects.
+	 * @var        Criteria The criteria used to select the current contents of collNagiosServiceTemplateInheritances.
 	 */
-	protected $collNagiosServiceCustomObjectVars;
+	private $lastNagiosServiceTemplateInheritanceCriteria = null;
 
 	/**
 	 * Flag to prevent endless save loop, if this object is referenced
@@ -423,6 +452,26 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * @var        boolean
 	 */
 	protected $alreadyInValidation = false;
+
+	/**
+	 * Initializes internal state of BaseNagiosService object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
 
 	/**
 	 * Get the [id] column value.
@@ -1087,23 +1136,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setInitialState()
 
 	/**
-	 * Sets the value of the [is_volatile] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [is_volatile] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setIsVolatile($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->is_volatile !== $v) {
@@ -1219,23 +1260,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setFirstNotificationDelay()
 
 	/**
-	 * Sets the value of the [active_checks_enabled] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [active_checks_enabled] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setActiveChecksEnabled($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->active_checks_enabled !== $v) {
@@ -1247,23 +1280,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setActiveChecksEnabled()
 
 	/**
-	 * Sets the value of the [passive_checks_enabled] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [passive_checks_enabled] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setPassiveChecksEnabled($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->passive_checks_enabled !== $v) {
@@ -1299,23 +1324,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setCheckPeriod()
 
 	/**
-	 * Sets the value of the [parallelize_check] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [parallelize_check] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setParallelizeCheck($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->parallelize_check !== $v) {
@@ -1327,23 +1344,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setParallelizeCheck()
 
 	/**
-	 * Sets the value of the [obsess_over_service] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [obsess_over_service] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setObsessOverService($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->obsess_over_service !== $v) {
@@ -1355,23 +1364,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setObsessOverService()
 
 	/**
-	 * Sets the value of the [check_freshness] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [check_freshness] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setCheckFreshness($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->check_freshness !== $v) {
@@ -1427,23 +1428,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setEventHandler()
 
 	/**
-	 * Sets the value of the [event_handler_enabled] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [event_handler_enabled] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setEventHandlerEnabled($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->event_handler_enabled !== $v) {
@@ -1495,23 +1488,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setHighFlapThreshold()
 
 	/**
-	 * Sets the value of the [flap_detection_enabled] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [flap_detection_enabled] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setFlapDetectionEnabled($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->flap_detection_enabled !== $v) {
@@ -1523,23 +1508,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setFlapDetectionEnabled()
 
 	/**
-	 * Sets the value of the [flap_detection_on_ok] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [flap_detection_on_ok] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setFlapDetectionOnOk($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->flap_detection_on_ok !== $v) {
@@ -1551,23 +1528,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setFlapDetectionOnOk()
 
 	/**
-	 * Sets the value of the [flap_detection_on_warning] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [flap_detection_on_warning] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setFlapDetectionOnWarning($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->flap_detection_on_warning !== $v) {
@@ -1579,23 +1548,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setFlapDetectionOnWarning()
 
 	/**
-	 * Sets the value of the [flap_detection_on_critical] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [flap_detection_on_critical] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setFlapDetectionOnCritical($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->flap_detection_on_critical !== $v) {
@@ -1607,23 +1568,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setFlapDetectionOnCritical()
 
 	/**
-	 * Sets the value of the [flap_detection_on_unknown] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [flap_detection_on_unknown] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setFlapDetectionOnUnknown($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->flap_detection_on_unknown !== $v) {
@@ -1635,23 +1588,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setFlapDetectionOnUnknown()
 
 	/**
-	 * Sets the value of the [process_perf_data] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [process_perf_data] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setProcessPerfData($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->process_perf_data !== $v) {
@@ -1663,23 +1608,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setProcessPerfData()
 
 	/**
-	 * Sets the value of the [retain_status_information] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [retain_status_information] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setRetainStatusInformation($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->retain_status_information !== $v) {
@@ -1691,23 +1628,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setRetainStatusInformation()
 
 	/**
-	 * Sets the value of the [retain_nonstatus_information] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [retain_nonstatus_information] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setRetainNonstatusInformation($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->retain_nonstatus_information !== $v) {
@@ -1763,23 +1692,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setNotificationPeriod()
 
 	/**
-	 * Sets the value of the [notification_on_warning] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_on_warning] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setNotificationOnWarning($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_on_warning !== $v) {
@@ -1791,23 +1712,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setNotificationOnWarning()
 
 	/**
-	 * Sets the value of the [notification_on_unknown] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_on_unknown] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setNotificationOnUnknown($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_on_unknown !== $v) {
@@ -1819,23 +1732,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setNotificationOnUnknown()
 
 	/**
-	 * Sets the value of the [notification_on_critical] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_on_critical] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setNotificationOnCritical($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_on_critical !== $v) {
@@ -1847,23 +1752,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setNotificationOnCritical()
 
 	/**
-	 * Sets the value of the [notification_on_recovery] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_on_recovery] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setNotificationOnRecovery($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_on_recovery !== $v) {
@@ -1875,23 +1772,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setNotificationOnRecovery()
 
 	/**
-	 * Sets the value of the [notification_on_flapping] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_on_flapping] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setNotificationOnFlapping($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_on_flapping !== $v) {
@@ -1903,23 +1792,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setNotificationOnFlapping()
 
 	/**
-	 * Sets the value of the [notification_on_scheduled_downtime] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notification_on_scheduled_downtime] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setNotificationOnScheduledDowntime($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notification_on_scheduled_downtime !== $v) {
@@ -1931,23 +1812,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setNotificationOnScheduledDowntime()
 
 	/**
-	 * Sets the value of the [notifications_enabled] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [notifications_enabled] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setNotificationsEnabled($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->notifications_enabled !== $v) {
@@ -1959,23 +1832,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setNotificationsEnabled()
 
 	/**
-	 * Sets the value of the [stalking_on_ok] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [stalking_on_ok] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setStalkingOnOk($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->stalking_on_ok !== $v) {
@@ -1987,23 +1852,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setStalkingOnOk()
 
 	/**
-	 * Sets the value of the [stalking_on_warning] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [stalking_on_warning] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setStalkingOnWarning($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->stalking_on_warning !== $v) {
@@ -2015,23 +1872,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setStalkingOnWarning()
 
 	/**
-	 * Sets the value of the [stalking_on_unknown] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [stalking_on_unknown] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setStalkingOnUnknown($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->stalking_on_unknown !== $v) {
@@ -2043,23 +1892,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setStalkingOnUnknown()
 
 	/**
-	 * Sets the value of the [stalking_on_critical] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [stalking_on_critical] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setStalkingOnCritical($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->stalking_on_critical !== $v) {
@@ -2071,23 +1912,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	} // setStalkingOnCritical()
 
 	/**
-	 * Sets the value of the [failure_prediction_enabled] column. 
-	 * Non-boolean arguments are converted using the following rules:
-	 *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-	 *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-	 * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+	 * Set the value of [failure_prediction_enabled] column.
 	 * 
-	 * @param      boolean|integer|string $v The new value
+	 * @param      boolean $v new value
 	 * @return     NagiosService The current object (for fluent API support)
 	 */
 	public function setFailurePredictionEnabled($v)
 	{
 		if ($v !== null) {
-			if (is_string($v)) {
-				$v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-			} else {
-				$v = (boolean) $v;
-			}
+			$v = (boolean) $v;
 		}
 
 		if ($this->failure_prediction_enabled !== $v) {
@@ -2208,6 +2041,11 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function hasOnlyDefaultValues()
 	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
 		// otherwise, everything was equal, so return TRUE
 		return true;
 	} // hasOnlyDefaultValues()
@@ -2289,7 +2127,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 51; // 51 = NagiosServicePeer::NUM_HYDRATE_COLUMNS.
+			// FIXME - using NUM_COLUMNS may be clearer.
+			return $startcol + 51; // 51 = NagiosServicePeer::NUM_COLUMNS - NagiosServicePeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating NagiosService object", $e);
@@ -2380,22 +2219,28 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 			$this->aNagiosTimeperiodRelatedByCheckPeriod = null;
 			$this->aNagiosTimeperiodRelatedByNotificationPeriod = null;
 			$this->collNagiosServiceCheckCommandParameters = null;
+			$this->lastNagiosServiceCheckCommandParameterCriteria = null;
 
 			$this->collNagiosServiceGroupMembers = null;
+			$this->lastNagiosServiceGroupMemberCriteria = null;
 
 			$this->collNagiosServiceContactMembers = null;
+			$this->lastNagiosServiceContactMemberCriteria = null;
 
 			$this->collNagiosServiceContactGroupMembers = null;
+			$this->lastNagiosServiceContactGroupMemberCriteria = null;
 
 			$this->collNagiosDependencys = null;
+			$this->lastNagiosDependencyCriteria = null;
 
 			$this->collNagiosDependencyTargets = null;
+			$this->lastNagiosDependencyTargetCriteria = null;
 
 			$this->collNagiosEscalations = null;
+			$this->lastNagiosEscalationCriteria = null;
 
 			$this->collNagiosServiceTemplateInheritances = null;
-
-			$this->collNagiosServiceCustomObjectVars = null;
+			$this->lastNagiosServiceTemplateInheritanceCriteria = null;
 
 		} // if (deep)
 	}
@@ -2418,20 +2263,12 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosServicePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
 		try {
-			$ret = $this->preDelete($con);
-			if ($ret) {
-				NagiosServiceQuery::create()
-					->filterByPrimaryKey($this->getPrimaryKey())
-					->delete($con);
-				$this->postDelete($con);
-				$con->commit();
-				$this->setDeleted(true);
-			} else {
-				$con->commit();
-			}
+			NagiosServicePeer::doDelete($this, $con);
+			$this->setDeleted(true);
+			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollBack();
 			throw $e;
@@ -2460,29 +2297,12 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosServicePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
-		$isInsert = $this->isNew();
 		try {
-			$ret = $this->preSave($con);
-			if ($isInsert) {
-				$ret = $ret && $this->preInsert($con);
-			} else {
-				$ret = $ret && $this->preUpdate($con);
-			}
-			if ($ret) {
-				$affectedRows = $this->doSave($con);
-				if ($isInsert) {
-					$this->postInsert($con);
-				} else {
-					$this->postUpdate($con);
-				}
-				$this->postSave($con);
-				NagiosServicePeer::addInstanceToPool($this);
-			} else {
-				$affectedRows = 0;
-			}
+			$affectedRows = $this->doSave($con);
 			$con->commit();
+			NagiosServicePeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollBack();
@@ -2568,14 +2388,13 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(NagiosServicePeer::ID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.NagiosServicePeer::ID.')');
-					}
+					$pk = NagiosServicePeer::doInsert($this, $con);
+					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
+										 // should always be true here (even though technically
+										 // BasePeer::doInsert() can insert multiple rows).
 
-					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows += 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
+
 					$this->setNew(false);
 				} else {
 					$affectedRows += NagiosServicePeer::doUpdate($this, $con);
@@ -2642,14 +2461,6 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 
 			if ($this->collNagiosServiceTemplateInheritances !== null) {
 				foreach ($this->collNagiosServiceTemplateInheritances as $referrerFK) {
-					if (!$referrerFK->isDeleted()) {
-						$affectedRows += $referrerFK->save($con);
-					}
-				}
-			}
-
-			if ($this->collNagiosServiceCustomObjectVars !== null) {
-				foreach ($this->collNagiosServiceCustomObjectVars as $referrerFK) {
 					if (!$referrerFK->isDeleted()) {
 						$affectedRows += $referrerFK->save($con);
 					}
@@ -2833,14 +2644,6 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 
 				if ($this->collNagiosServiceTemplateInheritances !== null) {
 					foreach ($this->collNagiosServiceTemplateInheritances as $referrerFK) {
-						if (!$referrerFK->validate($columns)) {
-							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
-						}
-					}
-				}
-
-				if ($this->collNagiosServiceCustomObjectVars !== null) {
-					foreach ($this->collNagiosServiceCustomObjectVars as $referrerFK) {
 						if (!$referrerFK->validate($columns)) {
 							$failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
 						}
@@ -3045,21 +2848,13 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param     string  $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-	 *                    Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
-	 *
-	 * @return    array an associative array containing the field names (as keys) and field values
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
+	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
-		if (isset($alreadyDumpedObjects['NagiosService'][$this->getPrimaryKey()])) {
-			return '*RECURSION*';
-		}
-		$alreadyDumpedObjects['NagiosService'][$this->getPrimaryKey()] = true;
 		$keys = NagiosServicePeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
@@ -3114,56 +2909,6 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 			$keys[49] => $this->getIconImage(),
 			$keys[50] => $this->getIconImageAlt(),
 		);
-		if ($includeForeignObjects) {
-			if (null !== $this->aNagiosHost) {
-				$result['NagiosHost'] = $this->aNagiosHost->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHostTemplate) {
-				$result['NagiosHostTemplate'] = $this->aNagiosHostTemplate->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHostgroup) {
-				$result['NagiosHostgroup'] = $this->aNagiosHostgroup->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosCommandRelatedByCheckCommand) {
-				$result['NagiosCommandRelatedByCheckCommand'] = $this->aNagiosCommandRelatedByCheckCommand->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosCommandRelatedByEventHandler) {
-				$result['NagiosCommandRelatedByEventHandler'] = $this->aNagiosCommandRelatedByEventHandler->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosTimeperiodRelatedByCheckPeriod) {
-				$result['NagiosTimeperiodRelatedByCheckPeriod'] = $this->aNagiosTimeperiodRelatedByCheckPeriod->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosTimeperiodRelatedByNotificationPeriod) {
-				$result['NagiosTimeperiodRelatedByNotificationPeriod'] = $this->aNagiosTimeperiodRelatedByNotificationPeriod->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->collNagiosServiceCheckCommandParameters) {
-				$result['NagiosServiceCheckCommandParameters'] = $this->collNagiosServiceCheckCommandParameters->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collNagiosServiceGroupMembers) {
-				$result['NagiosServiceGroupMembers'] = $this->collNagiosServiceGroupMembers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collNagiosServiceContactMembers) {
-				$result['NagiosServiceContactMembers'] = $this->collNagiosServiceContactMembers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collNagiosServiceContactGroupMembers) {
-				$result['NagiosServiceContactGroupMembers'] = $this->collNagiosServiceContactGroupMembers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collNagiosDependencys) {
-				$result['NagiosDependencys'] = $this->collNagiosDependencys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collNagiosDependencyTargets) {
-				$result['NagiosDependencyTargets'] = $this->collNagiosDependencyTargets->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collNagiosEscalations) {
-				$result['NagiosEscalations'] = $this->collNagiosEscalations->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collNagiosServiceTemplateInheritances) {
-				$result['NagiosServiceTemplateInheritances'] = $this->collNagiosServiceTemplateInheritances->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-			if (null !== $this->collNagiosServiceCustomObjectVars) {
-				$result['NagiosServiceCustomObjectVars'] = $this->collNagiosServiceCustomObjectVars->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-			}
-		}
 		return $result;
 	}
 
@@ -3499,6 +3244,7 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	public function buildPkeyCriteria()
 	{
 		$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+
 		$criteria->add(NagiosServicePeer::ID, $this->id);
 
 		return $criteria;
@@ -3525,15 +3271,6 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Returns true if the primary key for this object is null.
-	 * @return     boolean
-	 */
-	public function isPrimaryKeyNull()
-	{
-		return null === $this->getId();
-	}
-
-	/**
 	 * Sets contents of passed object to values from current object.
 	 *
 	 * If desired, this method can also make copies of all associated (fkey referrers)
@@ -3541,61 +3278,111 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 *
 	 * @param      object $copyObj An object of NagiosService (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
 	 * @throws     PropelException
 	 */
-	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
+	public function copyInto($copyObj, $deepCopy = false)
 	{
-		$copyObj->setDescription($this->getDescription());
-		$copyObj->setDisplayName($this->getDisplayName());
-		$copyObj->setHost($this->getHost());
-		$copyObj->setHostTemplate($this->getHostTemplate());
-		$copyObj->setHostgroup($this->getHostgroup());
-		$copyObj->setInitialState($this->getInitialState());
-		$copyObj->setIsVolatile($this->getIsVolatile());
-		$copyObj->setCheckCommand($this->getCheckCommand());
-		$copyObj->setMaximumCheckAttempts($this->getMaximumCheckAttempts());
-		$copyObj->setNormalCheckInterval($this->getNormalCheckInterval());
-		$copyObj->setRetryInterval($this->getRetryInterval());
-		$copyObj->setFirstNotificationDelay($this->getFirstNotificationDelay());
-		$copyObj->setActiveChecksEnabled($this->getActiveChecksEnabled());
-		$copyObj->setPassiveChecksEnabled($this->getPassiveChecksEnabled());
-		$copyObj->setCheckPeriod($this->getCheckPeriod());
-		$copyObj->setParallelizeCheck($this->getParallelizeCheck());
-		$copyObj->setObsessOverService($this->getObsessOverService());
-		$copyObj->setCheckFreshness($this->getCheckFreshness());
-		$copyObj->setFreshnessThreshold($this->getFreshnessThreshold());
-		$copyObj->setEventHandler($this->getEventHandler());
-		$copyObj->setEventHandlerEnabled($this->getEventHandlerEnabled());
-		$copyObj->setLowFlapThreshold($this->getLowFlapThreshold());
-		$copyObj->setHighFlapThreshold($this->getHighFlapThreshold());
-		$copyObj->setFlapDetectionEnabled($this->getFlapDetectionEnabled());
-		$copyObj->setFlapDetectionOnOk($this->getFlapDetectionOnOk());
-		$copyObj->setFlapDetectionOnWarning($this->getFlapDetectionOnWarning());
-		$copyObj->setFlapDetectionOnCritical($this->getFlapDetectionOnCritical());
-		$copyObj->setFlapDetectionOnUnknown($this->getFlapDetectionOnUnknown());
-		$copyObj->setProcessPerfData($this->getProcessPerfData());
-		$copyObj->setRetainStatusInformation($this->getRetainStatusInformation());
-		$copyObj->setRetainNonstatusInformation($this->getRetainNonstatusInformation());
-		$copyObj->setNotificationInterval($this->getNotificationInterval());
-		$copyObj->setNotificationPeriod($this->getNotificationPeriod());
-		$copyObj->setNotificationOnWarning($this->getNotificationOnWarning());
-		$copyObj->setNotificationOnUnknown($this->getNotificationOnUnknown());
-		$copyObj->setNotificationOnCritical($this->getNotificationOnCritical());
-		$copyObj->setNotificationOnRecovery($this->getNotificationOnRecovery());
-		$copyObj->setNotificationOnFlapping($this->getNotificationOnFlapping());
-		$copyObj->setNotificationOnScheduledDowntime($this->getNotificationOnScheduledDowntime());
-		$copyObj->setNotificationsEnabled($this->getNotificationsEnabled());
-		$copyObj->setStalkingOnOk($this->getStalkingOnOk());
-		$copyObj->setStalkingOnWarning($this->getStalkingOnWarning());
-		$copyObj->setStalkingOnUnknown($this->getStalkingOnUnknown());
-		$copyObj->setStalkingOnCritical($this->getStalkingOnCritical());
-		$copyObj->setFailurePredictionEnabled($this->getFailurePredictionEnabled());
-		$copyObj->setNotes($this->getNotes());
-		$copyObj->setNotesUrl($this->getNotesUrl());
-		$copyObj->setActionUrl($this->getActionUrl());
-		$copyObj->setIconImage($this->getIconImage());
-		$copyObj->setIconImageAlt($this->getIconImageAlt());
+
+		$copyObj->setDescription($this->description);
+
+		$copyObj->setDisplayName($this->display_name);
+
+		$copyObj->setHost($this->host);
+
+		$copyObj->setHostTemplate($this->host_template);
+
+		$copyObj->setHostgroup($this->hostgroup);
+
+		$copyObj->setInitialState($this->initial_state);
+
+		$copyObj->setIsVolatile($this->is_volatile);
+
+		$copyObj->setCheckCommand($this->check_command);
+
+		$copyObj->setMaximumCheckAttempts($this->maximum_check_attempts);
+
+		$copyObj->setNormalCheckInterval($this->normal_check_interval);
+
+		$copyObj->setRetryInterval($this->retry_interval);
+
+		$copyObj->setFirstNotificationDelay($this->first_notification_delay);
+
+		$copyObj->setActiveChecksEnabled($this->active_checks_enabled);
+
+		$copyObj->setPassiveChecksEnabled($this->passive_checks_enabled);
+
+		$copyObj->setCheckPeriod($this->check_period);
+
+		$copyObj->setParallelizeCheck($this->parallelize_check);
+
+		$copyObj->setObsessOverService($this->obsess_over_service);
+
+		$copyObj->setCheckFreshness($this->check_freshness);
+
+		$copyObj->setFreshnessThreshold($this->freshness_threshold);
+
+		$copyObj->setEventHandler($this->event_handler);
+
+		$copyObj->setEventHandlerEnabled($this->event_handler_enabled);
+
+		$copyObj->setLowFlapThreshold($this->low_flap_threshold);
+
+		$copyObj->setHighFlapThreshold($this->high_flap_threshold);
+
+		$copyObj->setFlapDetectionEnabled($this->flap_detection_enabled);
+
+		$copyObj->setFlapDetectionOnOk($this->flap_detection_on_ok);
+
+		$copyObj->setFlapDetectionOnWarning($this->flap_detection_on_warning);
+
+		$copyObj->setFlapDetectionOnCritical($this->flap_detection_on_critical);
+
+		$copyObj->setFlapDetectionOnUnknown($this->flap_detection_on_unknown);
+
+		$copyObj->setProcessPerfData($this->process_perf_data);
+
+		$copyObj->setRetainStatusInformation($this->retain_status_information);
+
+		$copyObj->setRetainNonstatusInformation($this->retain_nonstatus_information);
+
+		$copyObj->setNotificationInterval($this->notification_interval);
+
+		$copyObj->setNotificationPeriod($this->notification_period);
+
+		$copyObj->setNotificationOnWarning($this->notification_on_warning);
+
+		$copyObj->setNotificationOnUnknown($this->notification_on_unknown);
+
+		$copyObj->setNotificationOnCritical($this->notification_on_critical);
+
+		$copyObj->setNotificationOnRecovery($this->notification_on_recovery);
+
+		$copyObj->setNotificationOnFlapping($this->notification_on_flapping);
+
+		$copyObj->setNotificationOnScheduledDowntime($this->notification_on_scheduled_downtime);
+
+		$copyObj->setNotificationsEnabled($this->notifications_enabled);
+
+		$copyObj->setStalkingOnOk($this->stalking_on_ok);
+
+		$copyObj->setStalkingOnWarning($this->stalking_on_warning);
+
+		$copyObj->setStalkingOnUnknown($this->stalking_on_unknown);
+
+		$copyObj->setStalkingOnCritical($this->stalking_on_critical);
+
+		$copyObj->setFailurePredictionEnabled($this->failure_prediction_enabled);
+
+		$copyObj->setNotes($this->notes);
+
+		$copyObj->setNotesUrl($this->notes_url);
+
+		$copyObj->setActionUrl($this->action_url);
+
+		$copyObj->setIconImage($this->icon_image);
+
+		$copyObj->setIconImageAlt($this->icon_image_alt);
+
 
 		if ($deepCopy) {
 			// important: temporarily setNew(false) because this affects the behavior of
@@ -3644,24 +3431,25 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 				}
 			}
 
+			$numInheritance="0";
 			foreach ($this->getNagiosServiceTemplateInheritances() as $relObj) {
 				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addNagiosServiceTemplateInheritance($relObj->copy($deepCopy));
+                                        $newInheritance = new NagiosServiceTemplateInheritance();
+                                        $newInheritance->setNagiosService($copyObj);
+                                        $newInheritance->setNagiosServiceTemplateRelatedByTargetTemplate($relObj);
+                                        $newInheritance->setOrder($numInheritance);
+					//$copyObj->addNagiosServiceTemplateInheritance($relObj->copy($deepCopy));
 				}
-			}
-
-			foreach ($this->getNagiosServiceCustomObjectVars() as $relObj) {
-				if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-					$copyObj->addNagiosServiceCustomObjectVar($relObj->copy($deepCopy));
-				}
+				$numInheritance++;
 			}
 
 		} // if ($deepCopy)
 
-		if ($makeNew) {
-			$copyObj->setNew(true);
-			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
-		}
+
+		$copyObj->setNew(true);
+
+		$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+
 	}
 
 	/**
@@ -3739,13 +3527,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	public function getNagiosHost(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHost === null && ($this->host !== null)) {
-			$this->aNagiosHost = NagiosHostQuery::create()->findPk($this->host, $con);
+			$c = new Criteria(NagiosHostPeer::DATABASE_NAME);
+			$c->add(NagiosHostPeer::ID, $this->host);
+			$this->aNagiosHost = NagiosHostPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHost->addNagiosServices($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHost->addNagiosServices($this);
 			 */
 		}
 		return $this->aNagiosHost;
@@ -3788,13 +3578,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	public function getNagiosHostTemplate(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostTemplate === null && ($this->host_template !== null)) {
-			$this->aNagiosHostTemplate = NagiosHostTemplateQuery::create()->findPk($this->host_template, $con);
+			$c = new Criteria(NagiosHostTemplatePeer::DATABASE_NAME);
+			$c->add(NagiosHostTemplatePeer::ID, $this->host_template);
+			$this->aNagiosHostTemplate = NagiosHostTemplatePeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostTemplate->addNagiosServices($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostTemplate->addNagiosServices($this);
 			 */
 		}
 		return $this->aNagiosHostTemplate;
@@ -3837,13 +3629,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	public function getNagiosHostgroup(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostgroup === null && ($this->hostgroup !== null)) {
-			$this->aNagiosHostgroup = NagiosHostgroupQuery::create()->findPk($this->hostgroup, $con);
+			$c = new Criteria(NagiosHostgroupPeer::DATABASE_NAME);
+			$c->add(NagiosHostgroupPeer::ID, $this->hostgroup);
+			$this->aNagiosHostgroup = NagiosHostgroupPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostgroup->addNagiosServices($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostgroup->addNagiosServices($this);
 			 */
 		}
 		return $this->aNagiosHostgroup;
@@ -3886,13 +3680,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	public function getNagiosCommandRelatedByCheckCommand(PropelPDO $con = null)
 	{
 		if ($this->aNagiosCommandRelatedByCheckCommand === null && ($this->check_command !== null)) {
-			$this->aNagiosCommandRelatedByCheckCommand = NagiosCommandQuery::create()->findPk($this->check_command, $con);
+			$c = new Criteria(NagiosCommandPeer::DATABASE_NAME);
+			$c->add(NagiosCommandPeer::ID, $this->check_command);
+			$this->aNagiosCommandRelatedByCheckCommand = NagiosCommandPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosCommandRelatedByCheckCommand->addNagiosServicesRelatedByCheckCommand($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosCommandRelatedByCheckCommand->addNagiosServicesRelatedByCheckCommand($this);
 			 */
 		}
 		return $this->aNagiosCommandRelatedByCheckCommand;
@@ -3935,13 +3731,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	public function getNagiosCommandRelatedByEventHandler(PropelPDO $con = null)
 	{
 		if ($this->aNagiosCommandRelatedByEventHandler === null && ($this->event_handler !== null)) {
-			$this->aNagiosCommandRelatedByEventHandler = NagiosCommandQuery::create()->findPk($this->event_handler, $con);
+			$c = new Criteria(NagiosCommandPeer::DATABASE_NAME);
+			$c->add(NagiosCommandPeer::ID, $this->event_handler);
+			$this->aNagiosCommandRelatedByEventHandler = NagiosCommandPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosCommandRelatedByEventHandler->addNagiosServicesRelatedByEventHandler($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosCommandRelatedByEventHandler->addNagiosServicesRelatedByEventHandler($this);
 			 */
 		}
 		return $this->aNagiosCommandRelatedByEventHandler;
@@ -3984,13 +3782,15 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	public function getNagiosTimeperiodRelatedByCheckPeriod(PropelPDO $con = null)
 	{
 		if ($this->aNagiosTimeperiodRelatedByCheckPeriod === null && ($this->check_period !== null)) {
-			$this->aNagiosTimeperiodRelatedByCheckPeriod = NagiosTimeperiodQuery::create()->findPk($this->check_period, $con);
+			$c = new Criteria(NagiosTimeperiodPeer::DATABASE_NAME);
+			$c->add(NagiosTimeperiodPeer::ID, $this->check_period);
+			$this->aNagiosTimeperiodRelatedByCheckPeriod = NagiosTimeperiodPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosTimeperiodRelatedByCheckPeriod->addNagiosServicesRelatedByCheckPeriod($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosTimeperiodRelatedByCheckPeriod->addNagiosServicesRelatedByCheckPeriod($this);
 			 */
 		}
 		return $this->aNagiosTimeperiodRelatedByCheckPeriod;
@@ -4033,60 +3833,22 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	public function getNagiosTimeperiodRelatedByNotificationPeriod(PropelPDO $con = null)
 	{
 		if ($this->aNagiosTimeperiodRelatedByNotificationPeriod === null && ($this->notification_period !== null)) {
-			$this->aNagiosTimeperiodRelatedByNotificationPeriod = NagiosTimeperiodQuery::create()->findPk($this->notification_period, $con);
+			$c = new Criteria(NagiosTimeperiodPeer::DATABASE_NAME);
+			$c->add(NagiosTimeperiodPeer::ID, $this->notification_period);
+			$this->aNagiosTimeperiodRelatedByNotificationPeriod = NagiosTimeperiodPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosTimeperiodRelatedByNotificationPeriod->addNagiosServicesRelatedByNotificationPeriod($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosTimeperiodRelatedByNotificationPeriod->addNagiosServicesRelatedByNotificationPeriod($this);
 			 */
 		}
 		return $this->aNagiosTimeperiodRelatedByNotificationPeriod;
 	}
 
-
 	/**
-	 * Initializes a collection based on the name of a relation.
-	 * Avoids crafting an 'init[$relationName]s' method name 
-	 * that wouldn't work when StandardEnglishPluralizer is used.
-	 *
-	 * @param      string $relationName The name of the relation to initialize
-	 * @return     void
-	 */
-	public function initRelation($relationName)
-	{
-		if ('NagiosServiceCheckCommandParameter' == $relationName) {
-			return $this->initNagiosServiceCheckCommandParameters();
-		}
-		if ('NagiosServiceGroupMember' == $relationName) {
-			return $this->initNagiosServiceGroupMembers();
-		}
-		if ('NagiosServiceContactMember' == $relationName) {
-			return $this->initNagiosServiceContactMembers();
-		}
-		if ('NagiosServiceContactGroupMember' == $relationName) {
-			return $this->initNagiosServiceContactGroupMembers();
-		}
-		if ('NagiosDependency' == $relationName) {
-			return $this->initNagiosDependencys();
-		}
-		if ('NagiosDependencyTarget' == $relationName) {
-			return $this->initNagiosDependencyTargets();
-		}
-		if ('NagiosEscalation' == $relationName) {
-			return $this->initNagiosEscalations();
-		}
-		if ('NagiosServiceTemplateInheritance' == $relationName) {
-			return $this->initNagiosServiceTemplateInheritances();
-		}
-		if ('NagiosServiceCustomObjectVar' == $relationName) {
-			return $this->initNagiosServiceCustomObjectVars();
-		}
-	}
-
-	/**
-	 * Clears out the collNagiosServiceCheckCommandParameters collection
+	 * Clears out the collNagiosServiceCheckCommandParameters collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -4100,56 +3862,69 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosServiceCheckCommandParameters collection.
+	 * Initializes the collNagiosServiceCheckCommandParameters collection (array).
 	 *
 	 * By default this just sets the collNagiosServiceCheckCommandParameters collection to an empty array (like clearcollNagiosServiceCheckCommandParameters());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosServiceCheckCommandParameters($overrideExisting = true)
+	public function initNagiosServiceCheckCommandParameters()
 	{
-		if (null !== $this->collNagiosServiceCheckCommandParameters && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosServiceCheckCommandParameters = new PropelObjectCollection();
-		$this->collNagiosServiceCheckCommandParameters->setModel('NagiosServiceCheckCommandParameter');
+		$this->collNagiosServiceCheckCommandParameters = array();
 	}
 
 	/**
 	 * Gets an array of NagiosServiceCheckCommandParameter objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosService has previously been saved, it will retrieve
+	 * related NagiosServiceCheckCommandParameters from storage. If this NagiosService is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosServiceCheckCommandParameter[] List of NagiosServiceCheckCommandParameter objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosServiceCheckCommandParameter[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosServiceCheckCommandParameters($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceCheckCommandParameters || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceCheckCommandParameters) {
-				// return empty collection
-				$this->initNagiosServiceCheckCommandParameters();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosServiceCheckCommandParameters === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosServiceCheckCommandParameters = array();
 			} else {
-				$collNagiosServiceCheckCommandParameters = NagiosServiceCheckCommandParameterQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosServiceCheckCommandParameters;
+
+				$criteria->add(NagiosServiceCheckCommandParameterPeer::SERVICE, $this->id);
+
+				NagiosServiceCheckCommandParameterPeer::addSelectColumns($criteria);
+				$this->collNagiosServiceCheckCommandParameters = NagiosServiceCheckCommandParameterPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosServiceCheckCommandParameterPeer::SERVICE, $this->id);
+
+				NagiosServiceCheckCommandParameterPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosServiceCheckCommandParameterCriteria) || !$this->lastNagiosServiceCheckCommandParameterCriteria->equals($criteria)) {
+					$this->collNagiosServiceCheckCommandParameters = NagiosServiceCheckCommandParameterPeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosServiceCheckCommandParameters = $collNagiosServiceCheckCommandParameters;
 			}
 		}
+		$this->lastNagiosServiceCheckCommandParameterCriteria = $criteria;
 		return $this->collNagiosServiceCheckCommandParameters;
 	}
 
@@ -4164,21 +3939,47 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function countNagiosServiceCheckCommandParameters(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceCheckCommandParameters || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceCheckCommandParameters) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosServiceCheckCommandParameters === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosServiceCheckCommandParameterQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosServiceCheckCommandParameterPeer::SERVICE, $this->id);
+
+				$count = NagiosServiceCheckCommandParameterPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosServiceCheckCommandParameters);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosServiceCheckCommandParameterPeer::SERVICE, $this->id);
+
+				if (!isset($this->lastNagiosServiceCheckCommandParameterCriteria) || !$this->lastNagiosServiceCheckCommandParameterCriteria->equals($criteria)) {
+					$count = NagiosServiceCheckCommandParameterPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosServiceCheckCommandParameters);
+				}
+			} else {
+				$count = count($this->collNagiosServiceCheckCommandParameters);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -4194,8 +3995,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($this->collNagiosServiceCheckCommandParameters === null) {
 			$this->initNagiosServiceCheckCommandParameters();
 		}
-		if (!$this->collNagiosServiceCheckCommandParameters->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosServiceCheckCommandParameters[]= $l;
+		if (!in_array($l, $this->collNagiosServiceCheckCommandParameters, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosServiceCheckCommandParameters, $l);
 			$l->setNagiosService($this);
 		}
 	}
@@ -4211,22 +4012,44 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceCheckCommandParameter[] List of NagiosServiceCheckCommandParameter objects
 	 */
 	public function getNagiosServiceCheckCommandParametersJoinNagiosServiceTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceCheckCommandParameterQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosServiceCheckCommandParameters($query, $con);
+		if ($this->collNagiosServiceCheckCommandParameters === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceCheckCommandParameters = array();
+			} else {
+
+				$criteria->add(NagiosServiceCheckCommandParameterPeer::SERVICE, $this->id);
+
+				$this->collNagiosServiceCheckCommandParameters = NagiosServiceCheckCommandParameterPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceCheckCommandParameterPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceCheckCommandParameterCriteria) || !$this->lastNagiosServiceCheckCommandParameterCriteria->equals($criteria)) {
+				$this->collNagiosServiceCheckCommandParameters = NagiosServiceCheckCommandParameterPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosServiceCheckCommandParameterCriteria = $criteria;
+
+		return $this->collNagiosServiceCheckCommandParameters;
 	}
 
 	/**
-	 * Clears out the collNagiosServiceGroupMembers collection
+	 * Clears out the collNagiosServiceGroupMembers collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -4240,56 +4063,69 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosServiceGroupMembers collection.
+	 * Initializes the collNagiosServiceGroupMembers collection (array).
 	 *
 	 * By default this just sets the collNagiosServiceGroupMembers collection to an empty array (like clearcollNagiosServiceGroupMembers());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosServiceGroupMembers($overrideExisting = true)
+	public function initNagiosServiceGroupMembers()
 	{
-		if (null !== $this->collNagiosServiceGroupMembers && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosServiceGroupMembers = new PropelObjectCollection();
-		$this->collNagiosServiceGroupMembers->setModel('NagiosServiceGroupMember');
+		$this->collNagiosServiceGroupMembers = array();
 	}
 
 	/**
 	 * Gets an array of NagiosServiceGroupMember objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosService has previously been saved, it will retrieve
+	 * related NagiosServiceGroupMembers from storage. If this NagiosService is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosServiceGroupMember[] List of NagiosServiceGroupMember objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosServiceGroupMember[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosServiceGroupMembers($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceGroupMembers || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceGroupMembers) {
-				// return empty collection
-				$this->initNagiosServiceGroupMembers();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosServiceGroupMembers === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosServiceGroupMembers = array();
 			} else {
-				$collNagiosServiceGroupMembers = NagiosServiceGroupMemberQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosServiceGroupMembers;
+
+				$criteria->add(NagiosServiceGroupMemberPeer::SERVICE, $this->id);
+
+				NagiosServiceGroupMemberPeer::addSelectColumns($criteria);
+				$this->collNagiosServiceGroupMembers = NagiosServiceGroupMemberPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosServiceGroupMemberPeer::SERVICE, $this->id);
+
+				NagiosServiceGroupMemberPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosServiceGroupMemberCriteria) || !$this->lastNagiosServiceGroupMemberCriteria->equals($criteria)) {
+					$this->collNagiosServiceGroupMembers = NagiosServiceGroupMemberPeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosServiceGroupMembers = $collNagiosServiceGroupMembers;
 			}
 		}
+		$this->lastNagiosServiceGroupMemberCriteria = $criteria;
 		return $this->collNagiosServiceGroupMembers;
 	}
 
@@ -4304,21 +4140,47 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function countNagiosServiceGroupMembers(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceGroupMembers || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceGroupMembers) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosServiceGroupMembers === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosServiceGroupMemberQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosServiceGroupMemberPeer::SERVICE, $this->id);
+
+				$count = NagiosServiceGroupMemberPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosServiceGroupMembers);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosServiceGroupMemberPeer::SERVICE, $this->id);
+
+				if (!isset($this->lastNagiosServiceGroupMemberCriteria) || !$this->lastNagiosServiceGroupMemberCriteria->equals($criteria)) {
+					$count = NagiosServiceGroupMemberPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosServiceGroupMembers);
+				}
+			} else {
+				$count = count($this->collNagiosServiceGroupMembers);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -4334,8 +4196,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($this->collNagiosServiceGroupMembers === null) {
 			$this->initNagiosServiceGroupMembers();
 		}
-		if (!$this->collNagiosServiceGroupMembers->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosServiceGroupMembers[]= $l;
+		if (!in_array($l, $this->collNagiosServiceGroupMembers, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosServiceGroupMembers, $l);
 			$l->setNagiosService($this);
 		}
 	}
@@ -4351,18 +4213,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceGroupMember[] List of NagiosServiceGroupMember objects
 	 */
 	public function getNagiosServiceGroupMembersJoinNagiosServiceTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceGroupMemberQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosServiceGroupMembers($query, $con);
+		if ($this->collNagiosServiceGroupMembers === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceGroupMembers = array();
+			} else {
+
+				$criteria->add(NagiosServiceGroupMemberPeer::SERVICE, $this->id);
+
+				$this->collNagiosServiceGroupMembers = NagiosServiceGroupMemberPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceGroupMemberPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceGroupMemberCriteria) || !$this->lastNagiosServiceGroupMemberCriteria->equals($criteria)) {
+				$this->collNagiosServiceGroupMembers = NagiosServiceGroupMemberPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosServiceGroupMemberCriteria = $criteria;
+
+		return $this->collNagiosServiceGroupMembers;
 	}
 
 
@@ -4376,22 +4260,44 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceGroupMember[] List of NagiosServiceGroupMember objects
 	 */
 	public function getNagiosServiceGroupMembersJoinNagiosServiceGroup($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceGroupMemberQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceGroup', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosServiceGroupMembers($query, $con);
+		if ($this->collNagiosServiceGroupMembers === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceGroupMembers = array();
+			} else {
+
+				$criteria->add(NagiosServiceGroupMemberPeer::SERVICE, $this->id);
+
+				$this->collNagiosServiceGroupMembers = NagiosServiceGroupMemberPeer::doSelectJoinNagiosServiceGroup($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceGroupMemberPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceGroupMemberCriteria) || !$this->lastNagiosServiceGroupMemberCriteria->equals($criteria)) {
+				$this->collNagiosServiceGroupMembers = NagiosServiceGroupMemberPeer::doSelectJoinNagiosServiceGroup($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosServiceGroupMemberCriteria = $criteria;
+
+		return $this->collNagiosServiceGroupMembers;
 	}
 
 	/**
-	 * Clears out the collNagiosServiceContactMembers collection
+	 * Clears out the collNagiosServiceContactMembers collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -4405,56 +4311,69 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosServiceContactMembers collection.
+	 * Initializes the collNagiosServiceContactMembers collection (array).
 	 *
 	 * By default this just sets the collNagiosServiceContactMembers collection to an empty array (like clearcollNagiosServiceContactMembers());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosServiceContactMembers($overrideExisting = true)
+	public function initNagiosServiceContactMembers()
 	{
-		if (null !== $this->collNagiosServiceContactMembers && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosServiceContactMembers = new PropelObjectCollection();
-		$this->collNagiosServiceContactMembers->setModel('NagiosServiceContactMember');
+		$this->collNagiosServiceContactMembers = array();
 	}
 
 	/**
 	 * Gets an array of NagiosServiceContactMember objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosService has previously been saved, it will retrieve
+	 * related NagiosServiceContactMembers from storage. If this NagiosService is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosServiceContactMember[] List of NagiosServiceContactMember objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosServiceContactMember[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosServiceContactMembers($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceContactMembers || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceContactMembers) {
-				// return empty collection
-				$this->initNagiosServiceContactMembers();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosServiceContactMembers === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosServiceContactMembers = array();
 			} else {
-				$collNagiosServiceContactMembers = NagiosServiceContactMemberQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosServiceContactMembers;
+
+				$criteria->add(NagiosServiceContactMemberPeer::SERVICE, $this->id);
+
+				NagiosServiceContactMemberPeer::addSelectColumns($criteria);
+				$this->collNagiosServiceContactMembers = NagiosServiceContactMemberPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosServiceContactMemberPeer::SERVICE, $this->id);
+
+				NagiosServiceContactMemberPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosServiceContactMemberCriteria) || !$this->lastNagiosServiceContactMemberCriteria->equals($criteria)) {
+					$this->collNagiosServiceContactMembers = NagiosServiceContactMemberPeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosServiceContactMembers = $collNagiosServiceContactMembers;
 			}
 		}
+		$this->lastNagiosServiceContactMemberCriteria = $criteria;
 		return $this->collNagiosServiceContactMembers;
 	}
 
@@ -4469,21 +4388,47 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function countNagiosServiceContactMembers(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceContactMembers || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceContactMembers) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosServiceContactMembers === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosServiceContactMemberQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosServiceContactMemberPeer::SERVICE, $this->id);
+
+				$count = NagiosServiceContactMemberPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosServiceContactMembers);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosServiceContactMemberPeer::SERVICE, $this->id);
+
+				if (!isset($this->lastNagiosServiceContactMemberCriteria) || !$this->lastNagiosServiceContactMemberCriteria->equals($criteria)) {
+					$count = NagiosServiceContactMemberPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosServiceContactMembers);
+				}
+			} else {
+				$count = count($this->collNagiosServiceContactMembers);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -4499,8 +4444,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($this->collNagiosServiceContactMembers === null) {
 			$this->initNagiosServiceContactMembers();
 		}
-		if (!$this->collNagiosServiceContactMembers->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosServiceContactMembers[]= $l;
+		if (!in_array($l, $this->collNagiosServiceContactMembers, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosServiceContactMembers, $l);
 			$l->setNagiosService($this);
 		}
 	}
@@ -4516,18 +4461,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceContactMember[] List of NagiosServiceContactMember objects
 	 */
 	public function getNagiosServiceContactMembersJoinNagiosServiceTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceContactMemberQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosServiceContactMembers($query, $con);
+		if ($this->collNagiosServiceContactMembers === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceContactMembers = array();
+			} else {
+
+				$criteria->add(NagiosServiceContactMemberPeer::SERVICE, $this->id);
+
+				$this->collNagiosServiceContactMembers = NagiosServiceContactMemberPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceContactMemberPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceContactMemberCriteria) || !$this->lastNagiosServiceContactMemberCriteria->equals($criteria)) {
+				$this->collNagiosServiceContactMembers = NagiosServiceContactMemberPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosServiceContactMemberCriteria = $criteria;
+
+		return $this->collNagiosServiceContactMembers;
 	}
 
 
@@ -4541,22 +4508,44 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceContactMember[] List of NagiosServiceContactMember objects
 	 */
 	public function getNagiosServiceContactMembersJoinNagiosContact($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceContactMemberQuery::create(null, $criteria);
-		$query->joinWith('NagiosContact', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosServiceContactMembers($query, $con);
+		if ($this->collNagiosServiceContactMembers === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceContactMembers = array();
+			} else {
+
+				$criteria->add(NagiosServiceContactMemberPeer::SERVICE, $this->id);
+
+				$this->collNagiosServiceContactMembers = NagiosServiceContactMemberPeer::doSelectJoinNagiosContact($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceContactMemberPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceContactMemberCriteria) || !$this->lastNagiosServiceContactMemberCriteria->equals($criteria)) {
+				$this->collNagiosServiceContactMembers = NagiosServiceContactMemberPeer::doSelectJoinNagiosContact($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosServiceContactMemberCriteria = $criteria;
+
+		return $this->collNagiosServiceContactMembers;
 	}
 
 	/**
-	 * Clears out the collNagiosServiceContactGroupMembers collection
+	 * Clears out the collNagiosServiceContactGroupMembers collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -4570,56 +4559,69 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosServiceContactGroupMembers collection.
+	 * Initializes the collNagiosServiceContactGroupMembers collection (array).
 	 *
 	 * By default this just sets the collNagiosServiceContactGroupMembers collection to an empty array (like clearcollNagiosServiceContactGroupMembers());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosServiceContactGroupMembers($overrideExisting = true)
+	public function initNagiosServiceContactGroupMembers()
 	{
-		if (null !== $this->collNagiosServiceContactGroupMembers && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosServiceContactGroupMembers = new PropelObjectCollection();
-		$this->collNagiosServiceContactGroupMembers->setModel('NagiosServiceContactGroupMember');
+		$this->collNagiosServiceContactGroupMembers = array();
 	}
 
 	/**
 	 * Gets an array of NagiosServiceContactGroupMember objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosService has previously been saved, it will retrieve
+	 * related NagiosServiceContactGroupMembers from storage. If this NagiosService is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosServiceContactGroupMember[] List of NagiosServiceContactGroupMember objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosServiceContactGroupMember[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosServiceContactGroupMembers($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceContactGroupMembers || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceContactGroupMembers) {
-				// return empty collection
-				$this->initNagiosServiceContactGroupMembers();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosServiceContactGroupMembers === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosServiceContactGroupMembers = array();
 			} else {
-				$collNagiosServiceContactGroupMembers = NagiosServiceContactGroupMemberQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosServiceContactGroupMembers;
+
+				$criteria->add(NagiosServiceContactGroupMemberPeer::SERVICE, $this->id);
+
+				NagiosServiceContactGroupMemberPeer::addSelectColumns($criteria);
+				$this->collNagiosServiceContactGroupMembers = NagiosServiceContactGroupMemberPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosServiceContactGroupMemberPeer::SERVICE, $this->id);
+
+				NagiosServiceContactGroupMemberPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosServiceContactGroupMemberCriteria) || !$this->lastNagiosServiceContactGroupMemberCriteria->equals($criteria)) {
+					$this->collNagiosServiceContactGroupMembers = NagiosServiceContactGroupMemberPeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosServiceContactGroupMembers = $collNagiosServiceContactGroupMembers;
 			}
 		}
+		$this->lastNagiosServiceContactGroupMemberCriteria = $criteria;
 		return $this->collNagiosServiceContactGroupMembers;
 	}
 
@@ -4634,21 +4636,47 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function countNagiosServiceContactGroupMembers(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceContactGroupMembers || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceContactGroupMembers) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosServiceContactGroupMembers === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosServiceContactGroupMemberQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosServiceContactGroupMemberPeer::SERVICE, $this->id);
+
+				$count = NagiosServiceContactGroupMemberPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosServiceContactGroupMembers);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosServiceContactGroupMemberPeer::SERVICE, $this->id);
+
+				if (!isset($this->lastNagiosServiceContactGroupMemberCriteria) || !$this->lastNagiosServiceContactGroupMemberCriteria->equals($criteria)) {
+					$count = NagiosServiceContactGroupMemberPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosServiceContactGroupMembers);
+				}
+			} else {
+				$count = count($this->collNagiosServiceContactGroupMembers);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -4664,8 +4692,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($this->collNagiosServiceContactGroupMembers === null) {
 			$this->initNagiosServiceContactGroupMembers();
 		}
-		if (!$this->collNagiosServiceContactGroupMembers->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosServiceContactGroupMembers[]= $l;
+		if (!in_array($l, $this->collNagiosServiceContactGroupMembers, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosServiceContactGroupMembers, $l);
 			$l->setNagiosService($this);
 		}
 	}
@@ -4681,18 +4709,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceContactGroupMember[] List of NagiosServiceContactGroupMember objects
 	 */
 	public function getNagiosServiceContactGroupMembersJoinNagiosServiceTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceContactGroupMemberQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosServiceContactGroupMembers($query, $con);
+		if ($this->collNagiosServiceContactGroupMembers === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceContactGroupMembers = array();
+			} else {
+
+				$criteria->add(NagiosServiceContactGroupMemberPeer::SERVICE, $this->id);
+
+				$this->collNagiosServiceContactGroupMembers = NagiosServiceContactGroupMemberPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceContactGroupMemberPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceContactGroupMemberCriteria) || !$this->lastNagiosServiceContactGroupMemberCriteria->equals($criteria)) {
+				$this->collNagiosServiceContactGroupMembers = NagiosServiceContactGroupMemberPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosServiceContactGroupMemberCriteria = $criteria;
+
+		return $this->collNagiosServiceContactGroupMembers;
 	}
 
 
@@ -4706,22 +4756,44 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceContactGroupMember[] List of NagiosServiceContactGroupMember objects
 	 */
 	public function getNagiosServiceContactGroupMembersJoinNagiosContactGroup($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceContactGroupMemberQuery::create(null, $criteria);
-		$query->joinWith('NagiosContactGroup', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosServiceContactGroupMembers($query, $con);
+		if ($this->collNagiosServiceContactGroupMembers === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceContactGroupMembers = array();
+			} else {
+
+				$criteria->add(NagiosServiceContactGroupMemberPeer::SERVICE, $this->id);
+
+				$this->collNagiosServiceContactGroupMembers = NagiosServiceContactGroupMemberPeer::doSelectJoinNagiosContactGroup($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceContactGroupMemberPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceContactGroupMemberCriteria) || !$this->lastNagiosServiceContactGroupMemberCriteria->equals($criteria)) {
+				$this->collNagiosServiceContactGroupMembers = NagiosServiceContactGroupMemberPeer::doSelectJoinNagiosContactGroup($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosServiceContactGroupMemberCriteria = $criteria;
+
+		return $this->collNagiosServiceContactGroupMembers;
 	}
 
 	/**
-	 * Clears out the collNagiosDependencys collection
+	 * Clears out the collNagiosDependencys collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -4735,56 +4807,69 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosDependencys collection.
+	 * Initializes the collNagiosDependencys collection (array).
 	 *
 	 * By default this just sets the collNagiosDependencys collection to an empty array (like clearcollNagiosDependencys());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosDependencys($overrideExisting = true)
+	public function initNagiosDependencys()
 	{
-		if (null !== $this->collNagiosDependencys && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosDependencys = new PropelObjectCollection();
-		$this->collNagiosDependencys->setModel('NagiosDependency');
+		$this->collNagiosDependencys = array();
 	}
 
 	/**
 	 * Gets an array of NagiosDependency objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosService has previously been saved, it will retrieve
+	 * related NagiosDependencys from storage. If this NagiosService is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosDependency[] List of NagiosDependency objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosDependency[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosDependencys($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosDependencys || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosDependencys) {
-				// return empty collection
-				$this->initNagiosDependencys();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosDependencys === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosDependencys = array();
 			} else {
-				$collNagiosDependencys = NagiosDependencyQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosDependencys;
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				NagiosDependencyPeer::addSelectColumns($criteria);
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				NagiosDependencyPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosDependencyCriteria) || !$this->lastNagiosDependencyCriteria->equals($criteria)) {
+					$this->collNagiosDependencys = NagiosDependencyPeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosDependencys = $collNagiosDependencys;
 			}
 		}
+		$this->lastNagiosDependencyCriteria = $criteria;
 		return $this->collNagiosDependencys;
 	}
 
@@ -4799,21 +4884,47 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function countNagiosDependencys(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosDependencys || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosDependencys) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosDependencys === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosDependencyQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				$count = NagiosDependencyPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosDependencys);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				if (!isset($this->lastNagiosDependencyCriteria) || !$this->lastNagiosDependencyCriteria->equals($criteria)) {
+					$count = NagiosDependencyPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosDependencys);
+				}
+			} else {
+				$count = count($this->collNagiosDependencys);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -4829,8 +4940,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($this->collNagiosDependencys === null) {
 			$this->initNagiosDependencys();
 		}
-		if (!$this->collNagiosDependencys->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosDependencys[]= $l;
+		if (!in_array($l, $this->collNagiosDependencys, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosDependencys, $l);
 			$l->setNagiosService($this);
 		}
 	}
@@ -4846,18 +4957,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependency[] List of NagiosDependency objects
 	 */
 	public function getNagiosDependencysJoinNagiosHostTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyQuery::create(null, $criteria);
-		$query->joinWith('NagiosHostTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencys($query, $con);
+		if ($this->collNagiosDependencys === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencys = array();
+			} else {
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosHostTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosDependencyCriteria) || !$this->lastNagiosDependencyCriteria->equals($criteria)) {
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosHostTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyCriteria = $criteria;
+
+		return $this->collNagiosDependencys;
 	}
 
 
@@ -4871,18 +5004,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependency[] List of NagiosDependency objects
 	 */
 	public function getNagiosDependencysJoinNagiosHost($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyQuery::create(null, $criteria);
-		$query->joinWith('NagiosHost', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencys($query, $con);
+		if ($this->collNagiosDependencys === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencys = array();
+			} else {
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosDependencyCriteria) || !$this->lastNagiosDependencyCriteria->equals($criteria)) {
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyCriteria = $criteria;
+
+		return $this->collNagiosDependencys;
 	}
 
 
@@ -4896,18 +5051,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependency[] List of NagiosDependency objects
 	 */
 	public function getNagiosDependencysJoinNagiosServiceTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencys($query, $con);
+		if ($this->collNagiosDependencys === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencys = array();
+			} else {
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosDependencyCriteria) || !$this->lastNagiosDependencyCriteria->equals($criteria)) {
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyCriteria = $criteria;
+
+		return $this->collNagiosDependencys;
 	}
 
 
@@ -4921,18 +5098,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependency[] List of NagiosDependency objects
 	 */
 	public function getNagiosDependencysJoinNagiosHostgroup($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyQuery::create(null, $criteria);
-		$query->joinWith('NagiosHostgroup', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencys($query, $con);
+		if ($this->collNagiosDependencys === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencys = array();
+			} else {
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosHostgroup($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosDependencyCriteria) || !$this->lastNagiosDependencyCriteria->equals($criteria)) {
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosHostgroup($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyCriteria = $criteria;
+
+		return $this->collNagiosDependencys;
 	}
 
 
@@ -4946,22 +5145,44 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependency[] List of NagiosDependency objects
 	 */
 	public function getNagiosDependencysJoinNagiosTimeperiod($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyQuery::create(null, $criteria);
-		$query->joinWith('NagiosTimeperiod', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencys($query, $con);
+		if ($this->collNagiosDependencys === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencys = array();
+			} else {
+
+				$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosTimeperiod($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosDependencyCriteria) || !$this->lastNagiosDependencyCriteria->equals($criteria)) {
+				$this->collNagiosDependencys = NagiosDependencyPeer::doSelectJoinNagiosTimeperiod($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyCriteria = $criteria;
+
+		return $this->collNagiosDependencys;
 	}
 
 	/**
-	 * Clears out the collNagiosDependencyTargets collection
+	 * Clears out the collNagiosDependencyTargets collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -4975,56 +5196,69 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosDependencyTargets collection.
+	 * Initializes the collNagiosDependencyTargets collection (array).
 	 *
 	 * By default this just sets the collNagiosDependencyTargets collection to an empty array (like clearcollNagiosDependencyTargets());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosDependencyTargets($overrideExisting = true)
+	public function initNagiosDependencyTargets()
 	{
-		if (null !== $this->collNagiosDependencyTargets && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosDependencyTargets = new PropelObjectCollection();
-		$this->collNagiosDependencyTargets->setModel('NagiosDependencyTarget');
+		$this->collNagiosDependencyTargets = array();
 	}
 
 	/**
 	 * Gets an array of NagiosDependencyTarget objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosService has previously been saved, it will retrieve
+	 * related NagiosDependencyTargets from storage. If this NagiosService is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosDependencyTarget[] List of NagiosDependencyTarget objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosDependencyTarget[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosDependencyTargets($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosDependencyTargets || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosDependencyTargets) {
-				// return empty collection
-				$this->initNagiosDependencyTargets();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosDependencyTargets = array();
 			} else {
-				$collNagiosDependencyTargets = NagiosDependencyTargetQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosDependencyTargets;
+
+				$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+				NagiosDependencyTargetPeer::addSelectColumns($criteria);
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+				NagiosDependencyTargetPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+					$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosDependencyTargets = $collNagiosDependencyTargets;
 			}
 		}
+		$this->lastNagiosDependencyTargetCriteria = $criteria;
 		return $this->collNagiosDependencyTargets;
 	}
 
@@ -5039,21 +5273,47 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function countNagiosDependencyTargets(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosDependencyTargets || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosDependencyTargets) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosDependencyTargetQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+				$count = NagiosDependencyTargetPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosDependencyTargets);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+				if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+					$count = NagiosDependencyTargetPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosDependencyTargets);
+				}
+			} else {
+				$count = count($this->collNagiosDependencyTargets);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -5069,8 +5329,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($this->collNagiosDependencyTargets === null) {
 			$this->initNagiosDependencyTargets();
 		}
-		if (!$this->collNagiosDependencyTargets->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosDependencyTargets[]= $l;
+		if (!in_array($l, $this->collNagiosDependencyTargets, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosDependencyTargets, $l);
 			$l->setNagiosService($this);
 		}
 	}
@@ -5086,18 +5346,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependencyTarget[] List of NagiosDependencyTarget objects
 	 */
 	public function getNagiosDependencyTargetsJoinNagiosDependency($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyTargetQuery::create(null, $criteria);
-		$query->joinWith('NagiosDependency', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencyTargets($query, $con);
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencyTargets = array();
+			} else {
+
+				$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosDependency($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosDependency($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyTargetCriteria = $criteria;
+
+		return $this->collNagiosDependencyTargets;
 	}
 
 
@@ -5111,18 +5393,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependencyTarget[] List of NagiosDependencyTarget objects
 	 */
 	public function getNagiosDependencyTargetsJoinNagiosHost($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyTargetQuery::create(null, $criteria);
-		$query->joinWith('NagiosHost', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencyTargets($query, $con);
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencyTargets = array();
+			} else {
+
+				$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyTargetCriteria = $criteria;
+
+		return $this->collNagiosDependencyTargets;
 	}
 
 
@@ -5136,22 +5440,44 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosDependencyTarget[] List of NagiosDependencyTarget objects
 	 */
 	public function getNagiosDependencyTargetsJoinNagiosHostgroup($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosDependencyTargetQuery::create(null, $criteria);
-		$query->joinWith('NagiosHostgroup', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosDependencyTargets($query, $con);
+		if ($this->collNagiosDependencyTargets === null) {
+			if ($this->isNew()) {
+				$this->collNagiosDependencyTargets = array();
+			} else {
+
+				$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosHostgroup($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosDependencyTargetPeer::TARGET_SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosDependencyTargetCriteria) || !$this->lastNagiosDependencyTargetCriteria->equals($criteria)) {
+				$this->collNagiosDependencyTargets = NagiosDependencyTargetPeer::doSelectJoinNagiosHostgroup($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosDependencyTargetCriteria = $criteria;
+
+		return $this->collNagiosDependencyTargets;
 	}
 
 	/**
-	 * Clears out the collNagiosEscalations collection
+	 * Clears out the collNagiosEscalations collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -5165,56 +5491,69 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosEscalations collection.
+	 * Initializes the collNagiosEscalations collection (array).
 	 *
 	 * By default this just sets the collNagiosEscalations collection to an empty array (like clearcollNagiosEscalations());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosEscalations($overrideExisting = true)
+	public function initNagiosEscalations()
 	{
-		if (null !== $this->collNagiosEscalations && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosEscalations = new PropelObjectCollection();
-		$this->collNagiosEscalations->setModel('NagiosEscalation');
+		$this->collNagiosEscalations = array();
 	}
 
 	/**
 	 * Gets an array of NagiosEscalation objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosService has previously been saved, it will retrieve
+	 * related NagiosEscalations from storage. If this NagiosService is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosEscalation[] List of NagiosEscalation objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosEscalation[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosEscalations($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosEscalations || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosEscalations) {
-				// return empty collection
-				$this->initNagiosEscalations();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosEscalations === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosEscalations = array();
 			} else {
-				$collNagiosEscalations = NagiosEscalationQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosEscalations;
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				NagiosEscalationPeer::addSelectColumns($criteria);
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				NagiosEscalationPeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosEscalationCriteria) || !$this->lastNagiosEscalationCriteria->equals($criteria)) {
+					$this->collNagiosEscalations = NagiosEscalationPeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosEscalations = $collNagiosEscalations;
 			}
 		}
+		$this->lastNagiosEscalationCriteria = $criteria;
 		return $this->collNagiosEscalations;
 	}
 
@@ -5229,21 +5568,47 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function countNagiosEscalations(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosEscalations || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosEscalations) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosEscalations === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosEscalationQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				$count = NagiosEscalationPeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosEscalations);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				if (!isset($this->lastNagiosEscalationCriteria) || !$this->lastNagiosEscalationCriteria->equals($criteria)) {
+					$count = NagiosEscalationPeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosEscalations);
+				}
+			} else {
+				$count = count($this->collNagiosEscalations);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -5259,8 +5624,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($this->collNagiosEscalations === null) {
 			$this->initNagiosEscalations();
 		}
-		if (!$this->collNagiosEscalations->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosEscalations[]= $l;
+		if (!in_array($l, $this->collNagiosEscalations, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosEscalations, $l);
 			$l->setNagiosService($this);
 		}
 	}
@@ -5276,18 +5641,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosEscalation[] List of NagiosEscalation objects
 	 */
 	public function getNagiosEscalationsJoinNagiosHostTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosEscalationQuery::create(null, $criteria);
-		$query->joinWith('NagiosHostTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosEscalations($query, $con);
+		if ($this->collNagiosEscalations === null) {
+			if ($this->isNew()) {
+				$this->collNagiosEscalations = array();
+			} else {
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosHostTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosEscalationCriteria) || !$this->lastNagiosEscalationCriteria->equals($criteria)) {
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosHostTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosEscalationCriteria = $criteria;
+
+		return $this->collNagiosEscalations;
 	}
 
 
@@ -5301,18 +5688,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosEscalation[] List of NagiosEscalation objects
 	 */
 	public function getNagiosEscalationsJoinNagiosHost($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosEscalationQuery::create(null, $criteria);
-		$query->joinWith('NagiosHost', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosEscalations($query, $con);
+		if ($this->collNagiosEscalations === null) {
+			if ($this->isNew()) {
+				$this->collNagiosEscalations = array();
+			} else {
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosEscalationCriteria) || !$this->lastNagiosEscalationCriteria->equals($criteria)) {
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosHost($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosEscalationCriteria = $criteria;
+
+		return $this->collNagiosEscalations;
 	}
 
 
@@ -5326,18 +5735,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosEscalation[] List of NagiosEscalation objects
 	 */
 	public function getNagiosEscalationsJoinNagiosServiceTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosEscalationQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosEscalations($query, $con);
+		if ($this->collNagiosEscalations === null) {
+			if ($this->isNew()) {
+				$this->collNagiosEscalations = array();
+			} else {
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosEscalationCriteria) || !$this->lastNagiosEscalationCriteria->equals($criteria)) {
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosServiceTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosEscalationCriteria = $criteria;
+
+		return $this->collNagiosEscalations;
 	}
 
 
@@ -5351,18 +5782,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosEscalation[] List of NagiosEscalation objects
 	 */
 	public function getNagiosEscalationsJoinNagiosHostgroup($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosEscalationQuery::create(null, $criteria);
-		$query->joinWith('NagiosHostgroup', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosEscalations($query, $con);
+		if ($this->collNagiosEscalations === null) {
+			if ($this->isNew()) {
+				$this->collNagiosEscalations = array();
+			} else {
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosHostgroup($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosEscalationCriteria) || !$this->lastNagiosEscalationCriteria->equals($criteria)) {
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosHostgroup($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosEscalationCriteria = $criteria;
+
+		return $this->collNagiosEscalations;
 	}
 
 
@@ -5376,22 +5829,44 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosEscalation[] List of NagiosEscalation objects
 	 */
 	public function getNagiosEscalationsJoinNagiosTimeperiod($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosEscalationQuery::create(null, $criteria);
-		$query->joinWith('NagiosTimeperiod', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosEscalations($query, $con);
+		if ($this->collNagiosEscalations === null) {
+			if ($this->isNew()) {
+				$this->collNagiosEscalations = array();
+			} else {
+
+				$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosTimeperiod($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosEscalationPeer::SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosEscalationCriteria) || !$this->lastNagiosEscalationCriteria->equals($criteria)) {
+				$this->collNagiosEscalations = NagiosEscalationPeer::doSelectJoinNagiosTimeperiod($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosEscalationCriteria = $criteria;
+
+		return $this->collNagiosEscalations;
 	}
 
 	/**
-	 * Clears out the collNagiosServiceTemplateInheritances collection
+	 * Clears out the collNagiosServiceTemplateInheritances collection (array).
 	 *
 	 * This does not modify the database; however, it will remove any associated objects, causing
 	 * them to be refetched by subsequent calls to accessor method.
@@ -5405,56 +5880,69 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Initializes the collNagiosServiceTemplateInheritances collection.
+	 * Initializes the collNagiosServiceTemplateInheritances collection (array).
 	 *
 	 * By default this just sets the collNagiosServiceTemplateInheritances collection to an empty array (like clearcollNagiosServiceTemplateInheritances());
 	 * however, you may wish to override this method in your stub class to provide setting appropriate
 	 * to your application -- for example, setting the initial array to the values stored in database.
 	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
 	 * @return     void
 	 */
-	public function initNagiosServiceTemplateInheritances($overrideExisting = true)
+	public function initNagiosServiceTemplateInheritances()
 	{
-		if (null !== $this->collNagiosServiceTemplateInheritances && !$overrideExisting) {
-			return;
-		}
-		$this->collNagiosServiceTemplateInheritances = new PropelObjectCollection();
-		$this->collNagiosServiceTemplateInheritances->setModel('NagiosServiceTemplateInheritance');
+		$this->collNagiosServiceTemplateInheritances = array();
 	}
 
 	/**
 	 * Gets an array of NagiosServiceTemplateInheritance objects which contain a foreign key that references this object.
 	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
+	 * If this collection has already been initialized with an identical Criteria, it returns the collection.
+	 * Otherwise if this NagiosService has previously been saved, it will retrieve
+	 * related NagiosServiceTemplateInheritances from storage. If this NagiosService is new, it will return
+	 * an empty collection or the current collection, the criteria is ignored on a new object.
 	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosServiceTemplateInheritance[] List of NagiosServiceTemplateInheritance objects
+	 * @param      PropelPDO $con
+	 * @param      Criteria $criteria
+	 * @return     array NagiosServiceTemplateInheritance[]
 	 * @throws     PropelException
 	 */
 	public function getNagiosServiceTemplateInheritances($criteria = null, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceTemplateInheritances || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceTemplateInheritances) {
-				// return empty collection
-				$this->initNagiosServiceTemplateInheritances();
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
+
+		if ($this->collNagiosServiceTemplateInheritances === null) {
+			if ($this->isNew()) {
+			   $this->collNagiosServiceTemplateInheritances = array();
 			} else {
-				$collNagiosServiceTemplateInheritances = NagiosServiceTemplateInheritanceQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosServiceTemplateInheritances;
+
+				$criteria->add(NagiosServiceTemplateInheritancePeer::SOURCE_SERVICE, $this->id);
+
+				NagiosServiceTemplateInheritancePeer::addSelectColumns($criteria);
+				$this->collNagiosServiceTemplateInheritances = NagiosServiceTemplateInheritancePeer::doSelect($criteria, $con);
+			}
+		} else {
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return the collection.
+
+
+				$criteria->add(NagiosServiceTemplateInheritancePeer::SOURCE_SERVICE, $this->id);
+
+				NagiosServiceTemplateInheritancePeer::addSelectColumns($criteria);
+				if (!isset($this->lastNagiosServiceTemplateInheritanceCriteria) || !$this->lastNagiosServiceTemplateInheritanceCriteria->equals($criteria)) {
+					$this->collNagiosServiceTemplateInheritances = NagiosServiceTemplateInheritancePeer::doSelect($criteria, $con);
 				}
-				$this->collNagiosServiceTemplateInheritances = $collNagiosServiceTemplateInheritances;
 			}
 		}
+		$this->lastNagiosServiceTemplateInheritanceCriteria = $criteria;
 		return $this->collNagiosServiceTemplateInheritances;
 	}
 
@@ -5469,21 +5957,47 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 */
 	public function countNagiosServiceTemplateInheritances(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
 	{
-		if(null === $this->collNagiosServiceTemplateInheritances || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceTemplateInheritances) {
-				return 0;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		} else {
+			$criteria = clone $criteria;
+		}
+
+		if ($distinct) {
+			$criteria->setDistinct();
+		}
+
+		$count = null;
+
+		if ($this->collNagiosServiceTemplateInheritances === null) {
+			if ($this->isNew()) {
+				$count = 0;
 			} else {
-				$query = NagiosServiceTemplateInheritanceQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosServiceTemplateInheritancePeer::SOURCE_SERVICE, $this->id);
+
+				$count = NagiosServiceTemplateInheritancePeer::doCount($criteria, $con);
 			}
 		} else {
-			return count($this->collNagiosServiceTemplateInheritances);
+			// criteria has no effect for a new object
+			if (!$this->isNew()) {
+				// the following code is to determine if a new query is
+				// called for.  If the criteria is the same as the last
+				// one, just return count of the collection.
+
+
+				$criteria->add(NagiosServiceTemplateInheritancePeer::SOURCE_SERVICE, $this->id);
+
+				if (!isset($this->lastNagiosServiceTemplateInheritanceCriteria) || !$this->lastNagiosServiceTemplateInheritanceCriteria->equals($criteria)) {
+					$count = NagiosServiceTemplateInheritancePeer::doCount($criteria, $con);
+				} else {
+					$count = count($this->collNagiosServiceTemplateInheritances);
+				}
+			} else {
+				$count = count($this->collNagiosServiceTemplateInheritances);
+			}
 		}
+		return $count;
 	}
 
 	/**
@@ -5499,8 +6013,8 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 		if ($this->collNagiosServiceTemplateInheritances === null) {
 			$this->initNagiosServiceTemplateInheritances();
 		}
-		if (!$this->collNagiosServiceTemplateInheritances->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosServiceTemplateInheritances[]= $l;
+		if (!in_array($l, $this->collNagiosServiceTemplateInheritances, true)) { // only add it if the **same** object is not already associated
+			array_push($this->collNagiosServiceTemplateInheritances, $l);
 			$l->setNagiosService($this);
 		}
 	}
@@ -5516,18 +6030,40 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceTemplateInheritance[] List of NagiosServiceTemplateInheritance objects
 	 */
 	public function getNagiosServiceTemplateInheritancesJoinNagiosServiceTemplateRelatedBySourceTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceTemplateInheritanceQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplateRelatedBySourceTemplate', $join_behavior);
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
+		}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
+		}
 
-		return $this->getNagiosServiceTemplateInheritances($query, $con);
+		if ($this->collNagiosServiceTemplateInheritances === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceTemplateInheritances = array();
+			} else {
+
+				$criteria->add(NagiosServiceTemplateInheritancePeer::SOURCE_SERVICE, $this->id);
+
+				$this->collNagiosServiceTemplateInheritances = NagiosServiceTemplateInheritancePeer::doSelectJoinNagiosServiceTemplateRelatedBySourceTemplate($criteria, $con, $join_behavior);
+			}
+		} else {
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceTemplateInheritancePeer::SOURCE_SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceTemplateInheritanceCriteria) || !$this->lastNagiosServiceTemplateInheritanceCriteria->equals($criteria)) {
+				$this->collNagiosServiceTemplateInheritances = NagiosServiceTemplateInheritancePeer::doSelectJoinNagiosServiceTemplateRelatedBySourceTemplate($criteria, $con, $join_behavior);
+			}
+		}
+		$this->lastNagiosServiceTemplateInheritanceCriteria = $criteria;
+
+		return $this->collNagiosServiceTemplateInheritances;
 	}
 
 
@@ -5541,355 +6077,111 @@ abstract class BaseNagiosService extends BaseObject  implements Persistent
 	 * This method is protected by default in order to keep the public
 	 * api reasonable.  You can provide public methods for those you
 	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceTemplateInheritance[] List of NagiosServiceTemplateInheritance objects
 	 */
 	public function getNagiosServiceTemplateInheritancesJoinNagiosServiceTemplateRelatedByTargetTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
 	{
-		$query = NagiosServiceTemplateInheritanceQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplateRelatedByTargetTemplate', $join_behavior);
-
-		return $this->getNagiosServiceTemplateInheritances($query, $con);
-	}
-
-	/**
-	 * Clears out the collNagiosServiceCustomObjectVars collection
-	 *
-	 * This does not modify the database; however, it will remove any associated objects, causing
-	 * them to be refetched by subsequent calls to accessor method.
-	 *
-	 * @return     void
-	 * @see        addNagiosServiceCustomObjectVars()
-	 */
-	public function clearNagiosServiceCustomObjectVars()
-	{
-		$this->collNagiosServiceCustomObjectVars = null; // important to set this to NULL since that means it is uninitialized
-	}
-
-	/**
-	 * Initializes the collNagiosServiceCustomObjectVars collection.
-	 *
-	 * By default this just sets the collNagiosServiceCustomObjectVars collection to an empty array (like clearcollNagiosServiceCustomObjectVars());
-	 * however, you may wish to override this method in your stub class to provide setting appropriate
-	 * to your application -- for example, setting the initial array to the values stored in database.
-	 *
-	 * @param      boolean $overrideExisting If set to true, the method call initializes
-	 *                                        the collection even if it is not empty
-	 *
-	 * @return     void
-	 */
-	public function initNagiosServiceCustomObjectVars($overrideExisting = true)
-	{
-		if (null !== $this->collNagiosServiceCustomObjectVars && !$overrideExisting) {
-			return;
+		if ($criteria === null) {
+			$criteria = new Criteria(NagiosServicePeer::DATABASE_NAME);
 		}
-		$this->collNagiosServiceCustomObjectVars = new PropelObjectCollection();
-		$this->collNagiosServiceCustomObjectVars->setModel('NagiosServiceCustomObjectVar');
-	}
-
-	/**
-	 * Gets an array of NagiosServiceCustomObjectVar objects which contain a foreign key that references this object.
-	 *
-	 * If the $criteria is not null, it is used to always fetch the results from the database.
-	 * Otherwise the results are fetched from the database the first time, then cached.
-	 * Next time the same method is called without $criteria, the cached collection is returned.
-	 * If this NagiosService is new, it will return
-	 * an empty collection or the current collection; the criteria is ignored on a new object.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @return     PropelCollection|array NagiosServiceCustomObjectVar[] List of NagiosServiceCustomObjectVar objects
-	 * @throws     PropelException
-	 */
-	public function getNagiosServiceCustomObjectVars($criteria = null, PropelPDO $con = null)
-	{
-		if(null === $this->collNagiosServiceCustomObjectVars || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceCustomObjectVars) {
-				// return empty collection
-				$this->initNagiosServiceCustomObjectVars();
-			} else {
-				$collNagiosServiceCustomObjectVars = NagiosServiceCustomObjectVarQuery::create(null, $criteria)
-					->filterByNagiosService($this)
-					->find($con);
-				if (null !== $criteria) {
-					return $collNagiosServiceCustomObjectVars;
-				}
-				$this->collNagiosServiceCustomObjectVars = $collNagiosServiceCustomObjectVars;
-			}
+		elseif ($criteria instanceof Criteria)
+		{
+			$criteria = clone $criteria;
 		}
-		return $this->collNagiosServiceCustomObjectVars;
-	}
 
-	/**
-	 * Returns the number of related NagiosServiceCustomObjectVar objects.
-	 *
-	 * @param      Criteria $criteria
-	 * @param      boolean $distinct
-	 * @param      PropelPDO $con
-	 * @return     int Count of related NagiosServiceCustomObjectVar objects.
-	 * @throws     PropelException
-	 */
-	public function countNagiosServiceCustomObjectVars(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
-	{
-		if(null === $this->collNagiosServiceCustomObjectVars || null !== $criteria) {
-			if ($this->isNew() && null === $this->collNagiosServiceCustomObjectVars) {
-				return 0;
+		if ($this->collNagiosServiceTemplateInheritances === null) {
+			if ($this->isNew()) {
+				$this->collNagiosServiceTemplateInheritances = array();
 			} else {
-				$query = NagiosServiceCustomObjectVarQuery::create(null, $criteria);
-				if($distinct) {
-					$query->distinct();
-				}
-				return $query
-					->filterByNagiosService($this)
-					->count($con);
+
+				$criteria->add(NagiosServiceTemplateInheritancePeer::SOURCE_SERVICE, $this->id);
+
+				$this->collNagiosServiceTemplateInheritances = NagiosServiceTemplateInheritancePeer::doSelectJoinNagiosServiceTemplateRelatedByTargetTemplate($criteria, $con, $join_behavior);
 			}
 		} else {
-			return count($this->collNagiosServiceCustomObjectVars);
+			// the following code is to determine if a new query is
+			// called for.  If the criteria is the same as the last
+			// one, just return the collection.
+
+			$criteria->add(NagiosServiceTemplateInheritancePeer::SOURCE_SERVICE, $this->id);
+
+			if (!isset($this->lastNagiosServiceTemplateInheritanceCriteria) || !$this->lastNagiosServiceTemplateInheritanceCriteria->equals($criteria)) {
+				$this->collNagiosServiceTemplateInheritances = NagiosServiceTemplateInheritancePeer::doSelectJoinNagiosServiceTemplateRelatedByTargetTemplate($criteria, $con, $join_behavior);
+			}
 		}
+		$this->lastNagiosServiceTemplateInheritanceCriteria = $criteria;
+
+		return $this->collNagiosServiceTemplateInheritances;
 	}
 
 	/**
-	 * Method called to associate a NagiosServiceCustomObjectVar object to this object
-	 * through the NagiosServiceCustomObjectVar foreign key attribute.
+	 * Resets all collections of referencing foreign keys.
 	 *
-	 * @param      NagiosServiceCustomObjectVar $l NagiosServiceCustomObjectVar
-	 * @return     void
-	 * @throws     PropelException
-	 */
-	public function addNagiosServiceCustomObjectVar(NagiosServiceCustomObjectVar $l)
-	{
-		if ($this->collNagiosServiceCustomObjectVars === null) {
-			$this->initNagiosServiceCustomObjectVars();
-		}
-		if (!$this->collNagiosServiceCustomObjectVars->contains($l)) { // only add it if the **same** object is not already associated
-			$this->collNagiosServiceCustomObjectVars[]= $l;
-			$l->setNagiosService($this);
-		}
-	}
-
-
-	/**
-	 * If this collection has already been initialized with
-	 * an identical criteria, it returns the collection.
-	 * Otherwise if this NagiosService is new, it will return
-	 * an empty collection; or if this NagiosService has previously
-	 * been saved, it will retrieve related NagiosServiceCustomObjectVars from storage.
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
 	 *
-	 * This method is protected by default in order to keep the public
-	 * api reasonable.  You can provide public methods for those you
-	 * actually need in NagiosService.
-	 *
-	 * @param      Criteria $criteria optional Criteria object to narrow the query
-	 * @param      PropelPDO $con optional connection object
-	 * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-	 * @return     PropelCollection|array NagiosServiceCustomObjectVar[] List of NagiosServiceCustomObjectVar objects
-	 */
-	public function getNagiosServiceCustomObjectVarsJoinNagiosServiceTemplate($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-	{
-		$query = NagiosServiceCustomObjectVarQuery::create(null, $criteria);
-		$query->joinWith('NagiosServiceTemplate', $join_behavior);
-
-		return $this->getNagiosServiceCustomObjectVars($query, $con);
-	}
-
-	/**
-	 * Clears the current object and sets all attributes to their default values
-	 */
-	public function clear()
-	{
-		$this->id = null;
-		$this->description = null;
-		$this->display_name = null;
-		$this->host = null;
-		$this->host_template = null;
-		$this->hostgroup = null;
-		$this->initial_state = null;
-		$this->is_volatile = null;
-		$this->check_command = null;
-		$this->maximum_check_attempts = null;
-		$this->normal_check_interval = null;
-		$this->retry_interval = null;
-		$this->first_notification_delay = null;
-		$this->active_checks_enabled = null;
-		$this->passive_checks_enabled = null;
-		$this->check_period = null;
-		$this->parallelize_check = null;
-		$this->obsess_over_service = null;
-		$this->check_freshness = null;
-		$this->freshness_threshold = null;
-		$this->event_handler = null;
-		$this->event_handler_enabled = null;
-		$this->low_flap_threshold = null;
-		$this->high_flap_threshold = null;
-		$this->flap_detection_enabled = null;
-		$this->flap_detection_on_ok = null;
-		$this->flap_detection_on_warning = null;
-		$this->flap_detection_on_critical = null;
-		$this->flap_detection_on_unknown = null;
-		$this->process_perf_data = null;
-		$this->retain_status_information = null;
-		$this->retain_nonstatus_information = null;
-		$this->notification_interval = null;
-		$this->notification_period = null;
-		$this->notification_on_warning = null;
-		$this->notification_on_unknown = null;
-		$this->notification_on_critical = null;
-		$this->notification_on_recovery = null;
-		$this->notification_on_flapping = null;
-		$this->notification_on_scheduled_downtime = null;
-		$this->notifications_enabled = null;
-		$this->stalking_on_ok = null;
-		$this->stalking_on_warning = null;
-		$this->stalking_on_unknown = null;
-		$this->stalking_on_critical = null;
-		$this->failure_prediction_enabled = null;
-		$this->notes = null;
-		$this->notes_url = null;
-		$this->action_url = null;
-		$this->icon_image = null;
-		$this->icon_image_alt = null;
-		$this->alreadyInSave = false;
-		$this->alreadyInValidation = false;
-		$this->clearAllReferences();
-		$this->resetModified();
-		$this->setNew(true);
-		$this->setDeleted(false);
-	}
-
-	/**
-	 * Resets all references to other model objects or collections of model objects.
-	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect
-	 * objects with circular references (even in PHP 5.3). This is currently necessary
-	 * when using Propel in certain daemon or large-volumne/high-memory operations.
-	 *
-	 * @param      boolean $deep Whether to also clear the references on all referrer objects.
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
 	 */
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
 			if ($this->collNagiosServiceCheckCommandParameters) {
-				foreach ($this->collNagiosServiceCheckCommandParameters as $o) {
+				foreach ((array) $this->collNagiosServiceCheckCommandParameters as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collNagiosServiceGroupMembers) {
-				foreach ($this->collNagiosServiceGroupMembers as $o) {
+				foreach ((array) $this->collNagiosServiceGroupMembers as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collNagiosServiceContactMembers) {
-				foreach ($this->collNagiosServiceContactMembers as $o) {
+				foreach ((array) $this->collNagiosServiceContactMembers as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collNagiosServiceContactGroupMembers) {
-				foreach ($this->collNagiosServiceContactGroupMembers as $o) {
+				foreach ((array) $this->collNagiosServiceContactGroupMembers as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collNagiosDependencys) {
-				foreach ($this->collNagiosDependencys as $o) {
+				foreach ((array) $this->collNagiosDependencys as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collNagiosDependencyTargets) {
-				foreach ($this->collNagiosDependencyTargets as $o) {
+				foreach ((array) $this->collNagiosDependencyTargets as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collNagiosEscalations) {
-				foreach ($this->collNagiosEscalations as $o) {
+				foreach ((array) $this->collNagiosEscalations as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 			if ($this->collNagiosServiceTemplateInheritances) {
-				foreach ($this->collNagiosServiceTemplateInheritances as $o) {
-					$o->clearAllReferences($deep);
-				}
-			}
-			if ($this->collNagiosServiceCustomObjectVars) {
-				foreach ($this->collNagiosServiceCustomObjectVars as $o) {
+				foreach ((array) $this->collNagiosServiceTemplateInheritances as $o) {
 					$o->clearAllReferences($deep);
 				}
 			}
 		} // if ($deep)
 
-		if ($this->collNagiosServiceCheckCommandParameters instanceof PropelCollection) {
-			$this->collNagiosServiceCheckCommandParameters->clearIterator();
-		}
 		$this->collNagiosServiceCheckCommandParameters = null;
-		if ($this->collNagiosServiceGroupMembers instanceof PropelCollection) {
-			$this->collNagiosServiceGroupMembers->clearIterator();
-		}
 		$this->collNagiosServiceGroupMembers = null;
-		if ($this->collNagiosServiceContactMembers instanceof PropelCollection) {
-			$this->collNagiosServiceContactMembers->clearIterator();
-		}
 		$this->collNagiosServiceContactMembers = null;
-		if ($this->collNagiosServiceContactGroupMembers instanceof PropelCollection) {
-			$this->collNagiosServiceContactGroupMembers->clearIterator();
-		}
 		$this->collNagiosServiceContactGroupMembers = null;
-		if ($this->collNagiosDependencys instanceof PropelCollection) {
-			$this->collNagiosDependencys->clearIterator();
-		}
 		$this->collNagiosDependencys = null;
-		if ($this->collNagiosDependencyTargets instanceof PropelCollection) {
-			$this->collNagiosDependencyTargets->clearIterator();
-		}
 		$this->collNagiosDependencyTargets = null;
-		if ($this->collNagiosEscalations instanceof PropelCollection) {
-			$this->collNagiosEscalations->clearIterator();
-		}
 		$this->collNagiosEscalations = null;
-		if ($this->collNagiosServiceTemplateInheritances instanceof PropelCollection) {
-			$this->collNagiosServiceTemplateInheritances->clearIterator();
-		}
 		$this->collNagiosServiceTemplateInheritances = null;
-		if ($this->collNagiosServiceCustomObjectVars instanceof PropelCollection) {
-			$this->collNagiosServiceCustomObjectVars->clearIterator();
-		}
-		$this->collNagiosServiceCustomObjectVars = null;
-		$this->aNagiosHost = null;
-		$this->aNagiosHostTemplate = null;
-		$this->aNagiosHostgroup = null;
-		$this->aNagiosCommandRelatedByCheckCommand = null;
-		$this->aNagiosCommandRelatedByEventHandler = null;
-		$this->aNagiosTimeperiodRelatedByCheckPeriod = null;
-		$this->aNagiosTimeperiodRelatedByNotificationPeriod = null;
-	}
-
-	/**
-	 * Return the string representation of this object
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string) $this->exportTo(NagiosServicePeer::DEFAULT_STRING_FORMAT);
-	}
-
-	/**
-	 * Catches calls to virtual methods
-	 */
-	public function __call($name, $params)
-	{
-		if (preg_match('/get(\w+)/', $name, $matches)) {
-			$virtualColumn = $matches[1];
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-			// no lcfirst in php<5.3...
-			$virtualColumn[0] = strtolower($virtualColumn[0]);
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-		}
-		return parent::__call($name, $params);
+			$this->aNagiosHost = null;
+			$this->aNagiosHostTemplate = null;
+			$this->aNagiosHostgroup = null;
+			$this->aNagiosCommandRelatedByCheckCommand = null;
+			$this->aNagiosCommandRelatedByEventHandler = null;
+			$this->aNagiosTimeperiodRelatedByCheckPeriod = null;
+			$this->aNagiosTimeperiodRelatedByNotificationPeriod = null;
 	}
 
 } // BaseNagiosService

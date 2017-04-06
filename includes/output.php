@@ -1,7 +1,6 @@
 <?php
 /*
 Lilac - A Nagios Configuration Tool
-Copyright (C) 2012 Rene Hadler
 Copyright (C) 2007 Taylor Dondich
 
 This program is free software; you can redistribute it and/or
@@ -63,7 +62,7 @@ function double_pane_select_form_element_with_enabler($backgroundColor, $form_na
 		</td>
 		<td align="right" class="formcell">
 		<input type="hidden" name="<?php echo $form_name;?>_enablers[<?php echo $enabler_name;?>]" value="<?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("1"); else print("0");?>" />
-		<input type="checkbox" name="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" value="1" id="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" <?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("CHECKED");?> onClick="form_element_switch(document.<?php echo $form_name;?>.elements['<?php echo $element_name;?>'], document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]']); enabler_switch(document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_enablers[<?php echo $enabler_name;?>]']);" /><label for="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]"><b><?php echo $checkbox_description;?></b></label>
+		<input type="checkbox" name="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" value="1" id="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" <?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("CHECKED");?> onclick="form_element_switch(document.<?php echo $form_name;?>.elements['<?php echo $element_name;?>'], document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]']); enabler_switch(document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_enablers[<?php echo $enabler_name;?>]']);" /><label for="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]"><b><?php echo $checkbox_description;?></b></label>
 		</td>
 	</tr>
 	<tr>
@@ -85,7 +84,7 @@ function double_pane_text_form_element_with_enabler($backgroundColor, $form_name
 		</div>
 		<div class="formtogglefield">
 		<input type="hidden" name="<?php $form_name;?>_enablers[<?php echo $enabler_name;?>]" value="<?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("1"); else print("0");?>" />
-		<input type="checkbox" name="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" value="1" id="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" <?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("CHECKED");?> onClick="form_element_switch(document.<?php echo $form_name;?>.elements['<?php echo $element_name;?>'], document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]']); enabler_switch(document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_enablers[<?php echo $enabler_name;?>]']);" /><label for="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]"><b><?php echo $checkbox_description;?></b></label>
+		<input type="checkbox" name="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" value="1" id="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" <?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("CHECKED");?> onclick="form_element_switch(document.<?php echo $form_name;?>.elements['<?php echo $element_name;?>'], document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]']); enabler_switch(document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_enablers[<?php echo $enabler_name;?>]']);" /><label for="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]"><b><?php echo $checkbox_description;?></b></label>
 		</div>
 		<?php echo $element_description; ?>
 	</div>
@@ -124,7 +123,7 @@ function double_pane_checkbox_group_form_element_with_enabler($backgroundColor, 
 		</td>
 		<td align="right" class="formcell">
 		<input type="hidden" name="<?php echo $form_name;?>_enablers[<?php echo $enabler_name;?>]" value="<?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("1"); else print("0");?>" />
-		<input type="checkbox" name="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" value="1" id="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" <?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("CHECKED");?> onClick="<?php
+		<input type="checkbox" name="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" value="1" id="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" <?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("CHECKED");?> onclick="<?php
 		// Gotta send multiple calls to javascript: form_element_switch
 		for($counter = 0; $counter < $numOfElements; $counter++ ) {
 			?>
@@ -169,7 +168,7 @@ function double_pane_textarea_form_element_with_enabler($backgroundColor, $form_
 		</td>
 		<td align="right" class="formcell">
 		<input type="hidden" name="<?php echo $form_name;?>_enablers[<?php echo $enabler_name;?>]" value="<?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("1"); else print("0");?>" />
-		<input type="checkbox" name="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" value="1" id="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" <?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("CHECKED");?> onClick="form_element_switch(document.<?php echo $form_name;?>.elements['<?php echo $element_name;?>'], document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]']);
+		<input type="checkbox" name="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" value="1" id="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]" <?php if($_POST[$form_name.'_enablers'][$enabler_name]) print("CHECKED");?> onclick="form_element_switch(document.<?php echo $form_name;?>.elements['<?php echo $element_name;?>'], document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]']);
 		enabler_switch(document.<?php echo $form_name;?>.elements['<?php echo $form_name;?>_enablers[<?php echo $enabler_name;?>]']);" /><label for="<?php echo $form_name;?>_checkboxes[<?php echo $enabler_name;?>]"><b><?php echo $checkbox_description;?></b></label>
 		</td>
 		</tr>
@@ -242,13 +241,6 @@ function print_window_header($title = null, $type = "top") {
 	<div class="roundedcorner_lilac_box">
 	   <div class="roundedcorner_lilac_top"><div></div></div>
 	      <div class="roundedcorner_lilac_content">
-	      <?php
-	      if(!empty($title)) {
-	      	?>
-	      	<h2><?php echo $title;?></h2>
-	      	<?php
-	      }
-	      ?>
 			<div class="roundedcorner_inner_box">
 			   <div class="roundedcorner_inner_top"><div></div></div>
 			      <div class="roundedcorner_inner_content">
@@ -285,22 +277,27 @@ function print_header($title = null) {
 	<html>
 	<head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	    <title><?php echo LILAC_NAME . " "; echo LILAC_VERSION;?><?php if($title) print(" - " . $title);?></title>
-	    <link rel="stylesheet" type="text/css" href="style/reset.css">	    
-	    <link rel="stylesheet" type="text/css" href="style/lilac.css">
-	    <link rel="stylesheet" type="text/css" href="style/flexigrid.css">
-	    <link rel="stylesheet" type="text/css" href="style/jquery.tooltip.css">
+	<meta http-equiv="X-UA-Compatible" content="IE=10">
+
+		<title><?php echo LILAC_NAME . " "; echo LILAC_VERSION;?><?php if($title) print(" - " . $title);?></title>
+    	<link rel="stylesheet" type="text/css" href="style/reset.css">	    
+    	<link rel="stylesheet" type="text/css" href="style/lilac.css">
+    	<link rel="stylesheet" type="text/css" href="style/flexigrid.css">
+    	<link rel="stylesheet" type="text/css" href="style/jquery.tooltip.css">
 		<link rel="stylesheet" type="text/css" href="style/jquery.autocomplete.css">
-	 	<script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.min.css">
+	 	<link rel="stylesheet" type="text/css" href="/bower_components/font-awesome/css/font-awesome.min.css">
+	 	<script type="text/javascript" src="js/jquery-1.2.6.min.js"></script>
 	 	<script type="text/javascript" src="js/jquery.tooltip.min.js"></script>
-	 	<script type="text/javascript" src="js/jquery.timers.js"></script>
+	 	<script type="text/javascript" src="js/jquery.timers-1.0.0.js"></script>
 	 	<script type="text/javascript" src="js/flexigrid.js"></script>
 		<script type="text/javascript" src="js/jquery.autocomplete.js"></script>
 	</head>	    
 	
 	
-	<body>
+	<body onload="$('form[name=\'EoN_Actions_Form\'] input').removeAttr('checked');">
 	<script language="javascript">
+
 	function form_element_switch(element, checkbox) {
 		if(checkbox.checked) {
 			element.readOnly = false;
@@ -313,29 +310,86 @@ function print_header($title = null) {
 	}
 		
 	function confirmDelete() {
-		return confirm("Do you really want to delete this Object?");
-  }
+		return confirm("Are you sure ?");
+  	}
+
+	function checkLine(lineid,checkid) {
+		lineid=document.getElementById(lineid);
+		checkid=document.getElementById(checkid);
+		if(checkid.checked == false) {
+			checkid.checked=true;
+			lineid.style.backgroundColor = '#ffffc0';
+		}
+		else {
+			checkid.checked=false;
+			lineid.style.backgroundColor = '';
+		}
+	}
+	
+	function checkBox(lineid,checkid) {
+		lineid=document.getElementById(lineid);
+		checkid=document.getElementById(checkid);
+		if(checkid.checked == true) {
+			checkid.checked=true;
+			lineid.style.backgroundColor = '#ffffc0';
+		}
+		else {
+			checkid.checked=false;
+			lineid.style.backgroundColor = '';
+		}
+	}
+	
+	function checkUncheckAll(name) {
+		if(name=='EoN_Actions_Checks_ServiceTemplate') {
+			line='Sline';
+		}
+		else {
+			line='line';
+		}
+	    	if($("input[name='"+name+"[]']").is(':checked')) {
+			$("input[name='"+name+"[]']").removeAttr("checked");
+			for (var i = 0; i < $("input[name='"+name+"[]']").length; i++) {
+				lineid=document.getElementById(line+i);
+				lineid.style.backgroundColor = '';
+			}
+        		return false;
+	    	}
+        	else {
+			$("input[name='"+name+"[]']").attr("checked","checked");
+			for (var i = 0; i < $("input[name='"+name+"[]']").length; i++) {
+				lineid=document.getElementById(line+i);
+				lineid.style.backgroundColor = '#ffffc0';
+			}
+           		return false;
+        	}
+	}
 
 	</script>
 
 	<div id="header">
 		<div id="search">
 		<form action="search.php">
-			<span>Search:</span> <input type="text" name="query" />
+			<span>Search: </span> <input class="form-control input-sm" type="text" name="query" style="display: inline-block" />
 		</form>
 		</div>
-		<a href="about.php"><h1><div class="title"><?php echo LILAC_NAME; ?></div></h1></a>
+		<?php
+		if(empty($title)) { $title=LILAC_NAME; }
+		?>
+		<h1><?php echo $title; ?></h1>
 	</div>
+	<!-- EyesOfNetwork
 	<div id="navigation">
 		<ul>
 			<li><a href="index.php">General</a></li>
 			<li><a href="templates.php">Templates</a></li>
 			<li><a href="hosts.php">Network</a></li>
+			<li><a href="importer.php">Imports</a></li>
 			<li><a href="tools.php">Tools</a></li>
 			<li><a href="about.php">About</a></li>
 		</ul>
 	</div>
 	<div id="main">
+	-->
 	<?php
 	if(!empty($success) || !empty($error) || !empty($warning)) {
 		?>
@@ -673,7 +727,7 @@ function form_select_element_with_enabler($selectList, $selectValues, $selectLab
 	<div class="formbox">
 		<div class="formelement">
 			<div class="formcontent toggle">
-			<strong><?php echo $label;?>:</strong> <?php print_select($formName . "[" .$fieldName ."]", $selectList, $selectValues, $selectLabels, $value, $enabled);?><br />
+			<strong><?php echo $label;?>:</strong> <?php print_select($formName . "[" .$fieldName ."]", $selectList, $selectValues, $selectLabels, $value, $enabled);?>
 			<?php echo $description;?>
 			</div>
 		</div>
@@ -703,7 +757,7 @@ function form_text_element_with_enabler($size, $maxLength, $formName, $fieldName
 	<div class="formbox">
 		<div class="formelement">
 			<div class="formcontent toggle">
-			<strong><?php echo $label;?>:</strong> <input type="text" size="<?php echo $size;?>" maxlength="<?php echo $maxLength;?>" name="<?php echo $formName . "[" . $fieldName . "]";?>" value="<?php echo htmlspecialchars($value);?>" <?php if(!$enabled) print("DISABLED");?> /><br />
+			<strong><?php echo $label;?>:</strong> <input type="text" size="<?php echo $size;?>" maxlength="<?php echo $maxLength;?>" name="<?php echo $formName . "[" . $fieldName . "]";?>" value="<?php echo $value;?>" <?php if(!$enabled) print("DISABLED");?> />
 			<?php echo $description;?>
 			</div>
 		</div>

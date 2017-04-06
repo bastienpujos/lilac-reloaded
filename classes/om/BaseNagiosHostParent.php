@@ -1,20 +1,14 @@
 <?php
 
-
 /**
  * Base class that represents a row from the 'nagios_host_parent' table.
  *
  * Nagios Additional Host Parent Relationship
  *
- * @package    propel.generator..om
+ * @package    .om
  */
-abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
-{
+abstract class BaseNagiosHostParent extends BaseObject  implements Persistent {
 
-	/**
-	 * Peer class name
-	 */
-	const PEER = 'NagiosHostParentPeer';
 
 	/**
 	 * The Peer class.
@@ -76,6 +70,26 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	 * @var        boolean
 	 */
 	protected $alreadyInValidation = false;
+
+	/**
+	 * Initializes internal state of BaseNagiosHostParent object.
+	 * @see        applyDefaults()
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->applyDefaultValues();
+	}
+
+	/**
+	 * Applies default values to this object.
+	 * This method should be called from the object's constructor (or
+	 * equivalent initialization method).
+	 * @see        __construct()
+	 */
+	public function applyDefaultValues()
+	{
+	}
 
 	/**
 	 * Get the [id] column value.
@@ -219,6 +233,11 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	 */
 	public function hasOnlyDefaultValues()
 	{
+			// First, ensure that we don't have any columns that have been modified which aren't default columns.
+			if (array_diff($this->modifiedColumns, array())) {
+				return false;
+			}
+
 		// otherwise, everything was equal, so return TRUE
 		return true;
 	} // hasOnlyDefaultValues()
@@ -253,7 +272,8 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 				$this->ensureConsistency();
 			}
 
-			return $startcol + 4; // 4 = NagiosHostParentPeer::NUM_HYDRATE_COLUMNS.
+			// FIXME - using NUM_COLUMNS may be clearer.
+			return $startcol + 4; // 4 = NagiosHostParentPeer::NUM_COLUMNS - NagiosHostParentPeer::NUM_LAZY_LOAD_COLUMNS).
 
 		} catch (Exception $e) {
 			throw new PropelException("Error populating NagiosHostParent object", $e);
@@ -348,20 +368,12 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosHostParentPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
 		try {
-			$ret = $this->preDelete($con);
-			if ($ret) {
-				NagiosHostParentQuery::create()
-					->filterByPrimaryKey($this->getPrimaryKey())
-					->delete($con);
-				$this->postDelete($con);
-				$con->commit();
-				$this->setDeleted(true);
-			} else {
-				$con->commit();
-			}
+			NagiosHostParentPeer::doDelete($this, $con);
+			$this->setDeleted(true);
+			$con->commit();
 		} catch (PropelException $e) {
 			$con->rollBack();
 			throw $e;
@@ -390,29 +402,12 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 		if ($con === null) {
 			$con = Propel::getConnection(NagiosHostParentPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
 		}
-
+		
 		$con->beginTransaction();
-		$isInsert = $this->isNew();
 		try {
-			$ret = $this->preSave($con);
-			if ($isInsert) {
-				$ret = $ret && $this->preInsert($con);
-			} else {
-				$ret = $ret && $this->preUpdate($con);
-			}
-			if ($ret) {
-				$affectedRows = $this->doSave($con);
-				if ($isInsert) {
-					$this->postInsert($con);
-				} else {
-					$this->postUpdate($con);
-				}
-				$this->postSave($con);
-				NagiosHostParentPeer::addInstanceToPool($this);
-			} else {
-				$affectedRows = 0;
-			}
+			$affectedRows = $this->doSave($con);
 			$con->commit();
+			NagiosHostParentPeer::addInstanceToPool($this);
 			return $affectedRows;
 		} catch (PropelException $e) {
 			$con->rollBack();
@@ -470,14 +465,13 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 			// If this object has been modified, then save it to the database.
 			if ($this->isModified()) {
 				if ($this->isNew()) {
-					$criteria = $this->buildCriteria();
-					if ($criteria->keyContainsValue(NagiosHostParentPeer::ID) ) {
-						throw new PropelException('Cannot insert a value for auto-increment primary key ('.NagiosHostParentPeer::ID.')');
-					}
+					$pk = NagiosHostParentPeer::doInsert($this, $con);
+					$affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
+										 // should always be true here (even though technically
+										 // BasePeer::doInsert() can insert multiple rows).
 
-					$pk = BasePeer::doInsert($criteria, $con);
-					$affectedRows += 1;
 					$this->setId($pk);  //[IMV] update autoincrement primary key
+
 					$this->setNew(false);
 				} else {
 					$affectedRows += NagiosHostParentPeer::doUpdate($this, $con);
@@ -638,21 +632,13 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	 * You can specify the key type of the array by passing one of the class
 	 * type constants.
 	 *
-	 * @param     string  $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME,
-	 *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
-	 *                    Defaults to BasePeer::TYPE_PHPNAME.
-	 * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
-	 * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
-	 * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
-	 *
-	 * @return    array an associative array containing the field names (as keys) and field values
+	 * @param      string $keyType (optional) One of the class type constants BasePeer::TYPE_PHPNAME, BasePeer::TYPE_STUDLYPHPNAME
+	 *                        BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM. Defaults to BasePeer::TYPE_PHPNAME.
+	 * @param      boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns.  Defaults to TRUE.
+	 * @return     an associative array containing the field names (as keys) and field values
 	 */
-	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
+	public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
 	{
-		if (isset($alreadyDumpedObjects['NagiosHostParent'][$this->getPrimaryKey()])) {
-			return '*RECURSION*';
-		}
-		$alreadyDumpedObjects['NagiosHostParent'][$this->getPrimaryKey()] = true;
 		$keys = NagiosHostParentPeer::getFieldNames($keyType);
 		$result = array(
 			$keys[0] => $this->getId(),
@@ -660,17 +646,6 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 			$keys[2] => $this->getChildHostTemplate(),
 			$keys[3] => $this->getParentHost(),
 		);
-		if ($includeForeignObjects) {
-			if (null !== $this->aNagiosHostRelatedByChildHost) {
-				$result['NagiosHostRelatedByChildHost'] = $this->aNagiosHostRelatedByChildHost->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHostRelatedByParentHost) {
-				$result['NagiosHostRelatedByParentHost'] = $this->aNagiosHostRelatedByParentHost->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-			if (null !== $this->aNagiosHostTemplate) {
-				$result['NagiosHostTemplate'] = $this->aNagiosHostTemplate->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-			}
-		}
 		return $result;
 	}
 
@@ -771,6 +746,7 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	public function buildPkeyCriteria()
 	{
 		$criteria = new Criteria(NagiosHostParentPeer::DATABASE_NAME);
+
 		$criteria->add(NagiosHostParentPeer::ID, $this->id);
 
 		return $criteria;
@@ -797,15 +773,6 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	}
 
 	/**
-	 * Returns true if the primary key for this object is null.
-	 * @return     boolean
-	 */
-	public function isPrimaryKeyNull()
-	{
-		return null === $this->getId();
-	}
-
-	/**
 	 * Sets contents of passed object to values from current object.
 	 *
 	 * If desired, this method can also make copies of all associated (fkey referrers)
@@ -813,18 +780,22 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	 *
 	 * @param      object $copyObj An object of NagiosHostParent (or compatible) type.
 	 * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-	 * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
 	 * @throws     PropelException
 	 */
-	public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
+	public function copyInto($copyObj, $deepCopy = false)
 	{
-		$copyObj->setChildHost($this->getChildHost());
-		$copyObj->setChildHostTemplate($this->getChildHostTemplate());
-		$copyObj->setParentHost($this->getParentHost());
-		if ($makeNew) {
-			$copyObj->setNew(true);
-			$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
-		}
+
+		$copyObj->setChildHost($this->child_host);
+
+		$copyObj->setChildHostTemplate($this->child_host_template);
+
+		$copyObj->setParentHost($this->parent_host);
+
+
+		$copyObj->setNew(true);
+
+		$copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+
 	}
 
 	/**
@@ -902,13 +873,15 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	public function getNagiosHostRelatedByChildHost(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostRelatedByChildHost === null && ($this->child_host !== null)) {
-			$this->aNagiosHostRelatedByChildHost = NagiosHostQuery::create()->findPk($this->child_host, $con);
+			$c = new Criteria(NagiosHostPeer::DATABASE_NAME);
+			$c->add(NagiosHostPeer::ID, $this->child_host);
+			$this->aNagiosHostRelatedByChildHost = NagiosHostPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostRelatedByChildHost->addNagiosHostParentsRelatedByChildHost($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostRelatedByChildHost->addNagiosHostParentsRelatedByChildHost($this);
 			 */
 		}
 		return $this->aNagiosHostRelatedByChildHost;
@@ -951,13 +924,15 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	public function getNagiosHostRelatedByParentHost(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostRelatedByParentHost === null && ($this->parent_host !== null)) {
-			$this->aNagiosHostRelatedByParentHost = NagiosHostQuery::create()->findPk($this->parent_host, $con);
+			$c = new Criteria(NagiosHostPeer::DATABASE_NAME);
+			$c->add(NagiosHostPeer::ID, $this->parent_host);
+			$this->aNagiosHostRelatedByParentHost = NagiosHostPeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostRelatedByParentHost->addNagiosHostParentsRelatedByParentHost($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostRelatedByParentHost->addNagiosHostParentsRelatedByParentHost($this);
 			 */
 		}
 		return $this->aNagiosHostRelatedByParentHost;
@@ -1000,81 +975,37 @@ abstract class BaseNagiosHostParent extends BaseObject  implements Persistent
 	public function getNagiosHostTemplate(PropelPDO $con = null)
 	{
 		if ($this->aNagiosHostTemplate === null && ($this->child_host_template !== null)) {
-			$this->aNagiosHostTemplate = NagiosHostTemplateQuery::create()->findPk($this->child_host_template, $con);
+			$c = new Criteria(NagiosHostTemplatePeer::DATABASE_NAME);
+			$c->add(NagiosHostTemplatePeer::ID, $this->child_host_template);
+			$this->aNagiosHostTemplate = NagiosHostTemplatePeer::doSelectOne($c, $con);
 			/* The following can be used additionally to
-				guarantee the related object contains a reference
-				to this object.  This level of coupling may, however, be
-				undesirable since it could result in an only partially populated collection
-				in the referenced object.
-				$this->aNagiosHostTemplate->addNagiosHostParents($this);
+			   guarantee the related object contains a reference
+			   to this object.  This level of coupling may, however, be
+			   undesirable since it could result in an only partially populated collection
+			   in the referenced object.
+			   $this->aNagiosHostTemplate->addNagiosHostParents($this);
 			 */
 		}
 		return $this->aNagiosHostTemplate;
 	}
 
 	/**
-	 * Clears the current object and sets all attributes to their default values
-	 */
-	public function clear()
-	{
-		$this->id = null;
-		$this->child_host = null;
-		$this->child_host_template = null;
-		$this->parent_host = null;
-		$this->alreadyInSave = false;
-		$this->alreadyInValidation = false;
-		$this->clearAllReferences();
-		$this->resetModified();
-		$this->setNew(true);
-		$this->setDeleted(false);
-	}
-
-	/**
-	 * Resets all references to other model objects or collections of model objects.
+	 * Resets all collections of referencing foreign keys.
 	 *
-	 * This method is a user-space workaround for PHP's inability to garbage collect
-	 * objects with circular references (even in PHP 5.3). This is currently necessary
-	 * when using Propel in certain daemon or large-volumne/high-memory operations.
+	 * This method is a user-space workaround for PHP's inability to garbage collect objects
+	 * with circular references.  This is currently necessary when using Propel in certain
+	 * daemon or large-volumne/high-memory operations.
 	 *
-	 * @param      boolean $deep Whether to also clear the references on all referrer objects.
+	 * @param      boolean $deep Whether to also clear the references on all associated objects.
 	 */
 	public function clearAllReferences($deep = false)
 	{
 		if ($deep) {
 		} // if ($deep)
 
-		$this->aNagiosHostRelatedByChildHost = null;
-		$this->aNagiosHostRelatedByParentHost = null;
-		$this->aNagiosHostTemplate = null;
-	}
-
-	/**
-	 * Return the string representation of this object
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string) $this->exportTo(NagiosHostParentPeer::DEFAULT_STRING_FORMAT);
-	}
-
-	/**
-	 * Catches calls to virtual methods
-	 */
-	public function __call($name, $params)
-	{
-		if (preg_match('/get(\w+)/', $name, $matches)) {
-			$virtualColumn = $matches[1];
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-			// no lcfirst in php<5.3...
-			$virtualColumn[0] = strtolower($virtualColumn[0]);
-			if ($this->hasVirtualColumn($virtualColumn)) {
-				return $this->getVirtualColumn($virtualColumn);
-			}
-		}
-		return parent::__call($name, $params);
+			$this->aNagiosHostRelatedByChildHost = null;
+			$this->aNagiosHostRelatedByParentHost = null;
+			$this->aNagiosHostTemplate = null;
 	}
 
 } // BaseNagiosHostParent

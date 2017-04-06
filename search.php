@@ -25,8 +25,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 include_once('includes/config.inc');
 
+// EoN_Actions
+$OBJECTS=array(
+	"commands"		=>	"Command",
+	"contacts"		=>	"Contact",
+	"contactgroups"		=>	"ContactGroup",
+	"hosts"			=>	"Host",
+	"hostgroups"		=>	"Hostgroup",
+	"host_templates"	=>	"HostTemplate",
+	"services"		=>	"Service",
+	"servicegroups"		=>	"ServiceGroup",
+	"service_templates"	=>	"ServiceTemplate",
+	"timeperiods"		=>	"Timeperiod"
+);
+
+foreach($OBJECTS as $OBJECT_FIELD => $OBJECT_VALUE) {
+	EoN_Actions_Process($OBJECT_VALUE);
+}
 
 class module_search_simple {
+
 	private $dbHost;
 	private $dbUsername;
 	private $dbPasswor;
@@ -39,9 +57,9 @@ class module_search_simple {
 	private $searchTemplate;
 	
 	function __construct() {
+
 		global $sitedb_config;
 		global $path_config;
-		
 		
 		$this->searchResults = array();
 		$this->searchCount = 0;
@@ -286,6 +304,9 @@ class module_search_simple {
 		if(empty($_GET['query'])) {
 			$_GET['query'] = '';
 		}
+		elseif(!empty($_POST['query'])){
+			$_GET['query'] = $_POST['query'];
+		}
 		
 		$searchString = $_GET['query'];
 		$tokens = explode( " ", $searchString);
@@ -365,7 +386,7 @@ function validateForm() {
 		<td align="right" colspan="4"><img src="<?php echo $path_config['image_root'];?>dotclear.gif" height="4" width="1" /></td>
 	</tr>
 	<tr>
-		<td align="right"><input type="submit" value="Search" />&nbsp;&nbsp;</td>
+		<td align="right"><input class="btn btn-primary" type="submit" value="Search" />&nbsp;&nbsp;</td>
 	</tr>
 </table>
 </form>
@@ -378,11 +399,16 @@ function validateForm() {
 	
 	public function renderResults() {
 		global $error;
+		global $OBJECTS;
+
 		if(count($this->searchResults)) {
 
 			foreach( $this->searchResults as $group=>$results) {
 				print_window_header( "Results in " . $this->searchTemplate[$group]['type'] . ": " . count($results), "100%", "center");
 				?>
+                                <form name="EoN_Actions_Form" method="post">
+			        <?php echo EoN_Actions($OBJECTS[$group])?>
+				<input type="hidden" name="query" value="<?php echo $_GET["query"]?>">
 				<table width="95%" border="0" align="center" cellspacing="0" cellpadding="0">
 				<tr>
 				<?php
@@ -394,6 +420,7 @@ function validateForm() {
 									}
 								}
 				?>
+				  <td align="center" style="padding: 2px; border-bottom: 1px solid #aaaaaa;"><a href="#" onClick="checkUncheckAll('EoN_Actions_Checks_<?php echo $OBJECTS[$group]?>');">ALL</a></td>
 				</tr>
 				<?php
 				$count = 0;
@@ -431,13 +458,16 @@ function validateForm() {
 							}
 						}
 						$count++;
-						
+						?>
+						<td align="center" style="padding: 2px; border-right: 1px solid #aaaaaa; border-bottom: 1px solid #aaaaaa;"><input type="checkbox" class="checkbox" name="EoN_Actions_Checks_<?php echo $OBJECTS[$group]?>[]" value="<?php echo $id;?>"></td>	
+						<?php
 						print "</tr>\n";
 					}
 
 				}
 				?>
 				</table>
+				</form>
 				<br />
 				<?php
 				print_window_footer();

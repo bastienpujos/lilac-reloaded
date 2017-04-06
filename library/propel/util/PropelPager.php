@@ -1,11 +1,22 @@
 <?php
-
-/**
- * This file is part of the Propel package.
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
+/*
+ *  $Id: PropelPager.php 563 2007-02-01 09:45:55Z heltem $
  *
- * @license    MIT License
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the LGPL. For more information please see
+ * <http://propel.phpdb.org>.
  */
 
 /**
@@ -29,40 +40,40 @@
  * Some template:
  *
  * <p>
- * Total Pages: <?=$pager->getTotalPages()?>  Total Records: <?=$pager->getTotalRecordCount()?>
+ * Total Pages: <?php echo $pager->getTotalPages()?>  Total Records: <?php echo $pager->getTotalRecordCount()?>
  * </p>
  * <table>
  * <tr>
  * <td>
- * <?if ($link = $pager->getFirstPage):?>
- * <a href="somescript?page=<?=$link?>"><?=$link?></a>|
- * <?endif?>
+ * <?php if ($link = $pager->getFirstPage):?>
+ * <a href="somescript?page=<?php echo $link?>"><?php echo $link?></a>|
+ * <?php endif ?>
  * </td>
  * <td>
- * <?if ($link = $pager->getPrev()):?>
- * <a href="somescript?page=<?=$link?>">Previous</a>|
- * <?endif?>
+ * <?php if ($link = $pager->getPrev()):?>
+ * <a href="somescript?page=<?php echo $link?>">Previous</a>|
+ * <?php endif ?>
  * </td>
  * <td>
- * <?foreach ($pager->getPrevLinks() as $link):?>
- * <a href="somescript?page=<?=$link?>"><?=$link?></a>|
- * <?endforeach?>
+ * <?php foreach ($pager->getPrevLinks() as $link):?>
+ * <a href="somescript?page=<?php echo $link?>"><?php echo $link?></a>|
+ * <?php endforeach?>
  * </td>
- * <td><?=$pager->getPage()?></td>
+ * <td><?php echo $pager->getPage()?></td>
  * <td>
- * <?foreach ($pager->getNextLinks() as $link):?>
- * | <a href="somescript?page=<?=$link?>"><?=$link?></a>
- * <?endforeach?>
- * </td>
- * <td>
- * <?if ($link = $pager->getNext()):?>
- * <a href="somescript?page=<?=$link?>">Last</a>|
- * <?endif?>
+ * <?php foreach ($pager->getNextLinks() as $link):?>
+ * | <a href="somescript?page=<?php echo $link?>"><?php echo $link?></a>
+ * <?php endforeach?>
  * </td>
  * <td>
- * <?if ($link = $pager->getLastPage()):?>
- * <a href="somescript?page=<?=$link?>"><?=$link?></a>|
- * <?endif?>
+ * <?php if ($link = $pager->getNext()):?>
+ * <a href="somescript?page=<?php echo $link?>">Last</a>|
+ * <?php endif ?>
+ * </td>
+ * <td>
+ * <?php if ($link = $pager->getLastPage()):?>
+ * <a href="somescript?page=<?php echo $link?>"><?php echo $link?></a>|
+ * <?php endif ?>
  * </td>
  * </tr>
  * </table>
@@ -73,25 +84,23 @@
  * <th>Date</th>
  * <th>comments</th>
  * </tr>
- * <?foreach ($pager->getResult() as $poem):?>
+ * <?php foreach ($pager->getResult() as $poem):?>
  * <tr>
- * <td><?=$poem->getTitle()?></td>
- * <td><?=$poem->getPoemUsers()->getUname()?></td>
- * <td><?=$poem->getTime()?></td>
- * <td><?=$poem->getComments()?></td>
+ * <td><?php echo $poem->getTitle()?></td>
+ * <td><?php echo $poem->getPoemUsers()->getUname()?></td>
+ * <td><?php echo $poem->getTime()?></td>
+ * <td><?php echo $poem->getComments()?></td>
  * </tr>
- * <?endforeach?>
+ * <?php endforeach?>
  * </table>
  *
  *
  * @author     Rob Halff <info@rhalff.com>
- * @author	   Niklas Närhinen <niklas@narhinen.net>
- * @version    $Revision: 1612 $
+ * @version    $Revision: 563 $
  * @copyright  Copyright (c) 2004 Rob Halff: LGPL - See LICENCE
- * @package    propel.runtime.util
+ * @package    propel.util
  */
-class PropelPager implements Countable, Iterator
-{
+class PropelPager {
 
 	private $recordCount;
 	private $pages;
@@ -102,9 +111,6 @@ class PropelPager implements Countable, Iterator
 	private $countCriteria;
 	private $page;
 	private $rs = null;
-	
-	//Iterator vars
-	private $currentKey = 0;
 
 	/** @var        int Start row (offset) */
 	protected $start = 0;
@@ -532,66 +538,6 @@ class PropelPager implements Countable, Iterator
 	public function setMax($v)
 	{
 		$this->max = $v;
-	}
-	
-	/**
-	 * Returns the count of the current page's records
-	 * @return 	int
-	 */
-	public function count()
-	{
-		return count($this->getResult());
-	}
-	
-	/**
-	 * Returns the current element of the iterator
-	 * @return mixed
-	 */
-	public function current()
-	{
-		if (!isset($this->rs)) {
-			$this->doRs();
-		}
-		return $this->rs[$this->currentKey];
-	}
-	
-	/**
-	 * Returns the current key of the iterator
-	 * @return int
-	 */
-	public function key()
-	{
-		return $this->currentKey;
-	}
-	
-	/**
-	 * Advances the iterator to the next element
-	 * @return void
-	 */
-	public function next()
-	{
-		$this->currentKey++;
-	}
-	
-	/**
-	 * Resets the iterator to the first element
-	 * @return void
-	 */
-	public function rewind()
-	{
-		$this->currentKey = 0;
-	}
-	
-	/**
-	 * Checks if the current key exists in the container
-	 * @return boolean
-	 */
-	public function valid()
-	{
-		if (!isset($this->rs)) {
-			$this->doRs();
-		}
-		return in_array($this->currentKey, array_keys($this->rs));
 	}
 
 }

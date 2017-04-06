@@ -1,8 +1,8 @@
 <?php
 /**
- * $Header$
+ * $Header: /repository/pear/Log/Log/file.php,v 1.46 2006/12/07 04:15:02 jon Exp $
  *
- * @version $Revision: 224513 $
+ * @version $Revision: 1.46 $
  * @package Log
  */
 
